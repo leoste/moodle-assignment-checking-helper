@@ -5,10 +5,10 @@ function setup() {
 }
 
 function onLoad() {
-  test()
+  expandCommentSection()
 }
 
-function test() {
+function expandCommentSection() {
   const commentLink = document.querySelector("a.comment-link")
   commentLink.click()
 }

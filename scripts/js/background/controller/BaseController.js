@@ -2,6 +2,9 @@ import MessageHandlerMap from "../collection/MessageHandlerMap.js"
 
 export default class BaseController {
 
+  static #oneTimeInitiated = false
+  static #messageHandlerMap
+
   init() {
     this.#tryOneTimeInit()
   }
@@ -40,8 +43,4 @@ export default class BaseController {
     let response = await messageHandler()    
     sendResponse(response)
   }
-
-  static #oneTimeInitiated = false
-
-  static #messageHandlerMap
 }

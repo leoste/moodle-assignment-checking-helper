@@ -1,18 +1,16 @@
-import JuhhuuConstants from "../constants/juhhuuConstants.js";
-import JuhhuuService from "../service/JuhhuuService.js";
+import juhhuuConstants from "../constants/juhhuuConstants.js";
+import serviceRegistry from "../service/service-registry.js";
 import BaseController from "./BaseController.js";
 
 export default class JuhhuuController extends BaseController {
 
   init() {
     super.init()
-    this.addMessageHandler(JuhhuuConstants.messageName, this.#messageHandler)
+    this.addMessageHandler(juhhuuConstants.messageName, this.#messageHandler)
   }
 
-  static #juhhuuService = new JuhhuuService()
-
   async #messageHandler() {
-    let response = JuhhuuController.#juhhuuService.getTest()
+    let response = serviceRegistry.juhhuuService.getTest()
     return response
   }
 }

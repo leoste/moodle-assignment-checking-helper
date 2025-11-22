@@ -1,5 +1,5 @@
-const JuhhuuConstants = {
+const juhhuuConstants = {
   messageName: "test"
 }
 
-export default JuhhuuConstants
+export default juhhuuConstants

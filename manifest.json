@@ -13,11 +13,15 @@
   },
   "content_scripts": [
     {
+      "matches": ["https://moodle.taltech.ee/mod/assign/*action=grader*"],
       "js": [
-        "scripts/content-scripts/helper/page-helper.js",
-        "scripts/content-scripts/grader.js"
+        "scripts/content-scripts/js/helper/page-helper.js",
+        "scripts/content-scripts/js/grader.js"
       ],
-      "matches": ["https://moodle.taltech.ee/mod/assign/*action=grader*"]
+      "css": [
+        "scripts/content-scripts/css/grader.css"
+      ]
+      
     }
   ],
   "permissions": [

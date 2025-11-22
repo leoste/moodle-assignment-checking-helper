@@ -1,0 +1,11 @@
+.common-answer-section {  
+  min-height: 6em;
+  padding-top: 1.2em;
+  padding-left: 2.3em;
+  
+  margin: 1.35em;
+  border: 0.34em solid #FF7E2E;
+  box-shadow: 0 0 0 0.67em #2BFFFF, 0 0 0 1.01em #FF7E2E;
+
+  background-color: #FEEA9A;
+}

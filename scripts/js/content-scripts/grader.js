@@ -1,6 +1,18 @@
-async function omg() {
-  const response = await chrome.runtime.sendMessage("test")
+async function omg(text) {
+  const message = {
+    type: "test",
+    content: {
+      text: text
+    }
+  }
+  const response = await chrome.runtime.sendMessage(message)
   alert(response)
 }
 
-omg()
+jesus = async() => {
+  await omg("test")
+  await omg("mega")
+  await omg("see on nii lahe")
+}
+
+jesus()

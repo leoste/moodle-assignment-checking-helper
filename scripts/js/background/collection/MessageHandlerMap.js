@@ -1,13 +1,13 @@
 export default class MessageHandlerMap {
   
-  add(message, messageHandler) {
-    if (!this.#messageHandlers.has(message)) {
-      this.#messageHandlers.set(message, messageHandler)
+  add(messageType, messageHandler) {
+    if (!this.#messageHandlers.has(messageType)) {
+      this.#messageHandlers.set(messageType, messageHandler)
     }
   }
 
-  getMessageHandler(message) {
-    return this.#messageHandlers.get(message)
+  get(messageType) {
+    return this.#messageHandlers.get(messageType)
   }
   
   #messageHandlers = new Map()

@@ -9,12 +9,12 @@ export default class BaseController {
     this.#tryOneTimeInit()
   }
 
-  addMessageHandler(message, responseHandler) {
-    BaseController.#messageHandlerMap.add(message, responseHandler)
+  addMessageHandler(messageType, messageHandler) {
+    BaseController.#messageHandlerMap.add(messageType, messageHandler)
   }
 
   #tryOneTimeInit() {
-    if (!BaseController.#oneTimeInitiated) {      
+    if (!BaseController.#oneTimeInitiated) {
       this.#oneTimeInit()
       BaseController.#oneTimeInitiated = true
     }    
@@ -34,13 +34,13 @@ export default class BaseController {
   }
 
   #listenerCallback = (message, sender, sendResponse) => {
-    this.#handleMessage(message, sendResponse)
+    this.#handleMessage(message, sendResponse)    
     return true
   }
 
   async #handleMessage(message, sendResponse) {
-    let messageHandler = BaseController.#messageHandlerMap.getMessageHandler(message)
-    let response = await messageHandler()    
+    const messageHandler = BaseController.#messageHandlerMap.get(message.type)
+    const response = await messageHandler(message.content)
     sendResponse(response)
   }
 }

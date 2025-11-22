@@ -1,4 +1,3 @@
-import JuhhuuController from "./controller/JuhhuuController.js"
+import initControllers from "./worker/init-controllers";
 
-let juhhuuController = new JuhhuuController()
-juhhuuController.init()
+initControllers()

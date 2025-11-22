@@ -1,0 +1,15 @@
+activeTab permission võimaldab ligi pääseda praegusele tabi-le ja seal jooksutada päris ES6 tüüpi skripte, lihtsamini ligi pääseda chrome asjadele jne.
+kuid, seda saab ainult siis, kui user invoke-b extension-i.
+
+võimalikud variandid, millega oleks okei invoke-da activetab permissioni:
+
+chrome.action
+need on et kui extensioni ribal extensioni right-clickid, sinna saab klikitavaid actione teha
+
+chrome.contextMenus
+need on kui paremklikid suvalises kohas tuleb dropdown ja sinna saaks midagi panna
+
+chrome.commands
+need on custom keyboard shortcutid
+
+mingi omnibox on ka aga come-on kes see kasutab omniboxi

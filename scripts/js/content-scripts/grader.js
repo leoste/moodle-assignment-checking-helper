@@ -1,0 +1,1 @@
+alert('Grader page content script was successfully loaded')

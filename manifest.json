@@ -1,0 +1,26 @@
+{
+  "manifest_version": 3,
+  "name": "Moodle Assignment Checking Helper",
+  "description": "Speeds up checking assignments on Moodle by reducing clicks and typing.",
+  "version": "1.0",
+  "icons": {
+    "16": "images/128.png",
+    "128": "images/128.png"
+  },
+  "background": {
+    "service_worker": "scripts/js/background/service-worker.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "js": [
+        "scripts/js/content-scripts/grader.js"        
+      ],
+      "matches": ["https://moodle.taltech.ee/mod/assign/*action=grader*"]
+    }
+  ],
+  "permissions": [
+    "storage",
+    "activeTab"
+  ]
+}

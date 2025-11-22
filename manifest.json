@@ -14,7 +14,8 @@
   "content_scripts": [
     {
       "js": [
-        "scripts/js/content-scripts/grader.js"        
+        "scripts/js/content-scripts/helper/page-helper.js",
+        "scripts/js/content-scripts/grader.js"
       ],
       "matches": ["https://moodle.taltech.ee/mod/assign/*action=grader*"]
     }

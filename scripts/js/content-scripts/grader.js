@@ -1,18 +1,14 @@
-async function omg(text) {
-  const message = {
-    type: "test",
-    content: {
-      text: text
-    }
-  }
-  const response = await chrome.runtime.sendMessage(message)
-  alert(response)
+setup()
+
+function setup() {
+  executeOnPageLoad(onLoad)
 }
 
-jesus = async() => {
-  await omg("test")
-  await omg("mega")
-  await omg("see on nii lahe")
+function onLoad() {
+  test()
 }
 
-jesus()
+function test() {
+  const commentLink = document.querySelector("a.comment-link")
+  commentLink.click()
+}

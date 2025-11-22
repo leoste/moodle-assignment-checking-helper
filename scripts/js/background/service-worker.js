@@ -1,4 +1,4 @@
-chrome.runtime.onMessage.addListener((message,sender, sendResponse) => {
-  sendResponse("juhhuu")
-  return true
-})
+import JuhhuuController from "./controller/JuhhuuController.js"
+
+let juhhuuController = new JuhhuuController()
+juhhuuController.init()

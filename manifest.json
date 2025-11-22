@@ -8,14 +8,14 @@
     "128": "images/128.png"
   },
   "background": {
-    "service_worker": "scripts/js/background/service-worker.js",
+    "service_worker": "scripts/background/service-worker.js",
     "type": "module"
   },
   "content_scripts": [
     {
       "js": [
-        "scripts/js/content-scripts/helper/page-helper.js",
-        "scripts/js/content-scripts/grader.js"
+        "scripts/content-scripts/helper/page-helper.js",
+        "scripts/content-scripts/grader.js"
       ],
       "matches": ["https://moodle.taltech.ee/mod/assign/*action=grader*"]
     }

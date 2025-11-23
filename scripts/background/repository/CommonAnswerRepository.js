@@ -13,6 +13,10 @@ export default class CommonAnswerRepository {
       "enabled":true
     },
     {
+      "text":"The CREATE and INSERT commands are all good, but take another look at the SELECT statements.",
+      "enabled":false
+    },
+    {
       "text":"Best regards, Karl Aleksander Leoste",
       "enabled":true
     },

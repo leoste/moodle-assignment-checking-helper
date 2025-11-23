@@ -10,7 +10,6 @@ function onLoad() {
 
 function setupCommentSection() {
   const commentLink = getCommentLink()
-
   expandCommentSection(commentLink)
   insertCommonAnswerSection(commentLink)
 }
@@ -20,36 +19,70 @@ function expandCommentSection(commentLink) {
 }
 
 function insertCommonAnswerSection(commentLink) {
-  const commonAnswerSection = createCommonAnswerSection()
+  const creator = new CommonAnswerSectionCreator()
+  creator.setParameters(getCommentTextarea())  
+  const commonAnswerSection = creator.createCommonAnswerSection()
   commentLink.parentNode.insertBefore(commonAnswerSection, commentLink.nextSibling)
 }
 
-function createCommonAnswerSection() {
-  const section = createElementWithClasses("div", ["common-answer-section"])
+class CommonAnswerSectionCreator {
   
-  createAndAddChildElement(section, "h2", null, "Tüüpvastused")
-  const list = createAndAddChildElement(section, "ul", "common-answer-list")
+  #commonAnswers = [
+    {
+      "text":"Well done"
+    }
+  ]
+  #list
+  #commentTextarea
 
-  commonAnswers.forEach(commonAnswer => createCommonAnswerItem(commonAnswer, list))
-  
-  return section
-}
-
-function createCommonAnswerItem(commonAnswer, list) {
-  const item = createAndAddChildElement(list, "li", "common-answer-list-item")
-  const container = createAndAddChildElement(item, "div", "item-container")
-  const textSection = createAndAddChildElement(container, "div", "text-section", commonAnswer.text)
-  const buttonsSection = createAndAddChildElement(container, "div", "buttons-section")
-  const addButton = createAndAddChildImage(buttonsSection, "images/laughing-pointing-emoji.png", ["add-button", "inactive"])
-
-  addButton.addEventListener('click', () => {
-    addButton.classList.toggle('active')
-    addButton.classList.toggle('inactive')
-  })
-}
-
-const commonAnswers = [
-  {
-    "text":"Well done"
+  setParameters(commentTextarea) {
+    this.#commentTextarea = commentTextarea
   }
-]
+  
+  createCommonAnswerSection() {
+    const section = createElementWithClasses("div", ["common-answer-section"])  
+    createAndAddChildElement(section, "h2", null, "Tüüpvastused")
+    this.#list = createAndAddChildElement(section, "ul", "common-answer-list")
+  
+    this.#commonAnswers.forEach(this.#createCommonAnswerItem)
+    
+    return section
+  }
+
+  #createCommonAnswerItem = (commonAnswer) => {
+    const creator = new CommonAnswerItemCreator()
+    creator.setParameters(this.#commentTextarea, this.#list, commonAnswer)
+    creator.createCommonAnswerItem()
+  }
+}
+
+class CommonAnswerItemCreator {
+
+  #commentTextarea
+  #list
+  #commonAnswer
+
+  #addButton
+  
+  setParameters(commentTextarea, list, commonAnswer) {
+    this.#commentTextarea = commentTextarea
+    this.#list = list
+    this.#commonAnswer = commonAnswer
+  }
+
+  createCommonAnswerItem() {
+    const item = createAndAddChildElement(this.#list, "li", "common-answer-list-item")
+    const container = createAndAddChildElement(item, "div", "item-container")
+    const textSection = createAndAddChildElement(container, "div", "text-section", this.#commonAnswer.text)
+    const buttonsSection = createAndAddChildElement(container, "div", "buttons-section")
+    this.#addButton = createAndAddChildImage(buttonsSection, "images/laughing-pointing-emoji.png", ["add-button", "inactive"])
+  
+    this.#addButton.addEventListener('click', this.#addButtonOnClick)
+  }
+  
+  #addButtonOnClick = () => {
+    this.#addButton.classList.toggle('active')
+    this.#addButton.classList.toggle('inactive')
+    this.#commentTextarea.value = "."
+  }
+}

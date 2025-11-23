@@ -20,3 +20,7 @@ function executeOnPageLoad(callback) {
 function getCommentLink() {
   return document.querySelector("a.comment-link")
 }
+
+function getCommentTextarea() {
+  return document.querySelector("div.comment-area div.db textarea")
+}

@@ -47,13 +47,5 @@ function createCommonAnswerSection() {
 }
 
 const commonAnswers = [
-  {
-    "text": "Kahjuks olete te liiga loll ja ma ei vaevunud teie tööd üldse lõpuni lugemagi."
-  },
-  {
-    "text": "Nagu päriselt ka vä?!"
-  },
-  {
-    "text": "Ei no joppenpuhh täitsa lõpp mis tohuvapohu ilmselgelt teil peas toimub."
-  }
+  
 ]

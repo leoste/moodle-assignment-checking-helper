@@ -16,22 +16,6 @@ async function setupCommentSection() {
   creator.createCommentSection()
 }
 
-class CommonAnswersFetcher {
-
-  async getData() {
-    return [
-      {
-        "text":"Well done",
-        "enabled":false
-      },
-      {
-        "text":"No additional comments",
-        "enabled":false
-      }
-    ]
-  }
-}
-
 class CommentSectionCreator {
   
   #commonAnswers
@@ -72,10 +56,9 @@ class CommonAnswerSectionCreator {
   createCommonAnswerSection() {
     const section = createElementWithClasses("div", ["common-answer-section"])  
     createAndAddChildElement(section, "h2", null, "Tüüpvastused")
-    this.#list = createAndAddChildElement(section, "ul", "common-answer-list")
-  
+    this.#list = createAndAddChildElement(section, "ul", "common-answer-list")  
     this.#commonAnswers.forEach(this.#createCommonAnswerItem)
-    
+    this.#updateCommentText()
     return section
   }
 
@@ -87,6 +70,10 @@ class CommonAnswerSectionCreator {
   }
 
   #commonAnswerUpdatedCallback = () => {
+    this.#updateCommentText()
+  }
+
+  #updateCommentText() {
     const text = this.#getCommonAnswerString()
     console.log("section builder", this.#commonAnswers, text)
     this.#commentTextarea.value = text
@@ -108,6 +95,7 @@ class CommonAnswerItemCreator {
   #commonAnswerUpdatedCallback
 
   #addButton
+  #buttonsSection
   
   setParameters(list, commonAnswer) {
     this.#list = list
@@ -122,8 +110,15 @@ class CommonAnswerItemCreator {
     const item = createAndAddChildElement(this.#list, "li", "common-answer-list-item")
     const container = createAndAddChildElement(item, "div", "item-container")
     const textSection = createAndAddChildElement(container, "div", "text-section", this.#commonAnswer.text)
-    const buttonsSection = createAndAddChildElement(container, "div", "buttons-section")
-    this.#addButton = createAndAddChildImage(buttonsSection, "images/laughing-pointing-emoji.png", ["add-button", "inactive"])  
+    this.#buttonsSection = createAndAddChildElement(container, "div", "buttons-section")
+    this.createAddButton()
+  }
+
+  createAddButton() {
+    const classList = ["add-button"]
+    const extraClass = this.#commonAnswer.enabled ? "active" : "inactive"
+    classList.push(extraClass)
+    this.#addButton = createAndAddChildImage(this.#buttonsSection, "images/laughing-pointing-emoji.png", classList)
     this.#addButton.addEventListener('click', this.#addButtonOnClick)
   }
   

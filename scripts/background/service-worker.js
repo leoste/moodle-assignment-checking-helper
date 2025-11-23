@@ -1,3 +1,3 @@
-import initControllers from "./worker/init-controllers.js";
+import initControllers from "./controller/init-controllers.js";
 
 initControllers()

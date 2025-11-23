@@ -8,40 +8,65 @@ function onLoad() {
   setupCommentSection()
 }
 
-function setupCommentSection() {
-  const commentLink = getCommentLink()
-  expandCommentSection(commentLink)
-  insertCommonAnswerSection(commentLink)
+async function setupCommentSection() {
+  const fetcher = new CommonAnswersFetcher()
+  const commonAnswers = await fetcher.getData()
+  const creator = new CommentSectionCreator()
+  creator.setCommonAnswers(commonAnswers)
+  creator.createCommentSection()
 }
 
-function expandCommentSection(commentLink) {  
-  commentLink.click()
+class CommonAnswersFetcher {
+
+  async getData() {
+    return [
+      {
+        "text":"Well done",
+        "enabled":false
+      },
+      {
+        "text":"No additional comments",
+        "enabled":false
+      }
+    ]
+  }
 }
 
-function insertCommonAnswerSection(commentLink) {
-  const creator = new CommonAnswerSectionCreator()
-  creator.setParameters(getCommentTextarea())  
-  const commonAnswerSection = creator.createCommonAnswerSection()
-  commentLink.parentNode.insertBefore(commonAnswerSection, commentLink.nextSibling)
+class CommentSectionCreator {
+  
+  #commonAnswers
+
+  setCommonAnswers(commonAnswers) {
+    this.#commonAnswers = commonAnswers
+  }
+
+  createCommentSection() {
+    const commentLink = getCommentLink()
+    this.#expandCommentSection(commentLink)
+    this.#insertCommonAnswerSection(commentLink)
+  }
+  
+  #expandCommentSection(commentLink) {  
+    commentLink.click()
+  }
+  
+  #insertCommonAnswerSection(commentLink) {
+    const creator = new CommonAnswerSectionCreator()
+    creator.setParameters(getCommentTextarea(), this.#commonAnswers)  
+    const commonAnswerSection = creator.createCommonAnswerSection()
+    commentLink.parentNode.insertBefore(commonAnswerSection, commentLink.nextSibling)
+  }
 }
 
 class CommonAnswerSectionCreator {
   
-  #commonAnswers = [
-    {
-      "text":"Well done",
-      "enabled":false
-    },
-    {
-      "text":"No additional comments",
-      "enabled":false
-    }
-  ]
+  #commonAnswers
   #list
   #commentTextarea
 
-  setParameters(commentTextarea) {
+  setParameters(commentTextarea, commonAnswers) {
     this.#commentTextarea = commentTextarea
+    this.#commonAnswers = commonAnswers
   }
   
   createCommonAnswerSection() {

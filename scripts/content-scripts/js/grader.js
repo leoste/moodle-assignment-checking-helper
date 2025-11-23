@@ -29,7 +29,12 @@ class CommonAnswerSectionCreator {
   
   #commonAnswers = [
     {
-      "text":"Well done"
+      "text":"Well done",
+      "enabled":false
+    },
+    {
+      "text":"No additional comments",
+      "enabled":false
     }
   ]
   #list
@@ -51,23 +56,41 @@ class CommonAnswerSectionCreator {
 
   #createCommonAnswerItem = (commonAnswer) => {
     const creator = new CommonAnswerItemCreator()
-    creator.setParameters(this.#commentTextarea, this.#list, commonAnswer)
+    creator.setParameters(this.#list, commonAnswer)
+    creator.setCommonAnswerUpdatedCallback(this.#commonAnswerUpdatedCallback)
     creator.createCommonAnswerItem()
+  }
+
+  #commonAnswerUpdatedCallback = () => {
+    const text = this.#getCommonAnswerString()
+    console.log("section builder", this.#commonAnswers, text)
+    this.#commentTextarea.value = text
+  }
+
+  #getCommonAnswerString() {
+    const enabledTexts = this.#commonAnswers
+      .filter(answer => answer.enabled)
+      .map(answer => answer.text)
+    const combinedText = enabledTexts.join('\n')
+    return combinedText
   }
 }
 
 class CommonAnswerItemCreator {
 
-  #commentTextarea
   #list
   #commonAnswer
+  #commonAnswerUpdatedCallback
 
   #addButton
   
-  setParameters(commentTextarea, list, commonAnswer) {
-    this.#commentTextarea = commentTextarea
+  setParameters(list, commonAnswer) {
     this.#list = list
     this.#commonAnswer = commonAnswer
+  }
+
+  setCommonAnswerUpdatedCallback(callback) {
+    this.#commonAnswerUpdatedCallback = callback
   }
 
   createCommonAnswerItem() {
@@ -75,14 +98,20 @@ class CommonAnswerItemCreator {
     const container = createAndAddChildElement(item, "div", "item-container")
     const textSection = createAndAddChildElement(container, "div", "text-section", this.#commonAnswer.text)
     const buttonsSection = createAndAddChildElement(container, "div", "buttons-section")
-    this.#addButton = createAndAddChildImage(buttonsSection, "images/laughing-pointing-emoji.png", ["add-button", "inactive"])
-  
+    this.#addButton = createAndAddChildImage(buttonsSection, "images/laughing-pointing-emoji.png", ["add-button", "inactive"])  
     this.#addButton.addEventListener('click', this.#addButtonOnClick)
   }
   
   #addButtonOnClick = () => {
-    this.#addButton.classList.toggle('active')
-    this.#addButton.classList.toggle('inactive')
-    this.#commentTextarea.value = "."
+    this.#toggleCommonAnswer()
+  }
+
+  #toggleCommonAnswer() {
+    const newState = !this.#commonAnswer.enabled
+    this.#commonAnswer.enabled = newState
+    this.#addButton.classList.toggle('active', newState)
+    this.#addButton.classList.toggle('inactive', !newState)
+    console.log("item builder", this.#commonAnswer, newState)
+    this.#commonAnswerUpdatedCallback()
   }
 }

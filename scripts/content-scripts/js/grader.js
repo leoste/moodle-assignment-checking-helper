@@ -30,22 +30,26 @@ function createCommonAnswerSection() {
   createAndAddChildElement(section, "h2", null, "Tüüpvastused")
   const list = createAndAddChildElement(section, "ul", "common-answer-list")
 
-  commonAnswers.forEach(commonAnswer => {
-    const item = createAndAddChildElement(list, "li", "common-answer-list-item")
-    const container = createAndAddChildElement(item, "div", "item-container")
-    const textSection = createAndAddChildElement(container, "div", "text-section", commonAnswer.text)
-    const buttonsSection = createAndAddChildElement(container, "div", "buttons-section")
-    const addButton = createAndAddChildImage(buttonsSection, "images/laughing-pointing-emoji.png", ["add-button", "inactive"])
-
-    addButton.addEventListener('click', () => {
-      addButton.classList.toggle('active')
-      addButton.classList.toggle('inactive')
-    })
-  })
+  commonAnswers.forEach(commonAnswer => createCommonAnswerItem(commonAnswer, list))
   
   return section
 }
 
+function createCommonAnswerItem(commonAnswer, list) {
+  const item = createAndAddChildElement(list, "li", "common-answer-list-item")
+  const container = createAndAddChildElement(item, "div", "item-container")
+  const textSection = createAndAddChildElement(container, "div", "text-section", commonAnswer.text)
+  const buttonsSection = createAndAddChildElement(container, "div", "buttons-section")
+  const addButton = createAndAddChildImage(buttonsSection, "images/laughing-pointing-emoji.png", ["add-button", "inactive"])
+
+  addButton.addEventListener('click', () => {
+    addButton.classList.toggle('active')
+    addButton.classList.toggle('inactive')
+  })
+}
+
 const commonAnswers = [
-  
+  {
+    "text":"Well done"
+  }
 ]

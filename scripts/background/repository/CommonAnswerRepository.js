@@ -1,12 +1,24 @@
 export default class CommonAnswerRepository {
-  async getAll(assignmentId) {
-    const mockData = [
-      {
-        "text":"Well done (assignment id: " + assignmentId + ")",
-        "enabled":false
-      }
-    ]
+  static #data = [
+    {
+      "text":"Hello!",
+      "enabled":true
+    },
+    {
+      "text":"Everything is correct.",
+      "enabled":true
+    },
+    {
+      "text":"The queries are well written and run successfully.",
+      "enabled":true
+    },
+    {
+      "text":"Best regards, Karl Aleksander Leoste",
+      "enabled":true
+    },
+  ]
 
-    return mockData
+  async getAll(assignmentId) {
+    return CommonAnswerRepository.#data
   }
 }

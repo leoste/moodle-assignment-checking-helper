@@ -57,3 +57,7 @@ img.active {
   box-shadow: 0px 0px 3.73em 1.83em #2BFFFF;
   border-radius: 50%;
 }
+
+div.comment-area div.db textarea {
+  height: 160px;
+}

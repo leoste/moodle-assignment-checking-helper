@@ -5,6 +5,7 @@ function setup() {
 }
 
 function onLoad() {
+  console.log("on load!")
   setupCommentSection()
 }
 
@@ -76,7 +77,6 @@ class CommonAnswerSectionCreator {
 
   #updateCommentText() {
     const text = this.#getCommonAnswerString()
-    console.log("section builder", this.#commonAnswers, text)
     this.#commentTextarea.value = text
   }
 
@@ -132,7 +132,6 @@ class CommonAnswerItemCreator {
     this.#commonAnswer.enabled = newState
     this.#addButton.classList.toggle('active', newState)
     this.#addButton.classList.toggle('inactive', !newState)
-    console.log("item builder", this.#commonAnswer, newState)
     this.#commonAnswerUpdatedCallback()
   }
 }

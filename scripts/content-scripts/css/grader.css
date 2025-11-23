@@ -1,4 +1,4 @@
-.common-answer-section {  
+div.common-answer-section {  
   min-height: 6em;
   padding-top: 1.2em;
   padding-left: 2.3em;
@@ -8,4 +8,52 @@
   box-shadow: 0 0 0 0.67em #2BFFFF, 0 0 0 1.01em #FF7E2E;
 
   background-color: #FEEA9A;
+}
+
+ul.common-answer-list {
+  padding-inline-start: 0em;
+}
+
+li.common-answer-list-item {
+  list-style: none;
+  margin-bottom: 0.67em;
+}
+
+.item-container {
+  display: flex;
+  align-items: center;
+}
+
+div.text-section {
+  border: 1px solid black;
+  padding: 1.3em;
+  display: inline-block;
+  flex: 1;
+  min-width: 8.3em;
+}
+
+div.buttons-section {
+  display: inline-block;
+  border: 1px solid black;
+  width: 11.3em;
+  height: 3.8em;
+}
+
+button.add-button {
+  width: 100%;
+  height: 100%;
+}
+
+img.add-button {
+  height: 100%;
+}
+
+.inactive {
+  filter: grayscale(100%);
+}
+
+img.active {
+  filter: none;
+  box-shadow: 0px 0px 3.73em 1.83em #2BFFFF;
+  border-radius: 50%;
 }

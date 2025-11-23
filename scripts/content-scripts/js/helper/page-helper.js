@@ -17,8 +17,8 @@ function executeOnPageLoad(callback) {
   })
 }
 
-function createAndAddChildElement(parent, childDefinition, textContent = null) {
-  const child = document.createElement(childDefinition)
+function createAndAddChildElement(parent, childDefinition, childClasses = null, textContent = null) {
+  const child = createElementWithClasses(childDefinition, childClasses)
   parent.appendChild(child)
 
   if (textContent) {
@@ -28,8 +28,21 @@ function createAndAddChildElement(parent, childDefinition, textContent = null) {
   return child
 }
 
+function createAndAddChildImage(parent, src, classes=null) {
+  const img = createAndAddChildElement(parent, "img", classes)
+  img.src = chrome.runtime.getURL(src)
+  return img
+}
+
 function createElementWithClasses(elementDefinition, classes) {
   const element = document.createElement(elementDefinition)
-  element.classList.add(classes)
+
+  if (classes) {
+    const classesArray = [].concat(classes)
+    if (classesArray.length >0) {
+      element.classList.add(...classesArray)
+    }    
+  }
+  
   return element
 }

@@ -27,7 +27,33 @@ function insertCommonAnswerSection(commentLink) {
 function createCommonAnswerSection() {
   const section = createElementWithClasses("div", ["common-answer-section"])
   
-  createAndAddChildElement(section, "h2", "Tüüpvastused")
+  createAndAddChildElement(section, "h2", null, "Tüüpvastused")
+  const list = createAndAddChildElement(section, "ul", "common-answer-list")
+
+  commonAnswers.forEach(commonAnswer => {
+    const item = createAndAddChildElement(list, "li", "common-answer-list-item")
+    const container = createAndAddChildElement(item, "div", "item-container")
+    const textSection = createAndAddChildElement(container, "div", "text-section", commonAnswer.text)
+    const buttonsSection = createAndAddChildElement(container, "div", "buttons-section")
+    const addButton = createAndAddChildImage(buttonsSection, "images/laughing-pointing-emoji.png", ["add-button", "inactive"])
+
+    addButton.addEventListener('click', () => {
+      addButton.classList.toggle('active')
+      addButton.classList.toggle('inactive')
+    })
+  })
   
   return section
 }
+
+const commonAnswers = [
+  {
+    "text": "Kahjuks olete te liiga loll ja ma ei vaevunud teie tööd üldse lõpuni lugemagi."
+  },
+  {
+    "text": "Nagu päriselt ka vä?!"
+  },
+  {
+    "text": "Ei no joppenpuhh täitsa lõpp mis tohuvapohu ilmselgelt teil peas toimub."
+  }
+]

@@ -1,22 +1,3 @@
-function executeOnPageLoad(callback) {
-  let idleTimer
-
-  const observer = new MutationObserver(() => {
-    clearTimeout(idleTimer)
-    idleTimer = setTimeout(() => {
-      observer.disconnect()
-      callback()
-    }, 1200)
-  })
-
-  observer.observe(document, {
-    childList: true,
-    subtree: true,
-    attributes: true,
-    characterData: true
-  })
-}
-
 function createAndAddChildElement(parent, childDefinition, childClasses = null, textContent = null) {
   const child = createElementWithClasses(childDefinition, childClasses)
   parent.appendChild(child)

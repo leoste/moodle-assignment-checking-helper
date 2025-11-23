@@ -9,7 +9,7 @@ function onLoad() {
 }
 
 function setupCommentSection() {
-  const commentLink = document.querySelector("a.comment-link")
+  const commentLink = getCommentLink()
 
   expandCommentSection(commentLink)
   insertCommonAnswerSection(commentLink)

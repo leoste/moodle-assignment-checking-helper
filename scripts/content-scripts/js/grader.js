@@ -9,8 +9,9 @@ function onLoad() {
 }
 
 async function setupCommentSection() {
+  const assignmentId = getAssignmentId()
   const fetcher = new CommonAnswersFetcher()
-  const commonAnswers = await fetcher.getData()
+  const commonAnswers = await fetcher.getData(assignmentId)
   const creator = new CommentSectionCreator()
   creator.setCommonAnswers(commonAnswers)
   creator.createCommentSection()

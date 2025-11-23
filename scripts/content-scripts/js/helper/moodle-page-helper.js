@@ -24,3 +24,10 @@ function getCommentLink() {
 function getCommentTextarea() {
   return document.querySelector("div.comment-area div.db textarea")
 }
+
+function getAssignmentId() {
+  const urlParams = new URLSearchParams(window.location.search)
+  const id = urlParams.get('id')
+  console.log(id)
+  return id
+}

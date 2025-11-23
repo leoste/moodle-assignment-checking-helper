@@ -4,20 +4,6 @@ import BaseController from "./BaseController.js";
 export default class CommonAnswerController extends BaseController {
 
   static #getCommonAnswersMessageType = "common-answers/get"
-  static #mockData = [
-    {
-      "text":"Well done",
-      "enabled":false
-    },
-    {
-      "text":"No additional comments",
-      "enabled":false
-    },
-    {
-      "text":"Superb",
-      "enabled":true
-    }
-  ]
 
   init() {
     super.init()
@@ -27,8 +13,7 @@ export default class CommonAnswerController extends BaseController {
   }
 
   #getCommonAnswersHandler = async (content) => {
-    //const response = await serviceRegistry.commonAnsweService.getCommonAnswers()
-    const response = CommonAnswerController.#mockData
+    const response = await serviceRegistry.commonAnswerService.getAll(content.assignmentId)
     return response
   }
 }

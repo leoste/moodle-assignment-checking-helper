@@ -34,7 +34,7 @@ div.text-section {
 
 div.buttons-section {
   display: inline-block;
-  border: 1px solid black;
+  padding-left: 0.51em;
   width: 11.3em;
   height: 3.8em;
 }

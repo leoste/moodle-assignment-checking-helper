@@ -13,7 +13,11 @@ export default class CommonAnswerRepository {
       "enabled":true
     },
     {
-      "text":"The CREATE and INSERT commands are all good, but take another look at the SELECT statements.",
+      "text":"One note is that the file format is wrong. Instead of '.txt', it should be '.sql'.",
+      "enabled":false
+    },
+    {
+      "text":"Resolve the mentioned issues, resubmit and then I can raise the grade.",
       "enabled":false
     },
     {

@@ -11,6 +11,10 @@ function getCommentTextarea() {
   return document.querySelector("div.comment-area div.db textarea")
 }
 
+function getGradeInput() {
+  return document.querySelector("input#id_grade")
+}
+
 function getAssignmentId() {
   const urlParams = new URLSearchParams(window.location.search)
   const id = urlParams.get('id')

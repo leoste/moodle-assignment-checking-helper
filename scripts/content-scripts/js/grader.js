@@ -7,6 +7,12 @@ function setup() {
 function onLoad() {
   console.log("on load!")
   setupCommentSection()
+  autofillGrade100()
+}
+
+async function autofillGrade100() {
+  const input = getGradeInput()
+  input.value = 100
 }
 
 async function setupCommentSection() {

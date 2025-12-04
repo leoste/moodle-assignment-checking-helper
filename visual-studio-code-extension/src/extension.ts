@@ -1,26 +1,34 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
+import { WebSocketServer } from 'ws';
 
-// This method is called when your extension is activated
-// Your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
 
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
-	console.log('Congratulations, your extension "moodle-assignment-checking-helper" is now active!');
+    console.log('VS Code Listener is aaaaaaaaaaactive.');
 
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with registerCommand
-	// The commandId parameter must match the command field in package.json
-	const disposable = vscode.commands.registerCommand('moodle-assignment-checking-helper.helloWorld', () => {
-		// The code you place here will be executed every time your command is executed
-		// Display a message box to the user
-		vscode.window.showInformationMessage('Hello World from Moodle Assignment Checking Helper!');
-	});
+    const wss = new WebSocketServer({ port: 54321, host: '127.0.0.1' });
 
-	context.subscriptions.push(disposable);
+    wss.on('connection', (ws) => {
+        console.log('Chrome connected!');
+
+        ws.on('message', (message) => {
+            const data = JSON.parse(message.toString());
+						
+						console.log(data)
+						
+            if (data.command === 'openFile') {
+                vscode.window.showInformationMessage(`Chrome asked to open: ${data.filename}`);
+                
+                // Example: Actually creating/opening a generic untitled file
+                /*vscode.workspace.openTextDocument({ content: `Content from Chrome: ${data.text}` })
+                    .then(doc => vscode.window.showTextDocument(doc));*/
+            }
+        });
+    });
+
+    // Cleanup when extension deactivates
+    context.subscriptions.push({
+        dispose: () => wss.close()
+    });
 }
 
-// This method is called when your extension is deactivated
 export function deactivate() {}

@@ -17,5 +17,14 @@ class CommonAnswersFetcher {
   }
 }
 
+class PageInfoClient {
 
-"common-answers/get"
+  static #postStudentNameMessageType = "page-info/student-name/post"
+
+  async postStudentName(studentName) {
+    const message = getEmptyMessage(PageInfoClient.#postStudentNameMessageType)
+    message.content.studentName = studentName
+    const data = await chrome.runtime.sendMessage(message)
+    return data
+  }
+}

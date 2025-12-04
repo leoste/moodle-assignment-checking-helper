@@ -21,6 +21,12 @@ function getAssignmentId() {
   return id
 }
 
+function getStudentName() {
+  const studentNameElement = document.querySelector('div[data-region="user-info"] h4 a')
+  const studentName = getDirectTextContent(studentNameElement)
+  return studentName
+}
+
 class PageUpdateObserver {
   
   #timeoutDuration = 1200

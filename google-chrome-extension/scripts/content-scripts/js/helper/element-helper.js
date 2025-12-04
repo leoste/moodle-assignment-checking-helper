@@ -27,3 +27,14 @@ function createElementWithClasses(elementDefinition, classes) {
   
   return element
 }
+
+function getDirectTextContent(element) {
+  const cleanLines = element.textContent
+    .split('\n')
+    .map(line => line.trim())
+    .filter(line => line !== '')
+
+  const result = cleanLines.length > 0 ? cleanLines[0] : ''
+
+  return result
+}

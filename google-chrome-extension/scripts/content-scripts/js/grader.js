@@ -8,11 +8,7 @@ function onLoad() {
   console.log("on load!")
   setupCommentSection()
   autofillGrade100()
-}
-
-async function autofillGrade100() {
-  const input = getGradeInput()
-  input.value = 100
+  sendStudentName()
 }
 
 async function setupCommentSection() {
@@ -22,6 +18,18 @@ async function setupCommentSection() {
   const creator = new CommentSectionCreator()
   creator.setCommonAnswers(commonAnswers)
   creator.createCommentSection()
+}
+
+async function autofillGrade100() {
+  const input = getGradeInput()
+  input.value = 100
+}
+
+async function sendStudentName() {
+  const studentName = getStudentName()
+  const client = new PageInfoClient()
+  const response = await client.postStudentName(studentName)
+  console.log(response)
 }
 
 class CommentSectionCreator {

@@ -1,11 +1,10 @@
 import CommonAnswerController from "./CommonAnswerController.js"
 import JuhhuuController from "./JuhhuuController.js"
+import PageInfoController from "./PageInfoController.js"
 
 
 export default function initControllers() {  
-  const juhhuuController = new JuhhuuController()
-  juhhuuController.init()
-
-  const commonAnswerController = new CommonAnswerController()
-  commonAnswerController.init()
+  new JuhhuuController().init()
+  new CommonAnswerController().init()
+  new PageInfoController().init()
 }

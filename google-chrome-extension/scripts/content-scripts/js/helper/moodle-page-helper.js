@@ -15,6 +15,18 @@ function getGradeInput() {
   return document.querySelector("input#id_grade")
 }
 
+function getBottomDiv() {
+  return document.querySelector('div[data-region="grade-actions"] > div:has(> form)')
+}
+
+function getSaveCommentButton() {
+  return document.querySelector('a[id^="comment-action-post-"]')
+}
+
+function getSaveGradeAndShowNextButton() {
+  return document.querySelector('button[name="saveandshownext"]')
+}
+
 function getAssignmentId() {
   const urlParams = new URLSearchParams(window.location.search)
   const id = urlParams.get('id')

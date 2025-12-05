@@ -5,8 +5,8 @@ function setup() {
 }
 
 function onLoad() {
-  console.log("on load!")
   setupCommentSection()
+  setupQuickSubmit()
   autofillGrade100()
   sendStudentName()
 }
@@ -18,6 +18,18 @@ async function setupCommentSection() {
   const creator = new CommentSectionCreator()
   creator.setCommonAnswers(commonAnswers)
   creator.createCommentSection()
+}
+
+async function setupQuickSubmit() {
+  const commentLink = getCommentLink()
+  const myDiv = createAndAddChildElement(commentLink.parentNode, "div", ["quick-submit-section"])
+  const img = createAndAddChildImage(myDiv, "images/double-thumbs-up-emoji.png")
+  img.addEventListener('click', () => {
+    // this also automatically submits the comment
+    getSaveGradeAndShowNextButton().click()
+  }, {
+    once: true
+  })
 }
 
 async function autofillGrade100() {

@@ -8,6 +8,9 @@ div.common-answer-section {
   box-shadow: 0 0 0 0.67em #2BFFFF, 0 0 0 1.01em #FF7E2E;
 
   background-color: #FEEA9A;
+
+  grid-column: 2;
+  grid-row: 1 / span 2;
 }
 
 ul.common-answer-list {
@@ -60,4 +63,31 @@ img.active {
 
 div.comment-area div.db textarea {
   height: 160px;
+}
+
+div[data-region="review-panel"] {
+  width: 30% !important;
+}
+
+div[data-region="grade-panel"] {
+  position: absolute;
+  left: 30% !important;
+  width: 70% !important;
+}
+
+div.comment-ctrl {
+  display: inline-block !important;
+  grid-column: 1;
+  grid-row: 1;
+}
+
+div.quick-submit-section {
+  grid-column: 1;
+  grid-row: 2;
+}
+
+div.commentscontainer .mdl-left {
+  display: grid;
+  grid-template-columns: 40% 60%;
+  grid-template-rows: 30% 70%;
 }

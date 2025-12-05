@@ -1,52 +1,85 @@
+import WebSocketProvider from "../provider/WebSocketProvider.js"
+
 export default class WebSocketService {
 
-  #webSocketProvider = new WebSocketProvider()
+  #provider = new WebSocketProvider()
   #requests = new Map()
+  #timeoutDuration = 5000
+
+  constructor() {
+    this.#provider.onMessage = (rawMessageString) => this.#handleIncomingMessage(rawMessageString)
+    this.#provider.onDisconnect = () => this.#cancelAllRequests()
+  }
 
   async post(channelName, messageContent) {
-    const ws = await this.#webSocketProvider.getSocket()
-    const payload = { channelName, messageContent }
-    ws.send(JSON.stringify(payload))
-  }
+    return new Promise((resolve, reject) => {
+      const id = crypto.randomUUID()
+      const timer = this.#startTimer(id, reject)
+      this.#requests.set(id, { resolve, reject, timer })
 
+      const payload = JSON.stringify({
+        id,
+        channel: channelName,
+        content: messageContent
+      })
+
+      this.#provider.send(payload).catch(error => {
+        this.#cleanupRequest(id)
+        reject(error)
+      })
+    })
+  }
   
-}
-
-class WebSocketProvider {
-
-  #socket = null
-  #address = "ws://localhost:54321"
-
-  getSocket() {
-    return new Promise(this.#promiseClosure)
+  #handleIncomingMessage(rawMessageString) {
+    try {
+      const json = JSON.parse(rawMessageString)
+      this.#completeRequest(json.id, json.content)      
+    } catch (error) {
+      this.#failRequest(json.id, "JSON couldn't be parsed")
+    }
   }
 
-  #promiseClosure = (resolve, reject) => {
-    if (!this.#socket || this.#socket.readyState === WebSocket.CLOSED || this.#socket.readyState === WebSocket.CLOSING) {
-      this.#socket = new WebSocket(this.#address)
-    }
+  #isIdPresentInRequests(id) {
+    return id && this.#requests.has(id)
+  }
 
-    if (this.#socket.readyState === WebSocket.OPEN) {
-      resolve(this.#socket)
-      return
-    }
+  #completeRequest(id, content) {
+    if (!this.#isIdPresentInRequests(id)) return
 
-    const onOpen = () => {
-      cleanup()
-      resolve(this.#socket)
-    }
+    const request = this.#requests.get(id)
+    clearTimeout(request.timer)
+    request.resolve(content)
+    this.#requests.delete(id)
+  }
 
-    const onError = (error) => {
-      cleanup()
-      reject(error)
-    }
+  #failRequest(id, error) {
+    if (!this.#isIdPresentInRequests(id)) return
 
-    const cleanup = () => {
-      this.#socket.removeEventListener('open', onOpen)
-      this.#socket.removeEventListener('error', onError)
-    }
+    const request = this.#requests.get(id)
+    clearTimeout(request.timer)
+    request.reject(error)
+    this.#requests.delete(id)
+  }
 
-    this.#socket.addEventListener('open', onOpen)
-    this.#socket.addEventListener('error', onError)
+  #cancelAllRequests() {
+    this.#requests.forEach(request => {
+      clearTimeout(request.timer)
+      request.reject(new Error("Connection lost"))
+    })
+    this.#requests.clear()
+  }
+
+  #startTimer(id, reject) {
+    return setTimeout(() => {
+      this.#cleanupRequest(id)
+      reject(new Error("Connection timed out"))
+    }, this.#timeoutDuration)
+  }
+
+  #cleanupRequest(id) {
+    if (this.#requests.has(id)) {
+      clearTimeout(this.#requests.get(id).timer)
+      this.#requests.delete(id)
+    }
   }
 }

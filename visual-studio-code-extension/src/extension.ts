@@ -11,17 +11,23 @@ export function activate(context: vscode.ExtensionContext) {
         console.log('Chrome connected!');
 
         ws.on('message', (message) => {
-            const data = JSON.parse(message.toString());
-						
-						console.log(data)
-						
-            if (data.command === 'openFile') {
-                vscode.window.showInformationMessage(`Chrome asked to open: ${data.filename}`);
+            const incomingData = JSON.parse(message.toString());						
+						console.log(incomingData)
+						const result = "message received"
+						const reply = {
+							id: incomingData.id,
+							content: result
+						}
+						ws.send(JSON.stringify(reply))
+						console.log("sent")
+
+            /*if (incomingData.command === 'openFile') {
+                vscode.window.showInformationMessage(`Chrome asked to open: ${incomingData.filename}`);
                 
                 // Example: Actually creating/opening a generic untitled file
-                /*vscode.workspace.openTextDocument({ content: `Content from Chrome: ${data.text}` })
-                    .then(doc => vscode.window.showTextDocument(doc));*/
-            }
+                vscode.workspace.openTextDocument({ content: `Content from Chrome: ${data.text}` })
+                    .then(doc => vscode.window.showTextDocument(doc));
+            }*/
         });
     });
 

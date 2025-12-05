@@ -1,11 +1,7 @@
 export default class CommonAnswerRepository {
   static #data = [
     {
-      "text":"Hello!",
-      "enabled":true
-    },
-    {
-      "text":"Everything is correct. The queries are well written and run successfully.",
+      "text":"Everything is correct, the queries are well written and run successfully.",
       "enabled":true
     },
     {

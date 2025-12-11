@@ -30,7 +30,20 @@ export default class CommonAnswerRepository {
         "enabled":true
       },
     ],
-    '757712': []
+    '757712': [
+      {
+        "text":"You correctly identified the issues and your solutions are well thought out.",
+        "enabled": true
+      },
+      {
+        "text":"The graph is nicely made and the queries are well written.",
+        "enabled": true
+      },
+      {
+        "text":"Best regards, Karl Aleksander Leoste",
+        "enabled":true
+      }
+    ]
   }
 
   async getAll(assignmentId) {

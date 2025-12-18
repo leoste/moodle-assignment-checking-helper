@@ -23,15 +23,14 @@ async function setupCheckingHelperPanel() {
 }
 
 async function setupGradeSection(parentDiv) {
-  autofillGrade100()
-
   createAndAddChildElement(parentDiv, "h2", null, "Hinde kujunemine")
 
   // TODO: move fetching into component probably
   const assignmentId = getAssignmentId()
   const fetcher = new GradePartsFetcher()
   const data = await fetcher.getData(assignmentId)
-  const creator = new GradeSectionCreator(parentDiv)
+  const gradeInput = getGradeInput()
+  const creator = new GradeSectionCreator(parentDiv, gradeInput)
   creator.setGradeParts(data)
   creator.create()
 }
@@ -48,29 +47,9 @@ async function setupCommentSection(parentDiv) {
   creator.create()
 }
 
-async function autofillGrade100() {
-  const input = getGradeInput()
-  input.value = 100
-}
-
 async function sendStudentName() {
   const studentName = getStudentName()
   const client = new PageInfoClient()
   const response = await client.postStudentName(studentName)
   console.log(response)
 }
-
-
-
-/* seda pole otseselt vaja tegelikult */
-/*async function setupQuickSubmit() {
-  const commentLink = getCommentLink()
-  const myDiv = createAndAddChildElement(commentLink.parentNode, "div", ["quick-submit-section"])
-  const img = createAndAddChildImage(myDiv, "images/double-thumbs-up-emoji.png")
-  img.addEventListener('click', () => {
-    // this also automatically submits the comment
-    getSaveGradeAndShowNextButton().click()
-  }, {
-    once: true
-  })
-}*/

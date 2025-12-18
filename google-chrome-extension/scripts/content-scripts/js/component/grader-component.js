@@ -53,13 +53,23 @@ class GradeSectionCreator {
   
   #gradeParts
   #parentElement
+  #gradeInput
 
-  constructor(parentElement) {
+  constructor(parentElement, gradeInput) {
     this.#parentElement = parentElement
+    this.#gradeInput = gradeInput
   }
 
   setGradeParts(gradeParts) {
-    this.#gradeParts = gradeParts
+    this.#gradeParts = deepCopy(gradeParts)
+
+    let idCounter = 0
+    this.#gradeParts.forEach(part => {
+      part._id = ++idCounter
+      part.parts.forEach(partPart => {
+        partPart.text = `${partPart.text} (${partPart.points}p)`
+      })
+    })
   }
 
   create() {
@@ -77,11 +87,22 @@ class GradeSectionCreator {
       listItemClass: "common-answer-list"
     }
     list.items = gradePart.parts
-    list.onClickCallback = this.#onClickCallback
+    list.onClickCallback = (states) => this.#onClickCallback(states, gradePart._id)
     list.createContent()
   }
 
-  #onClickCallback = (states) => {
-    console.log(states)
+  #onClickCallback = (states, id) => {
+    const gradePart = this.#gradeParts.find(p => p._id === id)
+    gradePart.parts = states
+
+    this.#calculateAndSetTotalPoints()
+  }
+
+  #calculateAndSetTotalPoints() {
+    const totalPoints = this.#gradeParts.reduce((sum, major) => {
+      const partSum = (major.parts || []).reduce((ps, p) => ps + ((p.enabled) ? (p.points || 0) : 0), 0)
+      return sum + partSum
+    }, 0)
+    this.#gradeInput.value = totalPoints
   }
 }

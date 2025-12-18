@@ -18,6 +18,7 @@
         "scripts/content-scripts/js/component/base-component.js",
         "scripts/content-scripts/js/component/grader-component.js",
         "scripts/content-scripts/js/helper/moodle-page-helper.js",
+        "scripts/content-scripts/js/helper/maths-helper.js",
         "scripts/content-scripts/js/helper/element-helper.js",
         "scripts/content-scripts/js/client/data-client.js",
         "scripts/content-scripts/js/grader.js"

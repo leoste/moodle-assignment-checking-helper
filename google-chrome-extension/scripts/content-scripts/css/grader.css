@@ -49,7 +49,7 @@ ul.common-answer-list {
   padding-inline-start: 0em;
 }
 
-li.common-answer-list-item {
+li.clickable-list-item {
   list-style: none;
   margin-bottom: 0.67em;
 }
@@ -93,23 +93,4 @@ img.active {
   border-radius: 50%;
 }
 
-/*div.comment-area div.db textarea {
-  height: 160px;
-}*/
-
-/*div.comment-ctrl {
-  display: inline-block !important;
-  grid-column: 1;
-  grid-row: 1;
-}
-
-div.quick-submit-section {
-  grid-column: 1;
-  grid-row: 2;
-}
-
-div.commentscontainer .mdl-left {
-  display: grid;
-  grid-template-columns: 40% 60%;
-  grid-template-rows: 30% 70%;
-}*/
+/* -------- */

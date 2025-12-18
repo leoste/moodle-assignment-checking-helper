@@ -98,3 +98,7 @@ div.checking-helper-subpanel h2 {
 }
 
 /* -------- */
+
+div.comment-area div.db textarea {
+  height: 160px;
+}

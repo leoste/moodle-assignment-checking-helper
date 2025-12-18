@@ -3,6 +3,14 @@ function executeOnPageLoad(callback) {
   observer.addCallback(callback)
 }
 
+function getMainDiv() {
+  return document.querySelector('div[role="main"]')
+}
+
+function getGradePanel() {
+  return document.querySelector('div[data-region="grade-panel"]')
+}
+
 function getCommentLink() {
   return document.querySelector("a.comment-link")
 }

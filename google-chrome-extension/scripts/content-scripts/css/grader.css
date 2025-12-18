@@ -1,18 +1,50 @@
-div.common-answer-section {  
-  min-height: 6em;
+div.checking-helper-panel {
   padding-top: 1.2em;
   padding-left: 2.3em;
-  
   margin: 1.35em;
   border: 0.34em solid #FF7E2E;
   box-shadow: 0 0 0 0.67em #2BFFFF, 0 0 0 1.01em #FF7E2E;
-
   background-color: #FEEA9A;
 
+  position: absolute;
+  top: 85px;
+  bottom: 60px;
+  left: 40%;
+  right: 0;
+  overflow-y: scroll;
+  overflow-x: auto;
+}
+
+div[data-region="review-panel"] {
+  width: 20% !important;
+}
+
+div[data-region="grade-panel"] {
+  position: absolute;
+  left: 20% !important;
+  width: 20% !important;
+}
+
+/* -------- */
+
+div.checking-helper-panel {
+  display: flex;
+}
+
+.grade-subpanel, .common-answer-subpanel {
+  height: 100%;
+  margin: 10px;
+  flex: 1;
+}
+
+/* -------- */
+
+*div.common-answer-section {
+  min-height: 6em;
   grid-column: 2;
   grid-row: 1 / span 2;
 }
-
+  
 ul.common-answer-list {
   padding-inline-start: 0em;
 }
@@ -61,21 +93,11 @@ img.active {
   border-radius: 50%;
 }
 
-div.comment-area div.db textarea {
+/*div.comment-area div.db textarea {
   height: 160px;
-}
+}*/
 
-div[data-region="review-panel"] {
-  width: 30% !important;
-}
-
-div[data-region="grade-panel"] {
-  position: absolute;
-  left: 30% !important;
-  width: 70% !important;
-}
-
-div.comment-ctrl {
+/*div.comment-ctrl {
   display: inline-block !important;
   grid-column: 1;
   grid-row: 1;
@@ -90,4 +112,4 @@ div.commentscontainer .mdl-left {
   display: grid;
   grid-template-columns: 40% 60%;
   grid-template-rows: 30% 70%;
-}
+}*/

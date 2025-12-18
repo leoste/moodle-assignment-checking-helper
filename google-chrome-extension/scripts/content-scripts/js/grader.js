@@ -5,31 +5,34 @@ function setup() {
 }
 
 function onLoad() {
-  setupCommentSection()
-  setupQuickSubmit()
-  autofillGrade100()
+  setupCheckingHelperPanel()
   sendStudentName()
 }
 
-async function setupCommentSection() {
+async function setupCheckingHelperPanel() {
+  const mainDiv = getMainDiv()
+  const gradePanel = getGradePanel()
+  const element = createElementWithClasses("div", ["checking-helper-panel"])
+  mainDiv.insertBefore(element, gradePanel.nextSibling)
+  
+  const leftDiv = createAndAddChildElement(element, "div", ["grade-subpanel"])
+  const rightDiv = createAndAddChildElement(element, "div", ["common-answer-subpanel"])
+
+  setupGradeSection(leftDiv)
+  setupCommentSection(rightDiv)
+}
+
+async function setupGradeSection(parentDiv) {
+  autofillGrade100()
+}
+
+async function setupCommentSection(parentDiv) {
   const assignmentId = getAssignmentId()
   const fetcher = new CommonAnswersFetcher()
   const commonAnswers = await fetcher.getData(assignmentId)
-  const creator = new CommentSectionCreator()
+  const creator = new CommentSectionCreator(parentDiv)
   creator.setCommonAnswers(commonAnswers)
   creator.createCommentSection()
-}
-
-async function setupQuickSubmit() {
-  const commentLink = getCommentLink()
-  const myDiv = createAndAddChildElement(commentLink.parentNode, "div", ["quick-submit-section"])
-  const img = createAndAddChildImage(myDiv, "images/double-thumbs-up-emoji.png")
-  img.addEventListener('click', () => {
-    // this also automatically submits the comment
-    getSaveGradeAndShowNextButton().click()
-  }, {
-    once: true
-  })
 }
 
 async function autofillGrade100() {
@@ -45,6 +48,12 @@ async function sendStudentName() {
 }
 
 class CommentSectionCreator {
+
+  #parentElement
+
+  constructor(parentElement) {
+    this.#parentElement = parentElement
+  }
   
   #commonAnswers
 
@@ -55,18 +64,18 @@ class CommentSectionCreator {
   createCommentSection() {
     const commentLink = getCommentLink()
     this.#expandCommentSection(commentLink)
-    this.#insertCommonAnswerSection(commentLink)
+    this.#insertCommonAnswerSection(this.#parentElement)
   }
   
   #expandCommentSection(commentLink) {  
     commentLink.click()
   }
   
-  #insertCommonAnswerSection(commentLink) {
+  #insertCommonAnswerSection(parentElement) {
     const creator = new CommonAnswerSectionCreator()
     creator.setParameters(getCommentTextarea(), this.#commonAnswers)  
     const commonAnswerSection = creator.createCommonAnswerSection()
-    commentLink.parentNode.insertBefore(commonAnswerSection, commentLink.nextSibling)
+    parentElement.appendChild(commonAnswerSection)
   }
 }
 
@@ -160,4 +169,17 @@ class CommonAnswerItemCreator {
     this.#addButton.classList.toggle('inactive', !newState)
     this.#commonAnswerUpdatedCallback()
   }
+}
+
+/* seda pole otseselt vaja tegelikult */
+async function setupQuickSubmit() {
+  const commentLink = getCommentLink()
+  const myDiv = createAndAddChildElement(commentLink.parentNode, "div", ["quick-submit-section"])
+  const img = createAndAddChildImage(myDiv, "images/double-thumbs-up-emoji.png")
+  img.addEventListener('click', () => {
+    // this also automatically submits the comment
+    getSaveGradeAndShowNextButton().click()
+  }, {
+    once: true
+  })
 }

@@ -93,4 +93,8 @@ img.active {
   border-radius: 50%;
 }
 
+div.checking-helper-subpanel h2 {
+  margin-bottom: 1.35em;
+}
+
 /* -------- */

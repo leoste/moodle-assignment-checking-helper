@@ -15,15 +15,15 @@ class CommentSectionCreator extends ClickableList {
   create() {    
     this.#expandCommentSection()
 
-    this._protectedProperties = {
+    this.properties = {
       sectionDivClass: "common-answer-section",
       sectionTitle: "Tüüpvastused",
       listItemClass: "common-answer-list"
     }
-    this._protectedItems = this.#commonAnswers
-    this._protectedOnClickCallback = this.#onClickCallback
+    this.items = this.#commonAnswers
+    this.onClickCallback = this.#onClickCallback
 
-    this._protectedCreateContent()
+    this.createContent()
   }
 
   #onClickCallback = (states) => {
@@ -49,54 +49,39 @@ class CommentSectionCreator extends ClickableList {
   }
 }
 
-class GradeSectionCreator extends ClickableList {
+class GradeSectionCreator {
   
   #gradeParts
-  #commentTextarea
+  #parentElement
 
   constructor(parentElement) {
-    super(parentElement)
-    this.#commentTextarea = getCommentTextarea()
+    this.#parentElement = parentElement
   }
 
   setGradeParts(gradeParts) {
     this.#gradeParts = gradeParts
   }
 
-  create() {    
-    this.#expandCommentSection()
+  create() {
+    this.#gradeParts.forEach(gradePart => {
+      this.createSubsectionList(gradePart)
+    })
+  }
 
-    this._protectedProperties = {
+  createSubsectionList(gradePart) {
+    const list = new ClickableList(this.#parentElement)
+
+    list.properties = {
       sectionDivClass: "common-answer-section",
-      sectionTitle: "Tüüpvastused",
+      sectionTitle: `${gradePart.title} (${gradePart.max.points}p)`,
       listItemClass: "common-answer-list"
     }
-    this._protectedItems = this.#gradeParts
-    this._protectedOnClickCallback = this.#onClickCallback
-
-    this._protectedCreateContent()
+    list.items = gradePart.parts
+    list.onClickCallback = this.#onClickCallback
+    list.createContent()
   }
 
   #onClickCallback = (states) => {
-    this.#updateCommentText(states)
-  }
-
-  #updateCommentText(states) {
-    const text = this.#getgradePartString(states)
-    this.#commentTextarea.value = text
-  }
-
-  #getgradePartString(states) {
-    const enabledTexts = states
-      .filter(answer => answer.enabled)
-      .map(answer => answer.text)
-    const combinedText = enabledTexts.join('\n')
-    return combinedText
-  }
-  
-  #expandCommentSection() {  
-    const commentLink = getCommentLink()
-    commentLink.click()
+    console.log(states)
   }
 }
-

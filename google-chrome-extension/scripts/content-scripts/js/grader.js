@@ -15,8 +15,8 @@ async function setupCheckingHelperPanel() {
   const element = createElementWithClasses("div", ["checking-helper-panel"])
   mainDiv.insertBefore(element, gradePanel.nextSibling)
   
-  const leftDiv = createAndAddChildElement(element, "div", ["grade-subpanel"])
-  const rightDiv = createAndAddChildElement(element, "div", ["common-answer-subpanel"])
+  const leftDiv = createAndAddChildElement(element, "div", ["grade-subpanel", "checking-helper-subpanel"])
+  const rightDiv = createAndAddChildElement(element, "div", ["common-answer-subpanel", "checking-helper-subpanel"])
 
   setupGradeSection(leftDiv)
   setupCommentSection(rightDiv)
@@ -24,6 +24,8 @@ async function setupCheckingHelperPanel() {
 
 async function setupGradeSection(parentDiv) {
   autofillGrade100()
+
+  createAndAddChildElement(parentDiv, "h2", null, "Hinde kujunemine")
 
   // TODO: move fetching into component probably
   const assignmentId = getAssignmentId()
@@ -35,6 +37,8 @@ async function setupGradeSection(parentDiv) {
 }
 
 async function setupCommentSection(parentDiv) {
+  createAndAddChildElement(parentDiv, "h2", null, "Kommentaari koostamine")
+
   // TODO: move fetching into component probably
   const assignmentId = getAssignmentId()
   const fetcher = new CommonAnswersFetcher()

@@ -2,22 +2,22 @@ class ClickableList {
   
   #parentElement
   #contentCreated = false
-  _protectedProperties
-  _protectedItems
-  _protectedOnClickCallback
+  properties
+  items
+  onClickCallback
 
   constructor(parentElement) {
     this.#parentElement = parentElement
   }
 
-  _protectedCreateContent() {
+  createContent() {
     if (this.#contentCreated) return
 
     const creator = new ClickableListCreator()
     creator.setParameters(
-      this._protectedOnClickCallback,
-      this._protectedItems,
-      this._protectedProperties)
+      this.onClickCallback,
+      this.items,
+      this.properties)
     const clickableList = creator.create()
     this.#parentElement.appendChild(clickableList)
 
@@ -40,7 +40,7 @@ class ClickableListCreator {
   
   create() {
     const section = createElementWithClasses("div", [this.#properties.sectionDivClass])  
-    createAndAddChildElement(section, "h2", null, this.#properties.sectionTitle)
+    createAndAddChildElement(section, "h3", null, this.#properties.sectionTitle)
     this.#list = createAndAddChildElement(section, "ul", this.#properties.listItemClass)  
     this.#states.forEach(this.#createItem)
     this.#ItemUpdatedCallback()

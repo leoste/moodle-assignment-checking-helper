@@ -1,4 +1,5 @@
 export default class CommonAnswerRepository {
+  // TODO: store and fetch from localStorage, add UI page for chrome user to edit this data by themselves, add data file import export options
   static #data = {
     '757676': [
       {

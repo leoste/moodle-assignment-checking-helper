@@ -24,15 +24,24 @@ async function setupCheckingHelperPanel() {
 
 async function setupGradeSection(parentDiv) {
   autofillGrade100()
+
+  // TODO: move fetching into component probably
+  const assignmentId = getAssignmentId()
+  const fetcher = new GradePartsFetcher()
+  const data = await fetcher.getData(assignmentId)
+  const creator = new GradeSectionCreator(parentDiv)
+  creator.setGradeParts(data)
+  creator.create()
 }
 
 async function setupCommentSection(parentDiv) {
+  // TODO: move fetching into component probably
   const assignmentId = getAssignmentId()
   const fetcher = new CommonAnswersFetcher()
-  const commonAnswers = await fetcher.getData(assignmentId)
+  const data = await fetcher.getData(assignmentId)
   const creator = new CommentSectionCreator(parentDiv)
-  creator.setCommonAnswers(commonAnswers)
-  creator.createCommentSection()
+  creator.setCommonAnswers(data)
+  creator.create()
 }
 
 async function autofillGrade100() {

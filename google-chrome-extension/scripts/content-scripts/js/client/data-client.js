@@ -5,12 +5,24 @@ function getEmptyMessage(type) {
   }
 }
 
-class CommonAnswersFetcher {
-
-  static #getCommonAnswersMessageType = "common-answers/get"
+class GradePartsFetcher {
+  
+  static #messageType = "grade-parts/get"
 
   async getData(assignmentId) {
-    const message = getEmptyMessage(CommonAnswersFetcher.#getCommonAnswersMessageType)
+    const message = getEmptyMessage(GradePartsFetcher.#messageType)
+    message.content.assignmentId = assignmentId
+    const data = await chrome.runtime.sendMessage(message)
+    return data
+  }
+}
+
+class CommonAnswersFetcher {
+
+  static #messageType = "common-answers/get"
+
+  async getData(assignmentId) {
+    const message = getEmptyMessage(CommonAnswersFetcher.#messageType)
     message.content.assignmentId = assignmentId
     const data = await chrome.runtime.sendMessage(message)
     return data

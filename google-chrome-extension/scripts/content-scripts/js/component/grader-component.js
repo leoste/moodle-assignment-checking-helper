@@ -12,7 +12,7 @@ class CommentSectionCreator extends ClickableList {
     this.#commonAnswers = commonAnswers
   }
 
-  createCommentSection() {    
+  create() {    
     this.#expandCommentSection()
 
     this._protectedProperties = {
@@ -36,6 +36,57 @@ class CommentSectionCreator extends ClickableList {
   }
 
   #getCommonAnswerString(states) {
+    const enabledTexts = states
+      .filter(answer => answer.enabled)
+      .map(answer => answer.text)
+    const combinedText = enabledTexts.join('\n')
+    return combinedText
+  }
+  
+  #expandCommentSection() {  
+    const commentLink = getCommentLink()
+    commentLink.click()
+  }
+}
+
+class GradeSectionCreator extends ClickableList {
+  
+  #gradeParts
+  #commentTextarea
+
+  constructor(parentElement) {
+    super(parentElement)
+    this.#commentTextarea = getCommentTextarea()
+  }
+
+  setGradeParts(gradeParts) {
+    this.#gradeParts = gradeParts
+  }
+
+  create() {    
+    this.#expandCommentSection()
+
+    this._protectedProperties = {
+      sectionDivClass: "common-answer-section",
+      sectionTitle: "Tüüpvastused",
+      listItemClass: "common-answer-list"
+    }
+    this._protectedItems = this.#gradeParts
+    this._protectedOnClickCallback = this.#onClickCallback
+
+    this._protectedCreateContent()
+  }
+
+  #onClickCallback = (states) => {
+    this.#updateCommentText(states)
+  }
+
+  #updateCommentText(states) {
+    const text = this.#getgradePartString(states)
+    this.#commentTextarea.value = text
+  }
+
+  #getgradePartString(states) {
     const enabledTexts = states
       .filter(answer => answer.enabled)
       .map(answer => answer.text)

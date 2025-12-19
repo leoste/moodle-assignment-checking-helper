@@ -1,3 +1,5 @@
+// TODO: merge ClickableList and ClickableListManager
+
 class ClickableList {
   
   #parentElement
@@ -13,19 +15,19 @@ class ClickableList {
   createContent() {
     if (this.#contentCreated) return
 
-    const creator = new ClickableListCreator()
-    creator.setParameters(
+    const manager = new ClickableListManager()
+    manager.setParameters(
       this.onClickCallback,
       this.items,
       this.properties)
-    const clickableList = creator.create()
+    const clickableList = manager.create()
     this.#parentElement.appendChild(clickableList)
 
     this.#contentCreated = true
   }
 }
 
-class ClickableListCreator {
+class ClickableListManager {
   
   #states
   #list
@@ -47,11 +49,15 @@ class ClickableListCreator {
     return section
   }
 
+  destroy() {
+    // TODO: implement
+  }
+
   #createItem = (item) => {
-    const creator = new ClickableListItemCreator()
-    creator.setParameters(this.#list, item)
-    creator.setItemUpdatedCallback(this.#ItemUpdatedCallback)
-    creator.createItem()
+    const manager = new ClickableListItemManager()
+    manager.setParameters(this.#list, item)
+    manager.setItemUpdatedCallback(this.#ItemUpdatedCallback)
+    manager.createItem()
   }
 
   #ItemUpdatedCallback = () => {
@@ -59,7 +65,7 @@ class ClickableListCreator {
   }
 }
 
-class ClickableListItemCreator {
+class ClickableListItemManager {
 
   #list
   #listItem

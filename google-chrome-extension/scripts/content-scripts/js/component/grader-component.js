@@ -2,26 +2,29 @@ class CheckingHelperPanelRenderer {
 
   constructor() {
     console.log("uus constructor mehed")
-    this.#gradeCreator = new GradeSectionCreator()
-    this.#commentCreator = new CommentSectionCreator()
+    this.#gradeManager = new GradeSectionManager()
+    this.#commentManager = new CommentSectionManager()
   }
 
-  #mainDiv
-  #gradeCreator
-  #commentCreator
+  #checkingHelperPanel
+  #gradeManager
+  #commentManager
 
   async render() {
+    this.#gradeManager.destroy()
+    this.#commentManager.destroy()
+    this.#checkingHelperPanel?.remove()
     this.#setupCheckingHelperPanel()
   }
 
   async #setupCheckingHelperPanel() {
-    this.#mainDiv = getMainDiv()
+    const mainDiv = getMainDiv()
     const gradePanel = getGradePanel()
-    const element = createElementWithClasses("div", ["checking-helper-panel"])
-    this.#mainDiv.insertBefore(element, gradePanel.nextSibling)
+    this.#checkingHelperPanel = createElementWithClasses("div", ["checking-helper-panel"])
+    mainDiv.insertBefore(this.#checkingHelperPanel, gradePanel.nextSibling)
     
-    const leftDiv = createAndAddChildElement(element, "div", ["grade-subpanel", "checking-helper-subpanel"])
-    const rightDiv = createAndAddChildElement(element, "div", ["common-answer-subpanel", "checking-helper-subpanel"])
+    const leftDiv = createAndAddChildElement(this.#checkingHelperPanel, "div", ["grade-subpanel", "checking-helper-subpanel"])
+    const rightDiv = createAndAddChildElement(this.#checkingHelperPanel, "div", ["common-answer-subpanel", "checking-helper-subpanel"])
 
     this.#setupGradeSection(leftDiv)
     this.#setupCommentSection(rightDiv)
@@ -34,9 +37,9 @@ class CheckingHelperPanelRenderer {
     const assignmentId = getAssignmentId()
     const fetcher = new GradePartsFetcher()
     const data = await fetcher.getData(assignmentId)    
-    this.#gradeCreator.setParentElement(parentDiv)
-    this.#gradeCreator.setGradeParts(data)
-    this.#gradeCreator.create()
+    this.#gradeManager.setParentElement(parentDiv)
+    this.#gradeManager.setGradeParts(data)
+    this.#gradeManager.create()
   }
 
   async #setupCommentSection(parentDiv) {
@@ -46,34 +49,48 @@ class CheckingHelperPanelRenderer {
     const assignmentId = getAssignmentId()
     const fetcher = new CommonAnswersFetcher()
     const data = await fetcher.getData(assignmentId)    
-    this.#commentCreator.setParentElement(parentDiv)
-    this.#commentCreator.setCommonAnswers(data)
-    this.#commentCreator.create()
+    this.#commentManager.setParentElement(parentDiv)
+    this.#commentManager.setCommonAnswers(data)
+    this.#commentManager.create()
   }
 }
 
-class CommentSectionCreator extends ClickableList {
+// TODO: Instead of extending, use it internally
+
+class CommentSectionManager {
   
   #commonAnswers
   #commentTextarea
+  #parentElement
+
+  setParentElement(parentElement) {
+    this.#parentElement = parentElement
+  }
 
   setCommonAnswers(commonAnswers) {
     this.#commonAnswers = commonAnswers
   }
 
   create() {
+    const list = new ClickableList()
+    list.setParentElement(this.#parentElement)
+
     this.#commentTextarea = getCommentTextarea()
     this.#expandCommentSection()
 
-    this.properties = {
+    list.properties = {
       sectionDivClass: "common-answer-section",
       sectionTitle: "Tüüpvastused",
       listItemClass: "common-answer-list"
     }
-    this.items = this.#commonAnswers
-    this.onClickCallback = this.#onClickCallback
+    list.items = this.#commonAnswers
+    list.onClickCallback = this.#onClickCallback
 
-    this.createContent()
+    list.createContent()
+  }
+
+  destroy() {
+
   }
 
   #onClickCallback = (states) => {
@@ -99,7 +116,7 @@ class CommentSectionCreator extends ClickableList {
   }
 }
 
-class GradeSectionCreator {
+class GradeSectionManager {
   
   #gradeParts
   #parentElement
@@ -126,6 +143,10 @@ class GradeSectionCreator {
     this.#gradeParts.forEach(gradePart => {
       this.createSubsectionList(gradePart)
     })
+  }
+
+  destroy() {
+
   }
 
   createSubsectionList(gradePart) {

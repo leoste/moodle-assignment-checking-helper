@@ -28,14 +28,35 @@ div[data-region="grade-panel"] {
 /* -------- */
 
 div.checking-helper-panel {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 10px;
+  align-items: stretch;
 }
 
-.grade-subpanel, .common-answer-subpanel {
-  height: 100%;
+.grade-subpanel, .common-answer-subpanel, .quick-submit-subpanel {
   margin: 10px;
-  flex: 1;
 }
+
+.grade-subpanel {
+  grid-column: 1 / 2;
+  grid-row: 1 / 3;
+  height: auto;
+}
+
+.common-answer-subpanel {
+  grid-column: 2 / 3;
+  grid-row: 1 / 2;
+  height: 100%;
+}
+
+.quick-submit-subpanel {
+  grid-column: 2 / 3;
+  grid-row: 2 / 3;
+  height: 100%;
+}
+
 
 /* -------- */
 
@@ -102,3 +123,6 @@ div.checking-helper-subpanel h2 {
 div.comment-area div.db textarea {
   height: 160px;
 }
+
+/* -------- */
+

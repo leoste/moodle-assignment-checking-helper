@@ -11,8 +11,6 @@ function onLoad() {
   sendStudentName()
 }
 
-
-
 async function sendStudentName() {
   const studentName = getStudentName()
   const client = new PageInfoClient()

@@ -25,9 +25,23 @@ class CheckingHelperPanelRenderer {
     
     const leftDiv = createAndAddChildElement(this.#checkingHelperPanel, "div", ["grade-subpanel", "checking-helper-subpanel"])
     const rightDiv = createAndAddChildElement(this.#checkingHelperPanel, "div", ["common-answer-subpanel", "checking-helper-subpanel"])
+    const rightBottomDiv = createAndAddChildElement(this.#checkingHelperPanel, "div", ["quick-submit-subpanel", "checking-helper-subpanel"])
 
     this.#setupGradeSection(leftDiv)
     this.#setupCommentSection(rightDiv)
+    this.#setupQuickSubmit(rightBottomDiv)
+  }
+
+  async #setupQuickSubmit(parentDiv) {
+    const img = createAndAddChildImage(parentDiv, "images/double-thumbs-up-emoji.png")
+    img.addEventListener('click', () => {
+      this.#gradeManager.setPointsMax()
+      this.#commentManager.setCommentEmpty()
+      // this also automatically submits the comment
+      getSaveGradeAndShowNextButton().click()
+    }, {
+      once: true
+    })
   }
 
   async #setupGradeSection(parentDiv) {
@@ -93,12 +107,20 @@ class CommentSectionManager {
     // TODO: implement actual removal of callbacks, destruction of the list managers etc
   }
 
+  setCommentEmpty() {
+    this.#setCommentText("")
+  }
+
   #onClickCallback = (states) => {
     this.#updateCommentText(states)
   }
 
   #updateCommentText(states) {
     const text = this.#getCommonAnswerString(states)
+    this.#setCommentText(text)
+  }
+
+  #setCommentText(text) {
     this.#commentTextarea.value = text
   }
 
@@ -149,6 +171,10 @@ class GradeSectionManager {
     // TODO: implement actual removal of callbacks, destruction of the list managers etc
   }
 
+  setPointsMax() {
+    this.#calculateAndSetTotalPoints(true)
+  }
+
   createSubsectionList(gradePart) {
     const listManager = new ClickableListManager()
     listManager.setParentElement(this.#parentElement)
@@ -173,9 +199,10 @@ class GradeSectionManager {
     this.#calculateAndSetTotalPoints()
   }
 
-  #calculateAndSetTotalPoints() {
+  #calculateAndSetTotalPoints(overrideEnabledTrue) {
     const totalPoints = this.#gradeParts.reduce((sum, major) => {
-      const partSum = (major.parts || []).reduce((ps, p) => ps + ((p.enabled) ? (p.points || 0) : 0), 0)
+      const partSum = (major.parts || []).reduce((ps, p) => 
+        ps + ((p.enabled || overrideEnabledTrue) ? (p.points || 0) : 0), 0)
       return sum + partSum
     }, 0)
     this.#gradeInput.value = totalPoints

@@ -55,8 +55,6 @@ class CheckingHelperPanelRenderer {
   }
 }
 
-// TODO: Instead of extending, use it internally
-
 class CommentSectionManager {
   
   #commonAnswers

@@ -1,38 +1,14 @@
-// TODO: merge ClickableList and ClickableListManager
-
-class ClickableList {
-  
-  #parentElement
-  #contentCreated = false
-  properties
-  items
-  onClickCallback
-
-  setParentElement(parentElement) {
-    this.#parentElement = parentElement
-  }
-
-  createContent() {
-    if (this.#contentCreated) return
-
-    const manager = new ClickableListManager()
-    manager.setParameters(
-      this.onClickCallback,
-      this.items,
-      this.properties)
-    const clickableList = manager.create()
-    this.#parentElement.appendChild(clickableList)
-
-    this.#contentCreated = true
-  }
-}
-
 class ClickableListManager {
   
   #states
   #list
   #onClickCallback
   #properties
+  #parentElement
+
+  setParentElement(parentElement) {
+    this.#parentElement = parentElement
+  }
 
   setParameters(onClickCallback, items, properties) {
     this.#onClickCallback = onClickCallback
@@ -46,7 +22,7 @@ class ClickableListManager {
     this.#list = createAndAddChildElement(section, "ul", this.#properties.listItemClass)  
     this.#states.forEach(this.#createItem)
     this.#ItemUpdatedCallback()
-    return section
+    this.#parentElement.appendChild(section)
   }
 
   destroy() {

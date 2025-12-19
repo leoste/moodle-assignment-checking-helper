@@ -72,25 +72,27 @@ class CommentSectionManager {
   }
 
   create() {
-    const list = new ClickableList()
-    list.setParentElement(this.#parentElement)
+    const listManager = new ClickableListManager()
+    listManager.setParentElement(this.#parentElement)
 
     this.#commentTextarea = getCommentTextarea()
     this.#expandCommentSection()
 
-    list.properties = {
+    const properties = {
       sectionDivClass: "common-answer-section",
       sectionTitle: "Tüüpvastused",
       listItemClass: "common-answer-list"
     }
-    list.items = this.#commonAnswers
-    list.onClickCallback = this.#onClickCallback
+    const items = this.#commonAnswers
+    const onClickCallback = this.#onClickCallback
 
-    list.createContent()
+    listManager.setParameters(onClickCallback, items, properties)
+
+    listManager.create()
   }
 
   destroy() {
-
+    // TODO: implement actual removal of callbacks, destruction of the list managers etc
   }
 
   #onClickCallback = (states) => {
@@ -146,21 +148,24 @@ class GradeSectionManager {
   }
 
   destroy() {
-
+    // TODO: implement actual removal of callbacks, destruction of the list managers etc
   }
 
   createSubsectionList(gradePart) {
-    const list = new ClickableList()
-    list.setParentElement(this.#parentElement)
+    const listManager = new ClickableListManager()
+    listManager.setParentElement(this.#parentElement)
 
-    list.properties = {
+    const properties = {
       sectionDivClass: "common-answer-section",
       sectionTitle: `${gradePart.title} (${gradePart.max.points}p)`,
       listItemClass: "common-answer-list"
     }
-    list.items = gradePart.parts
-    list.onClickCallback = (states) => this.#onClickCallback(states, gradePart._id)
-    list.createContent()
+    const items = gradePart.parts
+    const onClickCallback = (states) => this.#onClickCallback(states, gradePart._id)
+
+    listManager.setParameters(onClickCallback, items, properties)
+    
+    listManager.create()
   }
 
   #onClickCallback = (states, id) => {

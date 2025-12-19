@@ -6,7 +6,7 @@ class ClickableList {
   items
   onClickCallback
 
-  constructor(parentElement) {
+  setParentElement(parentElement) {
     this.#parentElement = parentElement
   }
 

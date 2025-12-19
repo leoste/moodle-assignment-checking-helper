@@ -1,18 +1,68 @@
+class CheckingHelperPanelRenderer {
+
+  constructor() {
+    console.log("uus constructor mehed")
+    this.#gradeCreator = new GradeSectionCreator()
+    this.#commentCreator = new CommentSectionCreator()
+  }
+
+  #mainDiv
+  #gradeCreator
+  #commentCreator
+
+  async render() {
+    this.#setupCheckingHelperPanel()
+  }
+
+  async #setupCheckingHelperPanel() {
+    this.#mainDiv = getMainDiv()
+    const gradePanel = getGradePanel()
+    const element = createElementWithClasses("div", ["checking-helper-panel"])
+    this.#mainDiv.insertBefore(element, gradePanel.nextSibling)
+    
+    const leftDiv = createAndAddChildElement(element, "div", ["grade-subpanel", "checking-helper-subpanel"])
+    const rightDiv = createAndAddChildElement(element, "div", ["common-answer-subpanel", "checking-helper-subpanel"])
+
+    this.#setupGradeSection(leftDiv)
+    this.#setupCommentSection(rightDiv)
+  }
+
+  async #setupGradeSection(parentDiv) {
+    createAndAddChildElement(parentDiv, "h2", null, "Hinde kujunemine")
+
+    // TODO: move fetching into component probably
+    const assignmentId = getAssignmentId()
+    const fetcher = new GradePartsFetcher()
+    const data = await fetcher.getData(assignmentId)    
+    this.#gradeCreator.setParentElement(parentDiv)
+    this.#gradeCreator.setGradeParts(data)
+    this.#gradeCreator.create()
+  }
+
+  async #setupCommentSection(parentDiv) {
+    createAndAddChildElement(parentDiv, "h2", null, "Kommentaari koostamine")
+
+    // TODO: move fetching into component probably
+    const assignmentId = getAssignmentId()
+    const fetcher = new CommonAnswersFetcher()
+    const data = await fetcher.getData(assignmentId)    
+    this.#commentCreator.setParentElement(parentDiv)
+    this.#commentCreator.setCommonAnswers(data)
+    this.#commentCreator.create()
+  }
+}
+
 class CommentSectionCreator extends ClickableList {
   
   #commonAnswers
   #commentTextarea
 
-  constructor(parentElement) {
-    super(parentElement)
-    this.#commentTextarea = getCommentTextarea()
-  }
-
   setCommonAnswers(commonAnswers) {
     this.#commonAnswers = commonAnswers
   }
 
-  create() {    
+  create() {
+    this.#commentTextarea = getCommentTextarea()
     this.#expandCommentSection()
 
     this.properties = {
@@ -55,9 +105,8 @@ class GradeSectionCreator {
   #parentElement
   #gradeInput
 
-  constructor(parentElement, gradeInput) {
+  setParentElement(parentElement) {
     this.#parentElement = parentElement
-    this.#gradeInput = gradeInput
   }
 
   setGradeParts(gradeParts) {
@@ -73,13 +122,15 @@ class GradeSectionCreator {
   }
 
   create() {
+    this.#gradeInput = getGradeInput()
     this.#gradeParts.forEach(gradePart => {
       this.createSubsectionList(gradePart)
     })
   }
 
   createSubsectionList(gradePart) {
-    const list = new ClickableList(this.#parentElement)
+    const list = new ClickableList()
+    list.setParentElement(this.#parentElement)
 
     list.properties = {
       sectionDivClass: "common-answer-section",

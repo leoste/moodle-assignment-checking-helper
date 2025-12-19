@@ -12,17 +12,17 @@ export default class GradePartRepository {
           {
             "points": 10,
             "text": "välja toodud vähemalt 5 probleemi",
-            "enabled": true
+            "enabled": false
           },
           {
             "points": 10,
             "text": "ära märgitud probleemide tüüp ja olemus",
-            "enabled": true
+            "enabled": false
           },
           {
             "points": 10,
             "text": "pakutud probleemidele lahendused",
-            "enabled": true
+            "enabled": false
           }
         ]
       },
@@ -36,17 +36,17 @@ export default class GradePartRepository {
           {
             "points": 10,
             "text": "ER diagramm olemas",
-            "enabled": true
+            "enabled": false
           },
           {
             "points": 10,
             "text": "andmebaas normaliseeritud",
-            "enabled": true
+            "enabled": false
           },
           {
             "points": 15,
             "text": "tabelite ja constraint-ide kirjeldus olemas",
-            "enabled": true
+            "enabled": false
           }
         ]
       },
@@ -59,18 +59,18 @@ export default class GradePartRepository {
         "parts": [
           {
             "points": 8,
-            "text": "CREATE TABLE queryd olemas ja korrektsed",
-            "enabled": true
+            "text": "SCHEMA queryd olemas ja korrektsed",
+            "enabled": false
           },
           {
             "points": 8,
-            "text": "INSERT INTO queryd olemas ja toimivad",
-            "enabled": true
+            "text": "MIGRATION queryd olemas ja toimivad",
+            "enabled": false
           },
           {
             "points": 4,
-            "text": "SELECT queryd olemas. SELECT puhul on peaasi, et loogiliselt midagigi testib",
-            "enabled": true
+            "text": "VÕRDLUS queryd olemas. SELECT puhul on peaasi, et loogiliselt midagigi testib",
+            "enabled": false
           }
         ]
       },
@@ -84,17 +84,17 @@ export default class GradePartRepository {
           {
             "points": 5,
             "text": "töösse on kirjutatud selgitusi",
-            "enabled": true
+            "enabled": false
           },
           {
             "points": 5,
             "text": "otsused on põhjendatud",
-            "enabled": true
+            "enabled": false
           },
           {
             "points": 5,
             "text": "vähemalt mingidki põhjendused ja tekstid on kuskilgi olemas",
-            "enabled": true
+            "enabled": false
           }
         ]
       }

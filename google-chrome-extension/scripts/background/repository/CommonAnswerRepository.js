@@ -33,6 +33,14 @@ export default class CommonAnswerRepository {
     ],
     '757712': [
       {
+        "text":"Hello!",
+        "enabled": true
+      },
+      {
+        "text":"",
+        "enabled": true
+      },
+      {
         "text":"Best regards, Karl Aleksander Leoste",
         "enabled":true
       },

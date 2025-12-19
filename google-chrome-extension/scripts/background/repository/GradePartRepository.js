@@ -58,17 +58,17 @@ export default class GradePartRepository {
         },
         "parts": [
           {
-            "points": 9,
+            "points": 8,
             "text": "SCHEMA queryd olemas ja korrektsed",
             "enabled": false
           },
           {
-            "points": 9,
+            "points": 8,
             "text": "MIGRATION queryd olemas ja toimivad",
             "enabled": false
           },
           {
-            "points": 2,
+            "points": 4,
             "text": "VÕRDLUS queryd olemas. SELECT puhul on peaasi, et loogiliselt midagigi testib",
             "enabled": false
           }
@@ -94,7 +94,7 @@ export default class GradePartRepository {
           {
             "points": 5,
             "text": "vähemalt mingidki põhjendused ja tekstid on kuskilgi olemas",
-            "enabled": false
+            "enabled": true
           }
         ]
       }

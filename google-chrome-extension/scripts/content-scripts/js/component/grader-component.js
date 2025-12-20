@@ -4,24 +4,24 @@ class CheckingHelperPanelRenderer {
     console.log("uus constructor mehed")
     this.#gradeManager = new GradeSectionManager()
     this.#commentManager = new CommentSectionManager()
+    this.#quickSubmitManager = new QuickSubmitManager()
   }
 
   #checkingHelperPanel
   #gradeManager
   #commentManager
+  #quickSubmitManager
 
   async render() {
     this.#gradeManager.destroy()
     this.#commentManager.destroy()
+    this.#quickSubmitManager.destroy()
     this.#checkingHelperPanel?.remove()
     this.#setupCheckingHelperPanel()
   }
 
   async #setupCheckingHelperPanel() {
-    const mainDiv = getMainDiv()
-    const gradePanel = getGradePanel()
-    this.#checkingHelperPanel = createElementWithClasses("div", ["checking-helper-panel"])
-    mainDiv.insertBefore(this.#checkingHelperPanel, gradePanel.nextSibling)
+    this.#insertCheckingHelperPanelElement()
     
     const leftDiv = createAndAddChildElement(this.#checkingHelperPanel, "div", ["grade-subpanel", "checking-helper-subpanel"])
     const rightDiv = createAndAddChildElement(this.#checkingHelperPanel, "div", ["common-answer-subpanel", "checking-helper-subpanel"])
@@ -32,16 +32,17 @@ class CheckingHelperPanelRenderer {
     this.#setupQuickSubmit(rightBottomDiv)
   }
 
+  #insertCheckingHelperPanelElement() {
+    const mainDiv = getMainDiv()
+    const gradePanel = getGradePanel()
+    this.#checkingHelperPanel = createElementWithClasses("div", ["checking-helper-panel"])
+    mainDiv.insertBefore(this.#checkingHelperPanel, gradePanel.nextSibling)
+  }
+
   async #setupQuickSubmit(parentDiv) {
-    const img = createAndAddChildImage(parentDiv, "images/double-thumbs-up-emoji.png")
-    img.addEventListener('click', () => {
-      this.#gradeManager.setPointsMax()
-      this.#commentManager.setCommentEmpty()
-      // this also automatically submits the comment
-      getSaveGradeAndShowNextButton().click()
-    }, {
-      once: true
-    })
+    this.#quickSubmitManager.setParentElement(parentDiv)
+    this.#quickSubmitManager.setOtherManagers(this.#gradeManager, this.#commentManager)
+    this.#quickSubmitManager.create()    
   }
 
   async #setupGradeSection(parentDiv) {
@@ -205,6 +206,37 @@ class GradeSectionManager {
         ps + ((p.enabled || overrideEnabledTrue) ? (p.points || 0) : 0), 0)
       return sum + partSum
     }, 0)
-    this.#gradeInput.value = totalPoints
+    this.#gradeInput.value = totalPoints > 0 ? totalPoints : 100
+  }
+}
+
+class QuickSubmitManager {
+  #gradeManager
+  #commentManager
+  #parentElement
+
+  setParentElement(element) {
+    this.#parentElement = element
+  }
+
+  setOtherManagers(gradeManager, commentManager) {
+    this.#gradeManager = gradeManager
+    this.#commentManager = commentManager
+  }
+
+  create() {
+    const img = createAndAddChildImage(this.#parentElement, "images/double-thumbs-up-emoji.png")
+    img.addEventListener('click', () => {
+      this.#gradeManager.setPointsMax()
+      this.#commentManager.setCommentEmpty()
+      // this also automatically submits the comment
+      getSaveGradeAndShowNextButton().click()
+    }, {
+      once: true
+    })
+  }
+
+  destroy() {
+    // TODO: implement removing listeners here
   }
 }

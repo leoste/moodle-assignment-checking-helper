@@ -5,11 +5,10 @@ function setup() {
 }
 
 function onLoad() {
-  createAutoMaxButtons()
-  console.log("page loaded")
+  createAutoGradeButtons()
 }
 
-function createAutoMaxButtons() {
+function createAutoGradeButtons() {
   const graderBoxes = getManualGradedBoxes()
 
   graderBoxes.forEach(box => {
@@ -20,9 +19,10 @@ function createAutoMaxButtons() {
 }
 
 onClickCallback = (box, comment) => {
-  const { quizId, questionNumber } = getQuizIdAndQuestionNumberFromManualGradedBox(box)
-  const attemptId = getAttemptId()
-  // TODO: send message with the three above to say that autosubmit popup for those has been opened
-  // TODO 2: another
+  const autoGradeId = getAutoGradeId(box)
+
+  const client = new QuizDataClient()
+  client.beginAutoGrade(autoGradeId)
+
   getCommentActionLink(comment).click()
 }

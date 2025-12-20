@@ -34,7 +34,9 @@
       "js": [
         "scripts/content-scripts/js/helper/element-helper.js",
         "scripts/content-scripts/js/helper/moodle/base-moodle-helper.js",
+        "scripts/content-scripts/js/helper/moodle/quiz-moodle-helper.js",
         "scripts/content-scripts/js/helper/moodle/quiz-review-moodle-helper.js",
+        "scripts/content-scripts/js/client/quiz-data-client.js",
         "scripts/content-scripts/js/quiz-review.js"
       ],
       "css": [
@@ -46,7 +48,9 @@
       "js": [
         "scripts/content-scripts/js/helper/element-helper.js",
         "scripts/content-scripts/js/helper/moodle/base-moodle-helper.js",
+        "scripts/content-scripts/js/helper/moodle/quiz-moodle-helper.js",
         "scripts/content-scripts/js/helper/moodle/quiz-comment-moodle-helper.js",
+        "scripts/content-scripts/js/client/quiz-data-client.js",
         "scripts/content-scripts/js/quiz-comment.js"
       ]
     }

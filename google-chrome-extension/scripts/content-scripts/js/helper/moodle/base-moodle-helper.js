@@ -14,7 +14,6 @@ class PageUpdateObserver {
   }
 
   #executeOnPageRefresh(callback) {
-    console.log("begin on page..")
     let idleTimer
 
     const observer = new MutationObserver(() => {

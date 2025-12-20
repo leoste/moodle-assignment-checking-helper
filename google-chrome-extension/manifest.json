@@ -16,17 +16,39 @@
       "matches": ["https://moodle.taltech.ee/mod/assign/*action=grader*"],
       "js": [
         "scripts/content-scripts/js/component/base-component.js",
-        "scripts/content-scripts/js/component/grader-component.js",
-        "scripts/content-scripts/js/helper/moodle-page-helper.js",
+        "scripts/content-scripts/js/component/assign-grader-component.js",
+        "scripts/content-scripts/js/helper/moodle/assign-grader-moodle-helper.js",
+        "scripts/content-scripts/js/helper/moodle/base-moodle-helper.js",
         "scripts/content-scripts/js/helper/maths-helper.js",
         "scripts/content-scripts/js/helper/element-helper.js",
-        "scripts/content-scripts/js/client/data-client.js",
-        "scripts/content-scripts/js/grader.js"
+        "scripts/content-scripts/js/client/assignment-data-client.js",
+        "scripts/content-scripts/js/client/common-data-client.js",
+        "scripts/content-scripts/js/assign-grader.js"
       ],
       "css": [
-        "scripts/content-scripts/css/grader.css"
+        "scripts/content-scripts/css/assign-grader.css"
+      ]      
+    },
+    {
+      "matches": ["https://moodle.taltech.ee/mod/quiz/review.php*"],
+      "js": [
+        "scripts/content-scripts/js/helper/element-helper.js",
+        "scripts/content-scripts/js/helper/moodle/base-moodle-helper.js",
+        "scripts/content-scripts/js/helper/moodle/quiz-review-moodle-helper.js",
+        "scripts/content-scripts/js/quiz-review.js"
+      ],
+      "css": [
+        "scripts/content-scripts/css/quiz-review.css"
       ]
-      
+    },
+    {
+      "matches": ["https://moodle.taltech.ee/mod/quiz/comment.php*"],
+      "js": [
+        "scripts/content-scripts/js/helper/element-helper.js",
+        "scripts/content-scripts/js/helper/moodle/base-moodle-helper.js",
+        "scripts/content-scripts/js/helper/moodle/quiz-comment-moodle-helper.js",
+        "scripts/content-scripts/js/quiz-comment.js"
+      ]
     }
   ],
   "web_accessible_resources": [

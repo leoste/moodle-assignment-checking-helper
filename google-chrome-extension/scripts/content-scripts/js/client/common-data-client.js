@@ -1,28 +1,9 @@
-function getEmptyMessage(type) {
-  return {
-    type: type,
-    content: {}
-  }
-}
-
-class GradePartsFetcher {
-  
-  static #messageType = "grade-parts/get"
-
-  async getData(assignmentId) {
-    const message = getEmptyMessage(GradePartsFetcher.#messageType)
-    message.content.assignmentId = assignmentId
-    const data = await chrome.runtime.sendMessage(message)
-    return data
-  }
-}
-
-class CommonAnswersFetcher {
+class CommonAnswersClient {
 
   static #messageType = "common-answers/get"
 
   async getData(assignmentId) {
-    const message = getEmptyMessage(CommonAnswersFetcher.#messageType)
+    const message = getEmptyMessage(CommonAnswersClient.#messageType)
     message.content.assignmentId = assignmentId
     const data = await chrome.runtime.sendMessage(message)
     return data

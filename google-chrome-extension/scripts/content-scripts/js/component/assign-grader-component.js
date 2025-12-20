@@ -50,7 +50,7 @@ class CheckingHelperPanelRenderer {
 
     // TODO: move fetching into component probably
     const assignmentId = getAssignmentId()
-    const fetcher = new GradePartsFetcher()
+    const fetcher = new GradePartsClient()
     const data = await fetcher.getData(assignmentId)    
     this.#gradeManager.setParentElement(parentDiv)
     this.#gradeManager.setGradeParts(data)
@@ -62,7 +62,7 @@ class CheckingHelperPanelRenderer {
 
     // TODO: move fetching into component probably
     const assignmentId = getAssignmentId()
-    const fetcher = new CommonAnswersFetcher()
+    const fetcher = new CommonAnswersClient()
     const data = await fetcher.getData(assignmentId)    
     this.#commentManager.setParentElement(parentDiv)
     this.#commentManager.setCommonAnswers(data)

@@ -3,7 +3,7 @@ import BaseController from "./BaseController.js";
 
 export default class GradePartController extends BaseController {
 
-  static #getGradePartsMessageType = "grade-parts/get"
+  static #getGradePartsMessageType = "assignment/grade-parts/get"
 
   init() {
     super.init()

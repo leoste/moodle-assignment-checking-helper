@@ -2,6 +2,7 @@ import CommonAnswerController from "./CommonAnswerController.js"
 import GradePartController from "./GradePartController.js"
 import JuhhuuController from "./JuhhuuController.js"
 import PageInfoController from "./PageInfoController.js"
+import QuizController from "./QuizController.js"
 
 
 export default function initControllers() {  
@@ -9,4 +10,5 @@ export default function initControllers() {
   new CommonAnswerController().init()
   new GradePartController().init()
   new PageInfoController().init()
+  new QuizController().init()
 }

@@ -1,10 +1,3 @@
-function getEmptyMessage(type) {
-  return {
-    type: type,
-    content: {}
-  }
-}
-
 class GradePartsClient {
   
   static #messageType = "assignment/grade-parts/get"

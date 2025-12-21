@@ -4,7 +4,11 @@ export default class LocalStorageRepository {
   }
 
   async getValue(key) {
-    const value = await chrome.storage.local.get(key)
-    return value
+    const result = await chrome.storage.local.get(key)
+    return result[key]
+  }
+
+  async removeValue(key) {
+    await chrome.storage.local.remove(key)
   }
 }

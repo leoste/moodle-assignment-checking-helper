@@ -1,3 +1,10 @@
+function getEmptyMessage(type) {
+  return {
+    type: type,
+    content: {}
+  }
+}
+
 class CommonAnswersClient {
 
   static #messageType = "common-answers/get"

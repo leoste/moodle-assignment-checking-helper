@@ -5,16 +5,15 @@ function setup() {
 }
 
 function onLoad() {  
-  console.log("page loaded")
   autoGradeIfActive()
 }
 
-function autoGradeIfActive() {
+async function autoGradeIfActive() {
   const client = new QuizDataClient()
 
   const box = getManualGradedBox()
   const autoGradeId = getAutoGradeId(box)
-  const isActive = client.isAutoGradeActive(autoGradeId)
+  const isActive = await client.isAutoGradeActive(autoGradeId)
 
   if (isActive) {
     const grade = getMaxMark()
@@ -22,7 +21,7 @@ function autoGradeIfActive() {
     const gradeInput = getGradeInput()
     gradeInput.value = grade
 
-    client.endAutoGrade()
+    client.endAutoGrade(autoGradeId)
 
     getSubmitButton().click()
   }

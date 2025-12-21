@@ -16,6 +16,6 @@ function getAttemptId() {
 function getAutoGradeId(box) {
   const { quizId, questionNumber } = getQuizIdAndQuestionNumberFromManualGradedBox(box)
   const attemptId = getAttemptId()
-  const autoGradeId = { quizId, questionNumber, attemptId }  
+  const autoGradeId = { quizId, questionNumber, attemptId }
   return autoGradeId
 }

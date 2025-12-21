@@ -18,11 +18,15 @@ function createAutoGradeButtons() {
   })
 }
 
-onClickCallback = (box, comment) => {
+onClickCallback = async (box, comment) => {  
   const autoGradeId = getAutoGradeId(box)
 
+  console.log(autoGradeId)
+
   const client = new QuizDataClient()
-  client.beginAutoGrade(autoGradeId)
+  await client.beginAutoGrade(autoGradeId)
+
+  console.log("meh")
 
   getCommentActionLink(comment).click()
 }

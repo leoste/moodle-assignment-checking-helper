@@ -63,7 +63,7 @@ class CheckingHelperPanelRenderer {
     // TODO: move fetching into component probably
     const assignmentId = getAssignmentId()
     const fetcher = new CommonAnswersClient()
-    const data = await fetcher.getData(assignmentId)    
+    const data = await fetcher.getData(assignmentId)
     this.#commentManager.setParentElement(parentDiv)
     this.#commentManager.setCommonAnswers(data)
     this.#commentManager.create()

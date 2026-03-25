@@ -9,6 +9,14 @@ function onLoad() {
 }
 
 function createAutoGradeButtons() {
+  const quizId = getQuizId()
+  // TODO: use quizid and questionid to fetch common answers
+  // implement sidepanel similar like on assignments with my custom controls
+  // print question number + common answers as buttons into sidepanel
+  // when pressed, automatically assign answer and points.
+  // this probably doesnt need the combination of multiple common answers into one
+  // split commonanswers into assignment and quiz separately as theyre different
+
   const graderBoxes = getManualGradedBoxes()
 
   graderBoxes.forEach(box => {

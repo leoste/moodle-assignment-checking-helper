@@ -1,4 +1,4 @@
-import { QuizDataClient } from '../quiz-review/client/quiz-client'
+import { QuizDataClient } from './client/quiz-client'
 import { executeOnPageLoad, getManualGradedBox, getGradeInput, getMaxMark, getSubmitButton, getAutoGradeId } from './helper/moodle-helper'
 
 setup()

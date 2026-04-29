@@ -138,7 +138,7 @@ chrome-extension/
         PageInfoService.ts
         QuizService.ts
         service-registry.ts
-    content-scripts/
+    foreground/
       assign-grader/
         index.ts             ← entry point, matches assign grader page
         assign-grader.css

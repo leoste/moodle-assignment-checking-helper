@@ -1,6 +1,6 @@
 import BaseController from './BaseController'
-import serviceRegistry from '../service/service-registry'
 import type { AutoGradeId } from '../../types'
+import { quizService } from '../service/QuizService'
 
 export default class QuizController extends BaseController {
   static readonly #BEGIN  = 'quiz/auto-grade/begin'
@@ -11,15 +11,15 @@ export default class QuizController extends BaseController {
     super.init()
 
     this.addMessageHandler(QuizController.#BEGIN, async (content) => {
-      await serviceRegistry.quizService.beginAutoGrade(content.autoGradeId as AutoGradeId)
+      await quizService.beginAutoGrade(content.autoGradeId as AutoGradeId)
     })
 
     this.addMessageHandler(QuizController.#END, async (content) => {
-      await serviceRegistry.quizService.endAutoGrade(content.autoGradeId as AutoGradeId)
+      await quizService.endAutoGrade(content.autoGradeId as AutoGradeId)
     })
 
     this.addMessageHandler(QuizController.#ACTIVE, async (content) => {
-      return serviceRegistry.quizService.isAutoGradeActive(content.autoGradeId as AutoGradeId)
+      return quizService.isAutoGradeActive(content.autoGradeId as AutoGradeId)
     })
   }
 }

@@ -1,8 +1,11 @@
-import repositoryRegistry from '../repository/repository-registry'
 import type { GradePart } from '../../types'
+import { gradePartRepository } from '../repository/GradePartRepository'
+import BaseService from './BaseService'
 
-export default class GradePartService {
+class GradePartService extends BaseService {
   async getAll(assignmentId: string): Promise<GradePart[] | undefined> {
-    return repositoryRegistry.gradePartRepository.getAll(assignmentId)
+    return gradePartRepository.getAll(assignmentId)
   }
 }
+
+export const gradePartService = new GradePartService()

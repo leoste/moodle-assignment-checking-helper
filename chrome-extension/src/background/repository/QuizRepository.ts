@@ -1,7 +1,7 @@
 import LocalStorageRepository from './LocalStorageRepository'
 import type { AutoGradeId } from '../../types'
 
-export default class QuizRepository extends LocalStorageRepository {
+class QuizRepository extends LocalStorageRepository {
   #key(id: AutoGradeId): string {
     return `autograde:${id.quizId}:${id.questionNumber}:${id.attemptId}`
   }
@@ -19,3 +19,5 @@ export default class QuizRepository extends LocalStorageRepository {
     return !!value
   }
 }
+
+export const quizRepository = new QuizRepository()

@@ -1,6 +1,7 @@
 import type { GradePart } from '../../types'
+import BaseRepository from './BaseRepository'
 
-export default class GradePartRepository {
+class GradePartRepository extends BaseRepository {
   // TODO: store and fetch from localStorage, add UI page for chrome user to edit this data by themselves, add data file import export options
   static #data: Record<string, GradePart[]> = {
     '757712': [
@@ -107,3 +108,5 @@ export default class GradePartRepository {
     return GradePartRepository.#data[assignmentId]
   }
 }
+
+export const gradePartRepository = new GradePartRepository()

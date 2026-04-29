@@ -1,16 +1,19 @@
-import repositoryRegistry from '../repository/repository-registry'
 import type { AutoGradeId } from '../../types'
+import { quizRepository } from '../repository/QuizRepository'
+import BaseService from './BaseService'
 
-export default class QuizService {
+class QuizService extends BaseService {
   async beginAutoGrade(id: AutoGradeId): Promise<void> {
-    await repositoryRegistry.quizRepository.beginAutoGrade(id)
+    await quizRepository.beginAutoGrade(id)
   }
 
   async endAutoGrade(id: AutoGradeId): Promise<void> {
-    await repositoryRegistry.quizRepository.endAutoGrade(id)
+    await quizRepository.endAutoGrade(id)
   }
 
   async isAutoGradeActive(id: AutoGradeId): Promise<boolean> {
-    return repositoryRegistry.quizRepository.isAutoGradeActive(id)
+    return quizRepository.isAutoGradeActive(id)
   }
 }
+
+export const quizService = new QuizService()

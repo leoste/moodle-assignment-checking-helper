@@ -1,9 +1,12 @@
-import serviceRegistry from './service-registry'
+import BaseService from './BaseService'
+import { webSocketService } from './WebSocketService'
 
-export default class PageInfoService {
+class PageInfoService extends BaseService {
   static readonly #CHANNEL = 'page-info'
 
   async postStudentName(studentName: string): Promise<unknown> {
-    return serviceRegistry.webSocketService.post(PageInfoService.#CHANNEL, studentName)
+    return webSocketService.post(PageInfoService.#CHANNEL, studentName)
   }
 }
+
+export const pageInfoService = new PageInfoService()

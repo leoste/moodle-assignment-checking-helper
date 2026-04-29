@@ -1,5 +1,5 @@
+import { gradePartService } from '../service/GradePartService'
 import BaseController from './BaseController'
-import serviceRegistry from '../service/service-registry'
 
 export default class GradePartController extends BaseController {
   static readonly #GET = 'assignment/grade-parts/get'
@@ -7,7 +7,7 @@ export default class GradePartController extends BaseController {
   override init(): void {
     super.init()
     this.addMessageHandler(GradePartController.#GET, async (content) => {
-      return serviceRegistry.gradePartService.getAll(content.assignmentId as string)
+      return gradePartService.getAll(content.assignmentId as string)
     })
   }
 }

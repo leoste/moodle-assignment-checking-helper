@@ -1,5 +1,6 @@
 import WebSocketProvider from '../provider/WebSocketProvider'
 import type { WebSocketResponse } from '../../types'
+import BaseService from './BaseService'
 
 interface PendingRequest {
   resolve: (value: unknown) => void
@@ -7,14 +8,15 @@ interface PendingRequest {
   timer: ReturnType<typeof setTimeout>
 }
 
-export default class WebSocketService {
+class WebSocketService extends BaseService {
   readonly #provider = new WebSocketProvider()
   readonly #requests = new Map<string, PendingRequest>()
   readonly #timeoutMs = 5000
 
-  constructor() {
+  async onInit() {
     this.#provider.onMessage = (raw) => this.#handleMessage(raw)
     this.#provider.onDisconnect = () => this.#cancelAll()
+    await super.onInit()
   }
 
   async post(channel: string, content: unknown): Promise<unknown> {
@@ -70,3 +72,5 @@ export default class WebSocketService {
     this.#requests.clear()
   }
 }
+
+export const webSocketService = new WebSocketService()

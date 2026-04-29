@@ -1,5 +1,5 @@
+import { pageInfoService } from '../service/PageInfoService'
 import BaseController from './BaseController'
-import serviceRegistry from '../service/service-registry'
 
 export default class PageInfoController extends BaseController {
   static readonly #POST_STUDENT_NAME = 'page-info/student-name/post'
@@ -7,7 +7,7 @@ export default class PageInfoController extends BaseController {
   override init(): void {
     super.init()
     this.addMessageHandler(PageInfoController.#POST_STUDENT_NAME, async (content) => {
-      return serviceRegistry.pageInfoService.postStudentName(content.studentName as string)
+      return pageInfoService.postStudentName(content.studentName as string)
     })
   }
 }

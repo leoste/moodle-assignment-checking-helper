@@ -1,6 +1,7 @@
 import type { CommonAnswer } from '../../types'
+import BaseRepository from './BaseRepository'
 
-export default class CommonAnswerRepository {
+class CommonAnswerRepository extends BaseRepository {
   // TODO: store and fetch from localStorage, add UI page for chrome user to edit this data by themselves, add data file import export options
   static #data: Record<string, CommonAnswer[]> = {
     '757676': [
@@ -53,3 +54,5 @@ export default class CommonAnswerRepository {
     return CommonAnswerRepository.#data[assignmentId]
   }
 }
+
+export const commonAnswerRepository = new CommonAnswerRepository()

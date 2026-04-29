@@ -1,2 +1,18 @@
-node_modules
-out
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+out/
+
+# VS Code extension packages
+*.vsix
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.idea/
+*.suo
+*.user

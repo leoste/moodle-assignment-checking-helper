@@ -1,0 +1,27 @@
+{
+  "name": "moodle-assignment-checking-helper",
+  "displayName": "Moodle Assignment Checking Helper",
+  "description": "Listens for signals from the Chrome extension and opens student files in VS Code.",
+  "version": "0.0.1",
+  "engines": { "vscode": "^1.90.0" },
+  "categories": ["Other"],
+  "activationEvents": ["onStartupFinished"],
+  "main": "./dist/extension.js",
+  "scripts": {
+    "compile":          "node esbuild.js",
+    "watch":            "node esbuild.js --watch",
+    "typecheck":        "tsc --noEmit",
+    "vscode:prepublish": "node esbuild.js --production",
+    "lint":             "eslint src"
+  },
+  "devDependencies": {
+    "@types/node": "22.x",
+    "@types/vscode": "^1.90.0",
+    "@types/ws": "^8.18.0",
+    "esbuild": "^0.25.0",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "ws": "^8.18.0"
+  }
+}

@@ -1,6 +1,6 @@
-import { executeOnPageLoad } from "../assignment/helper/moodle-helper"
+import executeOnPageLoad from "../pagemanager/executeOnPageLoad"
 
-export default class BaseListener {
+export default class BaseMoodlePageListener {
 
     #initialized = false
     #initPromise: Promise<void> | null = null

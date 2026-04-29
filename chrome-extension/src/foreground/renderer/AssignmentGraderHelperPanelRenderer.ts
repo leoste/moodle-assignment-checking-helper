@@ -1,7 +1,6 @@
-import type { CommonAnswer, GradePart } from '../../../types'
-import { createElementWithClasses, createAndAddChildElement, createAndAddChildImage } from '../helper/element-helper'
-import { deepCopy } from '../helper/maths-helper'
-import { CommonAnswersClient, GradePartsClient } from '../client/clients'
+import type { CommonAnswer, GradePart } from '../../types'
+import { createElementWithClasses, createAndAddChildElement, createAndAddChildImage } from '../pagemanager/assignment-element-helper'
+import deepCopy from '../../util/deepCopy'
 import {
   getMainDiv,
   getGradePanel,
@@ -10,7 +9,9 @@ import {
   getGradeInput,
   getSaveGradeAndShowNextButton,
   getAssignmentId,
-} from '../helper/moodle-helper'
+} from '../pagemanager/assignment-moodle-helper'
+import CommonAnswersClient from '../client/CommonAnswerClient'
+import GradePartsClient from '../client/GradePartsClient'
 
 class ClickableListManager {
 

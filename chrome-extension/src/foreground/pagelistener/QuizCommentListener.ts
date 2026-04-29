@@ -1,8 +1,8 @@
-import { QuizDataClient } from '../quiz/client/quiz-client'
-import { getManualGradedBox, getGradeInput, getMaxMark, getSubmitButton, getAutoGradeId } from '../quiz/helper/moodle-helper'
-import BaseListener from './BaseListener'
+import QuizDataClient from '../client/QuizClient'
+import { getManualGradedBox, getGradeInput, getMaxMark, getSubmitButton, getAutoGradeId } from '../pagemanager/quiz-moodle-helper'
+import BaseMoodlePageListener from './BaseMoodlePageListener'
 
-class QuizCommentListener extends BaseListener {
+class QuizCommentListener extends BaseMoodlePageListener {
 
     onPageLoad() {
         this.#autoGradeIfActive()

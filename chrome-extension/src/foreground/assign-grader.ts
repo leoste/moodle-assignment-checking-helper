@@ -1,3 +1,3 @@
-import { assignmentGraderListener } from "./listener/AssignmentGraderListener";
+import { assignmentGraderListener } from "./pagelistener/AssignmentGraderListener";
 
 assignmentGraderListener.init()

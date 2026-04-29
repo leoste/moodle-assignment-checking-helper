@@ -1,3 +1,3 @@
-import { quizReviewListener } from "./listener/QuizReviewListener";
+import { quizReviewListener } from "./pagelistener/QuizReviewListener";
 
 quizReviewListener.init()

@@ -1,9 +1,9 @@
-import { QuizDataClient } from '../quiz/client/quiz-client'
-import { getManualGradedBoxes, getCommentFromManualGradedBox, getAutoGradeId, getCommentActionLink, getQuizId } from '../quiz/helper/moodle-helper'
-import { createAndAddChildElement } from '../quiz/helper/element-helper'
-import BaseListener from './BaseListener'
+import { getManualGradedBoxes, getCommentFromManualGradedBox, getAutoGradeId, getCommentActionLink, getQuizId } from '../pagemanager/quiz-moodle-helper'
+import { createAndAddChildElement } from '../pagemanager/quiz-element-helper'
+import BaseMoodlePageListener from './BaseMoodlePageListener'
+import QuizDataClient from '../client/QuizClient'
 
-class QuizReviewListener extends BaseListener {
+class QuizReviewListener extends BaseMoodlePageListener {
 
     onPageLoad() {
         this.#createAutoGradeButtons()

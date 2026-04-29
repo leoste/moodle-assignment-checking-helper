@@ -14,17 +14,17 @@
   "content_scripts": [
     {
       "matches": ["https://moodle.taltech.ee/mod/assign/*action=grader*"],
-      "js": ["src/foreground/assignment/assign-grader.ts"],
+      "js": ["src/foreground/assign-grader.ts"],
       "css": ["src/foreground/assignment/assign-grader.css"]
     },
     {
       "matches": ["https://moodle.taltech.ee/mod/quiz/review.php*"],
-      "js": ["src/foreground/quiz/quiz-review.ts"],
+      "js": ["src/foreground/quiz-review.ts"],
       "css": ["src/foreground/quiz/quiz-review.css"]
     },
     {
       "matches": ["https://moodle.taltech.ee/mod/quiz/comment.php*"],
-      "js": ["src/foreground/quiz/quiz-comment.ts"]
+      "js": ["src/foreground/quiz-comment.ts"]
     }
   ],
   "web_accessible_resources": [

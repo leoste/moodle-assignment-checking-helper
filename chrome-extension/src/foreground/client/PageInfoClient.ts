@@ -1,5 +1,7 @@
 import BaseClient from "./BaseClient"
 
+// This is the Visual Studio Code communicating client
+
 export default class PageInfoClient extends BaseClient {
   static readonly #TYPE = 'page-info/student-name/post'
 

@@ -1,5 +1,5 @@
 import type { CommonAnswer, GradePart } from '../../types'
-import { createElementWithClasses, createAndAddChildElement, createAndAddChildImage } from '../pagemanager/assignment-element-helper'
+import { createElementWithClasses, createAndAddChildElement, createAndAddChildImage } from '../pagemanager/element-creation-helper'
 import deepCopy from '../../util/deepCopy'
 import {
   getMainDiv,

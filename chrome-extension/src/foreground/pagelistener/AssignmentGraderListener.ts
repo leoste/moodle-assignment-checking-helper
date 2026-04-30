@@ -1,7 +1,7 @@
-import CheckingHelperPanelRenderer from '../renderer/AssignmentGraderHelperPanelRenderer'
 import { getStudentName } from '../pagemanager/assignment-moodle-helper'
 import BaseMoodlePageListener from './BaseMoodlePageListener'
 import PageInfoClient from '../client/PageInfoClient'
+import CheckingHelperPanelRenderer from '../renderer/CheckingHelperPanelRenderer'
 
 class AssignmentGraderListener extends BaseMoodlePageListener {
 

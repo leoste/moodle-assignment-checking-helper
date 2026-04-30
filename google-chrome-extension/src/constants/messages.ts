@@ -1,1 +1,2 @@
-export const OFFSCREEN_READ_FILES = 'offscreen/read-files'
+export const FILES_GET_SOURCES = 'files/get-sources'
+export const FILES_UPDATE_CACHE = 'files/update-cache'

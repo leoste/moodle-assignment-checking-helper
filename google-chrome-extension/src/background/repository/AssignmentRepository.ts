@@ -1,19 +1,19 @@
-import type { AssignmentDefinition } from '../../types'
-import LocalFileRepository from './LocalFileRepository'
+import type { AssignmentDefinition, FileSourceInfo } from '../../types'
+import { fileCacheRepository } from './FileCacheRepository'
+import BaseRepository from './BaseRepository'
 
-/*
-TODO:
-definitions
-- sünkroniseerin. see võtab liiga kaua ja ei juhtu õigel hetkel
-- read kood kirjutatud popup.ts sisse. see tuleks eraldada eraldi moodulisse ikka
-- localfilerepo extendib localstoragerepo. sel juhul pole localfilerepo-l kui sellist enam tähendust ja tuleks sellest lahti saada, ja definitions extendib localstorage hoopis.
+export default class AssignmentRepository extends BaseRepository {
 
-- kuidagi teha, et iga kord ikkagi uuendaks. võibolla sõnumite süsteem popupi ja backendi vahele.
-*/
+// TODO: ensure this is actually really the source of truth everywhere.
+// TODO: this should extend filecacherepository instead of using it internally, this is semantically wrong. fuck ai
+  readonly fileSourceInfo: FileSourceInfo = {
+    displayName: 'Definitsioonide kaust',
+    directoryConfigKey: 'config.assignmentDirectory',
+    cacheKey: 'file-cache.assignments',
+  }
 
-export default class AssignmentRepository extends LocalFileRepository {
   async getAllDefinitions(): Promise<AssignmentDefinition[]> {
-    const fileContents = await this.getAllFileContent()
+    const fileContents = await fileCacheRepository.get(this.fileSourceInfo.cacheKey)
     const definitions: AssignmentDefinition[] = []
     for (const content of fileContents) {
       try {

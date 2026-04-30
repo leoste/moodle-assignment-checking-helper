@@ -46,9 +46,11 @@ export interface WebSocketResponse {
   content: unknown
 }
 
-// User-controlled configuration stored persistently via IndexedDB.
-export interface Config {
-  directoryHandle?: FileSystemDirectoryHandle
+// Describes a file source: which folder to read from and where to cache results.
+export interface FileSourceInfo {
+  displayName: string
+  directoryConfigKey: string
+  cacheKey: string
 }
 
 // A user-defined assignment that may correspond to multiple Moodle assignment IDs across course iterations.

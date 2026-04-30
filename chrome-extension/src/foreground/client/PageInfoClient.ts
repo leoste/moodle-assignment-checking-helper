@@ -2,7 +2,7 @@ import BaseClient from "./BaseClient"
 
 // This is the Visual Studio Code communicating client
 
-export default class PageInfoClient extends BaseClient {
+class PageInfoClient extends BaseClient {
   static readonly #TYPE = 'page-info/student-name/post'
 
   async postStudentName(studentName: string): Promise<unknown> {
@@ -10,3 +10,5 @@ export default class PageInfoClient extends BaseClient {
     return chrome.runtime.sendMessage(msg)
   }
 }
+
+export const pageInfoClient = new PageInfoClient()

@@ -14,9 +14,9 @@ class WebSocketService extends BaseService {
   readonly #timeoutMs = 5000
 
   async onInit() {
+    await super.onInit()
     this.#provider.onMessage = (raw) => this.#handleMessage(raw)
     this.#provider.onDisconnect = () => this.#cancelAll()
-    await super.onInit()
   }
 
   async post(channel: string, content: unknown): Promise<unknown> {

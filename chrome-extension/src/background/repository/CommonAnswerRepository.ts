@@ -47,6 +47,12 @@ class CommonAnswerRepository extends BaseRepository {
         "text": "Best regards, Karl Aleksander Leoste",
         "enabled": true
       },
+    ],
+    '940421': [
+        {
+            "text": "Kõik korras.",
+            "enabled": true
+        },
     ]
   }
 

@@ -101,6 +101,62 @@ class GradePartRepository extends BaseRepository {
           }
         ]
       }
+    ],
+    '940421': [
+        {
+            "title": "Max punktid",
+            "max": {
+                "points": 15,
+                "text": "tubli"
+            },
+            "parts": [
+                {
+                    "points": 15,
+                    "text": "Kõik korras",
+                    "enabled": true
+                }
+            ]
+        },
+        {
+            "title": "Hilinemine",
+            "max": {
+                "points": -6,
+                "text": "üle aja submittimine"
+            },
+            "parts": [
+                {
+                    "points": -1,
+                    "text": "12h",
+                    "enabled": false
+                },
+                {
+                    "points": -1,
+                    "text": "1p",
+                    "enabled": false
+                },
+                {
+                    "points": -1,
+                    "text": "1p 12h",
+                    "enabled": false
+                },
+                {
+                    "points": -1,
+                    "text": "2p",
+                    "enabled": false
+                },
+                {
+                    "points": -1,
+                    "text": "2p 12h",
+                    "enabled": false
+                },
+                {
+                    "points": -1,
+                    "text": "3p",
+                    "enabled": false
+                }
+            ]
+        
+        }
     ]
   }
 

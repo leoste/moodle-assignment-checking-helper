@@ -76,6 +76,8 @@ function sendResponse(ws: WebSocket, id: string, content: unknown): void {
 // Opens all files in the folder matching the student's name.
 // ---------------------------------------------------------------------------
 
+
+const openSubDirectories = true;
 const SAFE_BINARY_EXTENSIONS = new Set([
   '.png', '.jpg', '.jpeg', '.gif', '.webp', '.svg', '.bmp', '.pdf',
 ])
@@ -101,15 +103,35 @@ async function handlePageInfo(data: IncomingMessage, _ws: WebSocket): Promise<vo
   }
 
   const targetUri = vscode.Uri.joinPath(rootUri, targetEntry)
-  const entries = await vscode.workspace.fs.readDirectory(targetUri)
-
-  let fileCount = 0
-  for (const [fileName, type] of entries) {
-    if (type !== vscode.FileType.File) continue
-    const column = (fileCount % 3) + 1
-    const opened = await openFile(targetUri, fileName, column)
-    if (opened) fileCount++
+  let files: [vscode.Uri, string][] = [];
+  if (openSubDirectories) {
+    files = await collectFiles(targetUri);
+  } else {
+    const entries = await vscode.workspace.fs.readDirectory(targetUri);
+    files = entries
+      .filter(([_, type]) => type === vscode.FileType.File)
+      .map(([fileName]) => [targetUri, fileName]);
   }
+
+  let fileCount = 0;
+  for (const [dirUri, fileName] of files) {
+    const column = (fileCount % 2) + 1;
+    const opened = await openFile(dirUri, fileName, column);
+    if (opened) fileCount++;
+  }
+
+    async function collectFiles(dirUri: vscode.Uri): Promise<[vscode.Uri, string][]> {
+    let result: [vscode.Uri, string][] = [];
+    const entries = await vscode.workspace.fs.readDirectory(dirUri);
+    for (const [name, type] of entries) {
+        if (type === vscode.FileType.File) {
+        result.push([dirUri, name]);
+        } else if (type === vscode.FileType.Directory) {
+        result = result.concat(await collectFiles(vscode.Uri.joinPath(dirUri, name)));
+        }
+    }
+    return result;
+    }
 }
 
 async function findDirectoryByName(

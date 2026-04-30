@@ -16,7 +16,7 @@ export default class BaseMoodlePageListener {
     }
 
     async onInit() {
-        executeOnPageLoad(this.onPageLoad)
+        executeOnPageLoad(this.onPageLoad.bind(this))
     }
 
     onPageLoad() {}

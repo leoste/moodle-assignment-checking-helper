@@ -1,6 +1,6 @@
 import { getStudentName } from '../pagemanager/assignment-moodle-helper'
 import BaseMoodlePageListener from './BaseMoodlePageListener'
-import PageInfoClient from '../client/PageInfoClient'
+import { pageInfoClient } from '../client/PageInfoClient'
 import CheckingHelperPanelRenderer from '../renderer/CheckingHelperPanelRenderer'
 
 class AssignmentGraderListener extends BaseMoodlePageListener {
@@ -12,8 +12,7 @@ class AssignmentGraderListener extends BaseMoodlePageListener {
 
     async #sendStudentName() {
         const studentName = getStudentName()
-        const client = new PageInfoClient()
-        const response = await client.postStudentName(studentName)
+        const response = await pageInfoClient.postStudentName(studentName)
         console.log(response)
     }
 }

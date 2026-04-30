@@ -9,7 +9,6 @@ import { createAndAddChildElement, createElementWithClasses } from "../pagemanag
 export default class CheckingHelperPanelRenderer {
 
     constructor() {
-        console.log("uus constructor mehed");
         this.#gradeManager = new GradeSectionRenderer();
         this.#commentManager = new CommentSectionRenderer();
         this.#quickSubmitManager = new QuickSubmitRenderer();
@@ -25,7 +24,7 @@ export default class CheckingHelperPanelRenderer {
         this.#commentManager.destroy();
         this.#quickSubmitManager.destroy();
         this.#checkingHelperPanel?.remove();
-        void this.#setupCheckingHelperPanel();
+        await this.#setupCheckingHelperPanel();
     }
 
     async #setupCheckingHelperPanel(): Promise<void> {
@@ -35,9 +34,9 @@ export default class CheckingHelperPanelRenderer {
         const rightDiv = createAndAddChildElement(this.#checkingHelperPanel!, 'div', ['common-answer-subpanel', 'checking-helper-subpanel']);
         const rightBottomDiv = createAndAddChildElement(this.#checkingHelperPanel!, 'div', ['quick-submit-subpanel', 'checking-helper-subpanel']);
 
-        void this.#setupGradeSection(leftDiv);
-        void this.#setupCommentSection(rightDiv);
-        void this.#setupQuickSubmit(rightBottomDiv);
+        await this.#setupGradeSection(leftDiv);
+        await this.#setupCommentSection(rightDiv);
+        await this.#setupQuickSubmit(rightBottomDiv);
     }
 
     #insertCheckingHelperPanelElement(): void {

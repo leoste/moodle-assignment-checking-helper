@@ -7,6 +7,10 @@
     "16": "images/128.png",
     "128": "images/128.png"
   },
+  "action": {
+    "default_popup": "src/popup/popup.html",
+    "default_title": "Moodle Assignment Checking Helper"
+  },
   "background": {
     "service_worker": "src/background/service-worker.ts",
     "type": "module"

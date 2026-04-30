@@ -45,3 +45,16 @@ export interface WebSocketResponse {
   id: string
   content: unknown
 }
+
+// User-controlled configuration stored persistently via IndexedDB.
+export interface Config {
+  directoryHandle?: FileSystemDirectoryHandle
+}
+
+// A user-defined assignment that may correspond to multiple Moodle assignment IDs across course iterations.
+export interface AssignmentDefinition {
+  name: string
+  moodleIds: string[]
+  commonAnswers: CommonAnswer[]
+  gradeParts: GradePart[]
+}

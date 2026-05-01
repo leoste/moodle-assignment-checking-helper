@@ -1,4 +1,5 @@
 const esbuild = require('esbuild')
+const path = require('path')
 
 const production = process.argv.includes('--production')
 const watch      = process.argv.includes('--watch')
@@ -30,6 +31,9 @@ async function main() {
     sourcemap: !production,
     sourcesContent: false,
     logLevel: 'warning',
+    alias: {
+      '@shared': path.resolve(__dirname, '../shared'),
+    },
     plugins: [problemMatcherPlugin],
   })
 

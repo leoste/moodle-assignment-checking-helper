@@ -1,53 +1,65 @@
 import * as vscode from 'vscode'
 import { WebSocketServer, WebSocket } from 'ws'
-import * as path from 'path'
+import type { WebSocketMessage } from '@shared/types/WebSocketProtocol'
+import { handlePageInfo } from './handler/PageInfoHandler'
+import { WEBSOCKET_HOST, WEBSOCKET_PORT } from './config'
+import type { ChannelHandler } from './types'
 
-// ---------------------------------------------------------------------------
-// Types
-// ---------------------------------------------------------------------------
+/*
+TODO: oluline refaktor enne asjade juurdeehitamist
+hetkel on visual studio code extensioni projektis muust projektist semantiliselt erinev struktuur.
+see takistab extensioni uute funktsionaalsustega laiendamist, kuna see läheks ruttu rõvedaks spagetiks.
 
-interface IncomingMessage {
-  id: string
-  channel: string
-  content: unknown
-}
+1) extension.ts sees on igat tüüpi sõnumite korda üldine websocketi vastuvõtmise kood. sarnast rolli chrome extensioni koodibaasis täidab basecontroller.
+seega see osa tuleb refaktorida src/controller/BaseController.ts.
+loogika tuleb ehitada üles täpselt samamoodi, nagu chrome extensionis, aga muidugi arvestades siis natukene vscode websocket handling eripäraga.
+koodi üksühele duubeldada ei saa, aga loogika saab jääda ja peab samaks jääma.
+extension.ts sees on ka channelHandlers nimeline const, kus otsustatakse mis handleri otsa asi suunatakse.
+selle asemel saaks teha pageinfocontrolleri, mis pärineb tavacontrollerist.
+pärast neid samme liiguks enamik koodist extension.ts seest välja, extension.ts rolliks jääb ainult initialisida controller.
+selleks tuleb init-controllers.ts täpselt nagu chrome extensionis, kus on init funktsioon.
+ja see ise kutsub kõigi controllerite init funktsioone. täpselt nagu google chrome extensionsi tehtud!
+nii peabki olema: extension.ts ei olegi muud koodi kui oluliste asjade käima panemine, täpselt nagu muudes moodulites.
 
-type ChannelHandler = (data: IncomingMessage, ws: WebSocket) => Promise<void>
-
-// ---------------------------------------------------------------------------
-// Channel dispatch map
-// Mirrors the BaseController pattern in the Chrome extension.
-// Add entries here as new channels are needed.
-// ---------------------------------------------------------------------------
+2) handler/pageinfohandler.ts sees on loogika ühte tüüpi sõnumi protsessimiseks.
+see olemuslikult muutuks pageinfoservice nimeliseks asjaks, mida siis pageinfocontroller kasutaks.
+async function handlePageInfo asemel tuleks minna samasugule service struktuurile nagu mujal projektis.
+ehk oleks class, imporditav klassiinstance, ja tehtaks pageInfoService.handlePageInfo(...) kus seda kasutatakse.
+selle liigutusega tekiks siis juurde ka init-services.ts fail ja extension.ts kutsuks välja sellest init funktsiooni.
+init-services.ts init funktsiooni sees init-itakse pageinfoservice.
+TÄPSELT samamoodi, nagu on juba google chrome extensionis tehtud! ei mingit isemõtlemist
+*/
 
 const channelHandlers: Record<string, ChannelHandler> = {
   'page-info': handlePageInfo,
 }
 
-// ---------------------------------------------------------------------------
-// Extension lifecycle
-// ---------------------------------------------------------------------------
-
 export function activate(context: vscode.ExtensionContext): void {
   console.log('Moodle Checking Helper: VS Code extension active.')
 
-  const wss = new WebSocketServer({ port: 54321, host: '127.0.0.1' })
+  const wss = new WebSocketServer({ port: WEBSOCKET_PORT, host: WEBSOCKET_HOST })
 
   wss.on('connection', (ws) => {
     console.log('Chrome extension connected.')
 
     ws.on('message', async (raw) => {
-      let data: IncomingMessage
+      let data: WebSocketMessage
       try {
-        data = JSON.parse(raw.toString()) as IncomingMessage
+        data = JSON.parse(raw.toString()) as WebSocketMessage
       } catch {
         console.error('Failed to parse incoming message:', raw.toString())
         return
       }
 
       const handler = channelHandlers[data.channel]
+      if (!handler) {
+        console.warn(`[WebSocketServer] No handler for channel: "${data.channel}"`)
+        sendResponse(ws, data.id, 'unhandled')
+        return
+      }
+
       try {
-        if (handler) await handler(data, ws)
+        await handler(data, ws)
         sendResponse(ws, data.id, 'ok')
       } catch (err) {
         console.error(`Handler error for channel "${data.channel}":`, err)
@@ -63,106 +75,6 @@ export function activate(context: vscode.ExtensionContext): void {
 
 export function deactivate(): void {}
 
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
-
 function sendResponse(ws: WebSocket, id: string, content: unknown): void {
   ws.send(JSON.stringify({ id, content }))
-}
-
-// ---------------------------------------------------------------------------
-// Channel: page-info
-// Opens all files in the folder matching the student's name.
-// ---------------------------------------------------------------------------
-
-
-const openSubDirectories = true;
-const SAFE_BINARY_EXTENSIONS = new Set([
-  '.png', '.jpg', '.jpeg', '.gif', '.webp', '.svg', '.bmp', '.pdf',
-])
-
-async function handlePageInfo(data: IncomingMessage, _ws: WebSocket): Promise<void> {
-  const studentName = data.content as string
-  if (!studentName) return
-
-  await vscode.commands.executeCommand('workbench.action.closeAllEditors')
-
-  const folders = vscode.workspace.workspaceFolders
-  if (!folders || folders.length === 0) {
-    vscode.window.showWarningMessage('Moodle Helper: No workspace folder open.')
-    return
-  }
-
-  const rootUri = folders[0].uri
-  const targetEntry = await findDirectoryByName(rootUri, studentName)
-
-  if (!targetEntry) {
-    vscode.window.showWarningMessage(`Moodle Helper: No folder found for "${studentName}".`)
-    return
-  }
-
-  const targetUri = vscode.Uri.joinPath(rootUri, targetEntry)
-  let files: [vscode.Uri, string][] = [];
-  if (openSubDirectories) {
-    files = await collectFiles(targetUri);
-  } else {
-    const entries = await vscode.workspace.fs.readDirectory(targetUri);
-    files = entries
-      .filter(([_, type]) => type === vscode.FileType.File)
-      .map(([fileName]) => [targetUri, fileName]);
-  }
-
-  let fileCount = 0;
-  for (const [dirUri, fileName] of files) {
-    const column = (fileCount % 2) + 1;
-    const opened = await openFile(dirUri, fileName, column);
-    if (opened) fileCount++;
-  }
-
-    async function collectFiles(dirUri: vscode.Uri): Promise<[vscode.Uri, string][]> {
-    let result: [vscode.Uri, string][] = [];
-    const entries = await vscode.workspace.fs.readDirectory(dirUri);
-    for (const [name, type] of entries) {
-        if (type === vscode.FileType.File) {
-        result.push([dirUri, name]);
-        } else if (type === vscode.FileType.Directory) {
-        result = result.concat(await collectFiles(vscode.Uri.joinPath(dirUri, name)));
-        }
-    }
-    return result;
-    }
-}
-
-async function findDirectoryByName(
-  rootUri: vscode.Uri,
-  wantedName: string
-): Promise<string | undefined> {
-  const entries = await vscode.workspace.fs.readDirectory(rootUri)
-  const match = entries.find(
-    ([name, type]) => type === vscode.FileType.Directory && name.startsWith(wantedName)
-  )
-  return match?.[0]
-}
-
-async function openFile(
-  dirUri: vscode.Uri,
-  fileName: string,
-  column: number
-): Promise<boolean> {
-  const fileUri = vscode.Uri.joinPath(dirUri, fileName)
-  const ext = path.extname(fileName).toLowerCase()
-  const options = { preview: false, viewColumn: column, preserveFocus: false }
-
-  try {
-    if (SAFE_BINARY_EXTENSIONS.has(ext)) {
-      await vscode.commands.executeCommand('vscode.open', fileUri, options)
-    } else {
-      const doc = await vscode.workspace.openTextDocument(fileUri)
-      await vscode.window.showTextDocument(doc, options)
-    }
-    return true
-  } catch {
-    return false
-  }
 }

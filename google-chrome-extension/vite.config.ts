@@ -4,4 +4,9 @@ import manifest from './manifest.json'
 
 export default defineConfig({
   plugins: [crx({ manifest })],
+  resolve: {
+    alias: {
+      '@shared': new URL('../shared', import.meta.url).pathname,
+    },
+  },
 })

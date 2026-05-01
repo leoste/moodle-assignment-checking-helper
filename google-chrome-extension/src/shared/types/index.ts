@@ -33,19 +33,6 @@ export interface ExtensionMessage<T = Record<string, unknown>> {
   content: T
 }
 
-// Shape of a message sent over WebSocket to the VS Code extension.
-export interface WebSocketMessage {
-  id: string
-  channel: string
-  content: unknown
-}
-
-// Shape of a response received over WebSocket from the VS Code extension.
-export interface WebSocketResponse {
-  id: string
-  content: unknown
-}
-
 // Describes a file source: which folder to read from and where to cache results.
 export interface FileSourceInfo {
   displayName: string
@@ -60,3 +47,5 @@ export interface AssignmentDefinition {
   commonAnswers: CommonAnswer[]
   gradeParts: GradePart[]
 }
+
+export type { WebSocketMessage, WebSocketResponse } from '@shared/types/WebSocketProtocol'

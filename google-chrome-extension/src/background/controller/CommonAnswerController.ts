@@ -1,13 +1,14 @@
 import BaseController from './BaseController'
 import { commonAnswerService } from '../service/CommonAnswerService'
+import { COMMON_ANSWERS_GET } from '../../shared/constants/messages'
 
-export default class CommonAnswerController extends BaseController {
-  static readonly #GET = 'common-answers/get'
-
+class CommonAnswerController extends BaseController {
   override init(): void {
     super.init()
-    this.addMessageHandler(CommonAnswerController.#GET, async (content) => {
+    this.addMessageHandler(COMMON_ANSWERS_GET, async (content) => {
       return commonAnswerService.getAll(content.assignmentId as string)
     })
   }
 }
+
+export const commonAnswerController = new CommonAnswerController()

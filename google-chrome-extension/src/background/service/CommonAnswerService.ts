@@ -1,4 +1,4 @@
-import type { CommonAnswer } from '../../types'
+import type { CommonAnswer } from '../../shared/types'
 import { commonAnswerRepository } from '../repository/CommonAnswerRepository'
 import BaseService from './BaseService'
 

@@ -1,4 +1,4 @@
-import type { AutoGradeId } from '../../types'
+import type { AutoGradeId } from '../../shared/types'
 
 export function getManualGradedBox(): HTMLElement {
   return document.querySelector<HTMLElement>('div.manualgraded.complete')!

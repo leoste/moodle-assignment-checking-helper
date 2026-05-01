@@ -1,4 +1,4 @@
-import type { FileSourceInfo } from '../../types'
+import type { FileSourceInfo } from '../../shared/types'
 import IndexedDBRepository from './IndexedDBRepository'
 
 export default abstract class FileCacheRepository extends IndexedDBRepository {

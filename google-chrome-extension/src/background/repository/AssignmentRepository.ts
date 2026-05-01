@@ -1,4 +1,4 @@
-import type { AssignmentDefinition, FileSourceInfo } from '../../types'
+import type { AssignmentDefinition, CommonAnswer, FileSourceInfo, GradePart } from '../../shared/types'
 import FileCacheRepository from './FileCacheRepository'
 
 export default class AssignmentRepository extends FileCacheRepository {
@@ -34,6 +34,16 @@ export default class AssignmentRepository extends FileCacheRepository {
   async findByMoodleId(moodleId: string): Promise<AssignmentDefinition | undefined> {
     const definitions = await this.getAllDefinitions()
     return definitions.find(d => d.moodleIds.some(id => String(id) === moodleId))
+  }
+
+  async getCommonAnswers(assignmentId: string): Promise<CommonAnswer[] | undefined> {
+    const definition = await this.findByMoodleId(assignmentId)
+    return definition?.commonAnswers
+  }
+
+  async getGradeParts(assignmentId: string): Promise<GradePart[] | undefined> {
+    const definition = await this.findByMoodleId(assignmentId)
+    return definition?.gradeParts
   }
 }
 

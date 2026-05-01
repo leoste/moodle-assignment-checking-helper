@@ -1,5 +1,5 @@
 import LocalStorageRepository from './LocalStorageRepository'
-import type { AutoGradeId } from '../../types'
+import type { AutoGradeId } from '../../shared/types'
 
 class QuizRepository extends LocalStorageRepository {
   #key(id: AutoGradeId): string {

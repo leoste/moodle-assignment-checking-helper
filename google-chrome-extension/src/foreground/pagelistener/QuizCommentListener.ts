@@ -21,7 +21,7 @@ class QuizCommentListener extends BaseMoodlePageListener {
             const gradeInput = getGradeInput()
             gradeInput.value = grade
 
-            client.endAutoGrade(autoGradeId)
+            await client.endAutoGrade(autoGradeId)
 
             getSubmitButton().click()
         }

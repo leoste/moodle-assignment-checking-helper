@@ -1,25 +1,28 @@
 import BaseController from './BaseController'
-import type { AutoGradeId } from '../../types'
+import type { AutoGradeId } from '../../shared/types'
 import { quizService } from '../service/QuizService'
+import {
+  QUIZ_AUTO_GRADE_BEGIN,
+  QUIZ_AUTO_GRADE_END,
+  QUIZ_AUTO_GRADE_IS_ACTIVE,
+} from '../../shared/constants/messages'
 
-export default class QuizController extends BaseController {
-  static readonly #BEGIN  = 'quiz/auto-grade/begin'
-  static readonly #END    = 'quiz/auto-grade/end'
-  static readonly #ACTIVE = 'quiz/auto-grade/is-active'
-
+class QuizController extends BaseController {
   override init(): void {
     super.init()
 
-    this.addMessageHandler(QuizController.#BEGIN, async (content) => {
+    this.addMessageHandler(QUIZ_AUTO_GRADE_BEGIN, async (content) => {
       await quizService.beginAutoGrade(content.autoGradeId as AutoGradeId)
     })
 
-    this.addMessageHandler(QuizController.#END, async (content) => {
+    this.addMessageHandler(QUIZ_AUTO_GRADE_END, async (content) => {
       await quizService.endAutoGrade(content.autoGradeId as AutoGradeId)
     })
 
-    this.addMessageHandler(QuizController.#ACTIVE, async (content) => {
+    this.addMessageHandler(QUIZ_AUTO_GRADE_IS_ACTIVE, async (content) => {
       return quizService.isAutoGradeActive(content.autoGradeId as AutoGradeId)
     })
   }
 }
+
+export const quizController = new QuizController()

@@ -7,72 +7,60 @@ import { getAssignmentId, getGradePanel, getMainDiv } from "../pagemanager/assig
 import { createAndAddChildElement, createElementWithClasses } from "../pagemanager/element-creation-helper";
 
 export default class CheckingHelperPanelRenderer {
+  #checkingHelperPanel: HTMLElement | undefined
+  #gradeManager: GradeSectionRenderer | undefined
+  #commentManager: CommentSectionRenderer | undefined
+  #quickSubmitManager: QuickSubmitRenderer | undefined
 
-    constructor() {
-        this.#gradeManager = new GradeSectionRenderer();
-        this.#commentManager = new CommentSectionRenderer();
-        this.#quickSubmitManager = new QuickSubmitRenderer();
-    }
+  async render(): Promise<void> {
+    this.#gradeManager?.destroy()
+    this.#commentManager?.destroy()
+    this.#quickSubmitManager?.destroy()
+    this.#checkingHelperPanel?.remove()
+    await this.#setupCheckingHelperPanel()
+  }
 
-    #checkingHelperPanel: HTMLElement | undefined;
-    #gradeManager: GradeSectionRenderer;
-    #commentManager: CommentSectionRenderer;
-    #quickSubmitManager: QuickSubmitRenderer;
+  async #setupCheckingHelperPanel(): Promise<void> {
+    this.#insertCheckingHelperPanelElement()
 
-    async render(): Promise<void> {
-        this.#gradeManager.destroy();
-        this.#commentManager.destroy();
-        this.#quickSubmitManager.destroy();
-        this.#checkingHelperPanel?.remove();
-        await this.#setupCheckingHelperPanel();
-    }
+    const leftDiv = createAndAddChildElement(this.#checkingHelperPanel!, 'div', ['grade-subpanel', 'checking-helper-subpanel'])
+    const rightDiv = createAndAddChildElement(this.#checkingHelperPanel!, 'div', ['common-answer-subpanel', 'checking-helper-subpanel'])
+    const rightBottomDiv = createAndAddChildElement(this.#checkingHelperPanel!, 'div', ['quick-submit-subpanel', 'checking-helper-subpanel'])
 
-    async #setupCheckingHelperPanel(): Promise<void> {
-        this.#insertCheckingHelperPanelElement();
+    await this.#setupGradeSection(leftDiv)
+    await this.#setupCommentSection(rightDiv)
+    this.#setupQuickSubmit(rightBottomDiv)
+  }
 
-        const leftDiv = createAndAddChildElement(this.#checkingHelperPanel!, 'div', ['grade-subpanel', 'checking-helper-subpanel']);
-        const rightDiv = createAndAddChildElement(this.#checkingHelperPanel!, 'div', ['common-answer-subpanel', 'checking-helper-subpanel']);
-        const rightBottomDiv = createAndAddChildElement(this.#checkingHelperPanel!, 'div', ['quick-submit-subpanel', 'checking-helper-subpanel']);
+  #insertCheckingHelperPanelElement(): void {
+    const mainDiv = getMainDiv()
+    const gradePanel = getGradePanel()
+    this.#checkingHelperPanel = createElementWithClasses('div', ['checking-helper-panel'])
+    mainDiv.insertBefore(this.#checkingHelperPanel, gradePanel.nextSibling)
+  }
 
-        await this.#setupGradeSection(leftDiv);
-        await this.#setupCommentSection(rightDiv);
-        await this.#setupQuickSubmit(rightBottomDiv);
-    }
+  async #setupGradeSection(parentDiv: HTMLElement): Promise<void> {
+    createAndAddChildElement(parentDiv, 'h2', null, 'Hinde kujunemine')
 
-    #insertCheckingHelperPanelElement(): void {
-        const mainDiv = getMainDiv();
-        const gradePanel = getGradePanel();
-        this.#checkingHelperPanel = createElementWithClasses('div', ['checking-helper-panel']);
-        mainDiv.insertBefore(this.#checkingHelperPanel, gradePanel.nextSibling);
-    }
+    const assignmentId = getAssignmentId()
+    const data = await new GradePartsClient().getData(assignmentId)
 
-    async #setupQuickSubmit(parentDiv: HTMLElement): Promise<void> {
-        this.#quickSubmitManager.setParentElement(parentDiv);
-        this.#quickSubmitManager.setOtherManagers(this.#gradeManager, this.#commentManager);
-        this.#quickSubmitManager.create();
-    }
+    this.#gradeManager = new GradeSectionRenderer(parentDiv, data)
+    this.#gradeManager.create()
+  }
 
-    async #setupGradeSection(parentDiv: HTMLElement): Promise<void> {
-        createAndAddChildElement(parentDiv, 'h2', null, 'Hinde kujunemine');
+  async #setupCommentSection(parentDiv: HTMLElement): Promise<void> {
+    createAndAddChildElement(parentDiv, 'h2', null, 'Kommentaari koostamine')
 
-        // TODO: move fetching into component probably
-        const assignmentId = getAssignmentId();
-        const fetcher = new GradePartsClient();
-        const data = await fetcher.getData(assignmentId);
-        this.#gradeManager.setParentElement(parentDiv);
-        this.#gradeManager.setGradeParts(data);
-        this.#gradeManager.create();
-    }
+    const assignmentId = getAssignmentId()
+    const data = await new CommonAnswersClient().getData(assignmentId)
 
-    async #setupCommentSection(parentDiv: HTMLElement): Promise<void> {
-        createAndAddChildElement(parentDiv, 'h2', null, 'Kommentaari koostamine');
+    this.#commentManager = new CommentSectionRenderer(parentDiv, data)
+    this.#commentManager.create()
+  }
 
-        // TODO: move fetching into component probably
-        const assignmentId = getAssignmentId();
-        const fetcher = new CommonAnswersClient();
-        const data = await fetcher.getData(assignmentId);
-        this.#commentManager.setParentElement(parentDiv);
-        this.#commentManager.setCommonAnswers(data);
-        this.#commentManager.create();
-    }
+  #setupQuickSubmit(parentDiv: HTMLElement): void {
+    this.#quickSubmitManager = new QuickSubmitRenderer(parentDiv, this.#gradeManager!, this.#commentManager!)
+    this.#quickSubmitManager.create()
+  }
 }

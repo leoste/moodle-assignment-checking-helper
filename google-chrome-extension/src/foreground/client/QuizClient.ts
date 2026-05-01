@@ -1,20 +1,21 @@
-import type { AutoGradeId } from '../../types'
+import type { AutoGradeId } from '../../shared/types'
 import BaseClient from './BaseClient'
+import {
+  QUIZ_AUTO_GRADE_BEGIN,
+  QUIZ_AUTO_GRADE_END,
+  QUIZ_AUTO_GRADE_IS_ACTIVE,
+} from '../../shared/constants/messages'
 
 export default class QuizDataClient extends BaseClient {
-  static readonly #BEGIN  = 'quiz/auto-grade/begin'
-  static readonly #END    = 'quiz/auto-grade/end'
-  static readonly #ACTIVE = 'quiz/auto-grade/is-active'
-
   async beginAutoGrade(id: AutoGradeId): Promise<void> {
-    await chrome.runtime.sendMessage(this.makeMessage(QuizDataClient.#BEGIN, { autoGradeId: id }))
+    await chrome.runtime.sendMessage(this.makeMessage(QUIZ_AUTO_GRADE_BEGIN, { autoGradeId: id }))
   }
 
   async endAutoGrade(id: AutoGradeId): Promise<void> {
-    await chrome.runtime.sendMessage(this.makeMessage(QuizDataClient.#END, { autoGradeId: id }))
+    await chrome.runtime.sendMessage(this.makeMessage(QUIZ_AUTO_GRADE_END, { autoGradeId: id }))
   }
 
   async isAutoGradeActive(id: AutoGradeId): Promise<boolean> {
-    return chrome.runtime.sendMessage(this.makeMessage(QuizDataClient.#ACTIVE, { autoGradeId: id })) as Promise<boolean>
+    return chrome.runtime.sendMessage(this.makeMessage(QUIZ_AUTO_GRADE_IS_ACTIVE, { autoGradeId: id })) as Promise<boolean>
   }
 }

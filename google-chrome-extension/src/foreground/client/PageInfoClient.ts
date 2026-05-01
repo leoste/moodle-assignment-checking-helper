@@ -1,12 +1,11 @@
-import BaseClient from "./BaseClient"
+import BaseClient from './BaseClient'
+import { PAGE_INFO_POST_STUDENT_NAME } from '../../shared/constants/messages'
 
 // This is the Visual Studio Code communicating client
 
 class PageInfoClient extends BaseClient {
-  static readonly #TYPE = 'page-info/student-name/post'
-
   async postStudentName(studentName: string): Promise<unknown> {
-    const msg = this.makeMessage(PageInfoClient.#TYPE, { studentName })
+    const msg = this.makeMessage(PAGE_INFO_POST_STUDENT_NAME, { studentName })
     return chrome.runtime.sendMessage(msg)
   }
 }

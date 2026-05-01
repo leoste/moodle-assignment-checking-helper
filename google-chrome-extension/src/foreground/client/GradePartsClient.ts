@@ -1,11 +1,10 @@
-import type { GradePart } from '../../types'
-import BaseClient from "./BaseClient"
+import type { GradePart } from '../../shared/types'
+import BaseClient from './BaseClient'
+import { GRADE_PARTS_GET } from '../../shared/constants/messages'
 
 export default class GradePartsClient extends BaseClient {
-  static readonly #TYPE = 'assignment/grade-parts/get'
-
   async getData(assignmentId: string): Promise<GradePart[]> {
-    const msg = this.makeMessage(GradePartsClient.#TYPE, { assignmentId })
+    const msg = this.makeMessage(GRADE_PARTS_GET, { assignmentId })
     return chrome.runtime.sendMessage(msg) as Promise<GradePart[]>
   }
 }

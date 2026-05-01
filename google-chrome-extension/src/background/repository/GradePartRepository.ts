@@ -1,10 +1,10 @@
-import type { GradePart } from '../../types'
-import AssignmentRepository from './AssignmentRepository'
+import type { GradePart } from '../../shared/types'
+import { assignmentRepository } from './AssignmentRepository'
+import BaseRepository from './BaseRepository'
 
-class GradePartRepository extends AssignmentRepository {
+class GradePartRepository extends BaseRepository {
   async getAll(assignmentId: string): Promise<GradePart[] | undefined> {
-    const definition = await this.findByMoodleId(assignmentId)
-    return definition?.gradeParts
+    return assignmentRepository.getGradeParts(assignmentId)
   }
 }
 

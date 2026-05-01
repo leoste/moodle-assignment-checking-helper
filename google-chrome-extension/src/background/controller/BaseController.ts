@@ -47,7 +47,12 @@ export default class BaseController {
     sendResponse: (response: unknown) => void
   ): Promise<void> {
     const messageHandler = BaseController.#messageHandlerMap.get(message.type)
-    const response = await messageHandler!(message.content)
+    if (!messageHandler) {
+      console.error(`[BaseController] No handler registered for message type: "${message.type}"`)
+      sendResponse(undefined)
+      return
+    }
+    const response = await messageHandler(message.content)
     sendResponse(response)
   }
 }

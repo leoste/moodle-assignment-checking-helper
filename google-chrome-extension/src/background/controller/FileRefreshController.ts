@@ -1,4 +1,4 @@
-import { FILES_GET_SOURCES, FILES_UPDATE_CACHE } from '../../constants/messages'
+import { FILES_GET_SOURCES, FILES_UPDATE_CACHE } from '../../shared/constants/messages'
 import FileCacheRepository from '../repository/FileCacheRepository'
 import BaseController from './BaseController'
 

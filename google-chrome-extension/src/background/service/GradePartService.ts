@@ -1,4 +1,4 @@
-import type { GradePart } from '../../types'
+import type { GradePart } from '../../shared/types'
 import { gradePartRepository } from '../repository/GradePartRepository'
 import BaseService from './BaseService'
 

@@ -1,10 +1,10 @@
-import type { CommonAnswer } from '../../types'
-import AssignmentRepository from './AssignmentRepository'
+import type { CommonAnswer } from '../../shared/types'
+import { assignmentRepository } from './AssignmentRepository'
+import BaseRepository from './BaseRepository'
 
-class CommonAnswerRepository extends AssignmentRepository {
+class CommonAnswerRepository extends BaseRepository {
   async getAll(assignmentId: string): Promise<CommonAnswer[] | undefined> {
-    const definition = await this.findByMoodleId(assignmentId)
-    return definition?.commonAnswers
+    return assignmentRepository.getCommonAnswers(assignmentId)
   }
 }
 

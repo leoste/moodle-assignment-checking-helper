@@ -1,11 +1,10 @@
-import type { CommonAnswer } from '../../types'
+import type { CommonAnswer } from '../../shared/types'
 import BaseClient from './BaseClient'
+import { COMMON_ANSWERS_GET } from '../../shared/constants/messages'
 
 export default class CommonAnswersClient extends BaseClient {
-  static readonly #TYPE = 'common-answers/get'
-
   async getData(assignmentId: string): Promise<CommonAnswer[]> {
-    const msg = this.makeMessage(CommonAnswersClient.#TYPE, { assignmentId })
+    const msg = this.makeMessage(COMMON_ANSWERS_GET, { assignmentId })
     return chrome.runtime.sendMessage(msg) as Promise<CommonAnswer[]>
   }
 }

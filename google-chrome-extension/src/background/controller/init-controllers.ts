@@ -1,13 +1,13 @@
-import CommonAnswerController from './CommonAnswerController'
+import { commonAnswerController } from './CommonAnswerController'
 import { fileRefreshController } from './FileRefreshController'
-import GradePartController from './GradePartController'
-import PageInfoController from './PageInfoController'
-import QuizController from './QuizController'
+import { gradePartController } from './GradePartController'
+import { pageInfoController } from './PageInfoController'
+import { quizController } from './QuizController'
 
 export default function initControllers(): void {
   fileRefreshController.init()
-  new CommonAnswerController().init()
-  new GradePartController().init()
-  new PageInfoController().init()
-  new QuizController().init()
+  commonAnswerController.init()
+  gradePartController.init()
+  pageInfoController.init()
+  quizController.init()
 }

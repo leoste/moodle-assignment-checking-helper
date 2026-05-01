@@ -1,4 +1,4 @@
-import type { ExtensionMessage } from '../../types'
+import type { ExtensionMessage } from '../../shared/types'
 
 export default class BaseClient {
 

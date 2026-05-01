@@ -2,7 +2,7 @@ import { FILES_GET_SOURCES, FILES_UPDATE_CACHE } from '../../shared/constants/me
 import FileCacheRepository from '../repository/FileCacheRepository'
 import BaseController from './BaseController'
 
-class FileRefreshController extends BaseController {
+class FileCacheController extends BaseController {
   override init(): void {
     // TODO: make this message transaction clearer semantically. it is built correctly but holy how annoying to understand
     super.init()
@@ -17,4 +17,4 @@ class FileRefreshController extends BaseController {
   }
 }
 
-export const fileRefreshController = new FileRefreshController()
+export const fileRefreshController = new FileCacheController()

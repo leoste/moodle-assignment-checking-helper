@@ -1,4 +1,4 @@
-import MessageHandlerMap from '../collection/MessageHandlerMap'
+import MessageHandlerMap from '../object/MessageHandlerMap'
 
 export default class BaseController {
 

@@ -1,5 +1,5 @@
 import { commonAnswerController } from './CommonAnswerController'
-import { fileRefreshController } from './FileRefreshController'
+import { fileRefreshController } from './FileCacheController'
 import { gradePartController } from './GradePartController'
 import { pageInfoController } from './PageInfoController'
 import { quizController } from './QuizController'

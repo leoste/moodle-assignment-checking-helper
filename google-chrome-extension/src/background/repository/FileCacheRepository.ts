@@ -1,13 +1,24 @@
+import type { FileSourceInfo } from '../../types'
 import IndexedDBRepository from './IndexedDBRepository'
 
-class FileCacheRepository extends IndexedDBRepository {
-  async get(cacheKey: string): Promise<string[]> {
-    return (await this.getValue<string[]>(cacheKey)) ?? []
+export default abstract class FileCacheRepository extends IndexedDBRepository {
+  static readonly #registry: FileCacheRepository[] = []
+
+  static getRegistry(): readonly FileCacheRepository[] {
+    return FileCacheRepository.#registry
   }
 
-  async set(cacheKey: string, contents: string[]): Promise<void> {
-    await this.setValue(cacheKey, contents)
+  protected static register(instance: FileCacheRepository): void {
+    FileCacheRepository.#registry.push(instance)
+  }
+
+  abstract readonly fileSourceInfo: FileSourceInfo
+
+  async getFileContents(): Promise<string[]> {
+    return (await this.getValue<string[]>(this.fileSourceInfo.cacheKey)) ?? []
+  }
+
+  async setFileContents(contents: string[]): Promise<void> {
+    await this.setValue(this.fileSourceInfo.cacheKey, contents)
   }
 }
-
-export const fileCacheRepository = new FileCacheRepository()

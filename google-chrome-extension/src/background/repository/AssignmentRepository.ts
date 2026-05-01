@@ -1,19 +1,25 @@
 import type { AssignmentDefinition, FileSourceInfo } from '../../types'
-import { fileCacheRepository } from './FileCacheRepository'
-import BaseRepository from './BaseRepository'
+import FileCacheRepository from './FileCacheRepository'
 
-export default class AssignmentRepository extends BaseRepository {
+export default class AssignmentRepository extends FileCacheRepository {
+  static #registered = false
 
-// TODO: ensure this is actually really the source of truth everywhere.
-// TODO: this should extend filecacherepository instead of using it internally, this is semantically wrong. fuck ai
   readonly fileSourceInfo: FileSourceInfo = {
     displayName: 'Definitsioonide kaust',
     directoryConfigKey: 'config.assignmentDirectory',
     cacheKey: 'file-cache.assignments',
   }
 
+  override async init(): Promise<void> {
+    await super.init()
+    if (!AssignmentRepository.#registered) {
+      AssignmentRepository.#registered = true
+      FileCacheRepository.register(this)
+    }
+  }
+
   async getAllDefinitions(): Promise<AssignmentDefinition[]> {
-    const fileContents = await fileCacheRepository.get(this.fileSourceInfo.cacheKey)
+    const fileContents = await this.getFileContents()
     const definitions: AssignmentDefinition[] = []
     for (const content of fileContents) {
       try {

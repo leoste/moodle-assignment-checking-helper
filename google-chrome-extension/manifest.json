@@ -12,23 +12,23 @@
     "default_title": "Moodle Assignment Checking Helper"
   },
   "background": {
-    "service_worker": "src/background/service-worker.ts",
+    "service_worker": "src/service-worker/service-worker.ts",
     "type": "module"
   },
   "content_scripts": [
     {
       "matches": ["https://moodle.taltech.ee/mod/assign/*action=grader*"],
-      "js": ["src/foreground/assign-grader.ts"],
-      "css": ["src/foreground/assign-grader.css"]
+      "js": ["src/content-script/assign-grader.ts"],
+      "css": ["src/content-script/assign-grader.css"]
     },
     {
       "matches": ["https://moodle.taltech.ee/mod/quiz/review.php*"],
-      "js": ["src/foreground/quiz-review.ts"],
-      "css": ["src/foreground/quiz-review.css"]
+      "js": ["src/content-script/quiz-review.ts"],
+      "css": ["src/content-script/quiz-review.css"]
     },
     {
       "matches": ["https://moodle.taltech.ee/mod/quiz/comment.php*"],
-      "js": ["src/foreground/quiz-comment.ts"]
+      "js": ["src/content-script/quiz-comment.ts"]
     }
   ],
   "web_accessible_resources": [

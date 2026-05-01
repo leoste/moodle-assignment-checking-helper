@@ -90,7 +90,7 @@ Produces a minified `dist/extension.js` ready for packaging with `vsce`.
 Moodle page (Chrome)
   └── content script
         └── chrome.runtime.sendMessage()
-              └── service worker (background)
+              └── service worker (service-worker)
                     └── WebSocketService.post()
                           └── ws://127.0.0.1:54321
                                 └── VS Code extension (WebSocketServer)
@@ -112,7 +112,7 @@ chrome-extension/
   src/
     types/
       index.ts               ← shared TypeScript interfaces
-    background/
+    service-worker/
       service-worker.ts      ← entry point for the service worker
       collection/
         MessageHandlerMap.ts
@@ -138,7 +138,7 @@ chrome-extension/
         PageInfoService.ts
         QuizService.ts
         service-registry.ts
-    foreground/
+    content-script/
       assign-grader/
         index.ts             ← entry point, matches assign grader page
         assign-grader.css

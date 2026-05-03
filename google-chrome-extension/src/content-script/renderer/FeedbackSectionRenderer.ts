@@ -83,7 +83,7 @@ export class FeedbackSectionRenderer {
     const texts: string[] = []
     for (const item of this.#feedbackItems) {
       for (const part of item.parts) {
-        if (part.enabled && part.text) texts.push(part.text)
+        if (part.enabled && part.text && !part.textDisabled) texts.push(part.text)
       }
     }
     return texts.join('\n')

@@ -29,6 +29,7 @@ export default class CheckingHelperPanelRenderer {
   #insertCheckingHelperPanelElement(): void {
     const mainDiv = getMainDiv()
     const gradePanel = getGradePanel()
+    console.log("see peaks ainult üks kord juhtuma")
     this.#checkingHelperPanel = createElementWithClasses('div', ['checking-helper-panel'])
     mainDiv.insertBefore(this.#checkingHelperPanel, gradePanel.nextSibling)
   }

@@ -3,44 +3,42 @@
   "moodleIds": ["940421"],
   "feedback": [
     {
+      "title": "Max punktid",
+      "max": { "points": 15, "text": "tubli" },
+      "parts": [
+        { "points": 15, "text": "Kõik korras", "enabled": true, "textDisabled": true },
+        {
+          "text": "Kõik töötab. Põhimõtteliselt on muidugi API osa ja veebis kuvamine mõistlik teha eraldi projektidena, siis saab API-t kasutada ka muudes projektides.",
+          "enabled": false
+        }
+      ]
+    },
+    {
       "title": "default",
       "max": { "points": 0, "text": null },
       "parts": [
         {
           "text": "Üks miinuspunkt on selle eest, et üleslaetud fail sisaldab mõlema projekti kohta .idea ja .venv faile, mille eest on kodutöö kirjelduses eraldi punase kirjaga hoiatatud. Muidu on kõik OK.",
+          "points": -1,
           "enabled": false
         },
         {
           "text": "Praegu Teil ei ole eraldi API-t, mille poole veebileht pöördub. Hetkel pöördub Teie veebileht otse andmebaasi poole. Punktide juurdesaamiseks on vaja eraldada need osad.",
+          "points": -6,
           "enabled": false
-        },
-        {
-          "text": "Kõik töötab. Põhimõtteliselt on muidugi API osa ja veebis kuvamine mõistlik teha eraldi projektidena, siis saab API-t kasutada ka muudes projektides.",
-          "enabled": false
-        },
-        {
-          "text": "Kõik korras.",
-          "enabled": true
         }
-      ]
-    },
-    {
-      "title": "Max punktid",
-      "max": { "points": 15, "text": "tubli" },
-      "parts": [
-        { "points": 15, "text": "Kõik korras", "enabled": true }
       ]
     },
     {
       "title": "Hilinemine",
       "max": { "points": -6, "text": "üle aja submittimine" },
       "parts": [
-        { "points": -1, "text": "12h", "enabled": false },
-        { "points": -1, "text": "1p", "enabled": false },
-        { "points": -1, "text": "1p 12h", "enabled": false },
-        { "points": -1, "text": "2p", "enabled": false },
-        { "points": -1, "text": "2p 12h", "enabled": false },
-        { "points": -1, "text": "3p", "enabled": false }
+        { "points": -1, "text": "12h", "enabled": false, "textDisabled": true },
+        { "points": -1, "text": "1p", "enabled": false, "textDisabled": true },
+        { "points": -1, "text": "1p 12h", "enabled": false, "textDisabled": true },
+        { "points": -1, "text": "2p", "enabled": false, "textDisabled": true },
+        { "points": -1, "text": "2p 12h", "enabled": false, "textDisabled": true },
+        { "points": -1, "text": "3p", "enabled": false, "textDisabled": true }
       ]
     }
   ]

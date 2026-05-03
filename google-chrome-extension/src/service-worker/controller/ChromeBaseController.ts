@@ -1,33 +1,21 @@
+import BaseController from '@shared/controller/BaseController'
 import ChromeMessageHandlerMap from '../../shared/object/ChromeMessageHandlerMap'
 import type { ChromeMessageHandler } from '../../shared/types/ChromeMessageHandler'
 
-export default class BaseController {
-
-  static #oneTimeInitiated = false
+export default class ChromeBaseController extends BaseController {
   static #messageHandlerMap: ChromeMessageHandlerMap
 
-  init(): void {
-    this.#tryOneTimeInit()
-  }
-
-  addMessageHandler(messageType: string, messageHandler: ChromeMessageHandler): void {
-    BaseController.#messageHandlerMap.add(messageType, messageHandler)
-  }
-
-  #tryOneTimeInit(): void {
-    if (!BaseController.#oneTimeInitiated) {
-      this.#oneTimeInit()
-      BaseController.#oneTimeInitiated = true
-    }
-  }
-
-  #oneTimeInit(): void {
+  protected override async onOneTimeInit(): Promise<void> {
     this.#initMessageHandlerMap()
     this.#initListener()
   }
 
+  addMessageHandler(messageType: string, messageHandler: ChromeMessageHandler): void {
+    ChromeBaseController.#messageHandlerMap.add(messageType, messageHandler)
+  }
+
   #initMessageHandlerMap(): void {
-    BaseController.#messageHandlerMap = new ChromeMessageHandlerMap()
+    ChromeBaseController.#messageHandlerMap = new ChromeMessageHandlerMap()
   }
 
   #initListener(): void {
@@ -47,9 +35,9 @@ export default class BaseController {
     message: { type: string; content: Record<string, unknown> },
     sendResponse: (response: unknown) => void
   ): Promise<void> {
-    const messageHandler = BaseController.#messageHandlerMap.get(message.type)
+    const messageHandler = ChromeBaseController.#messageHandlerMap.get(message.type)
     if (!messageHandler) {
-      console.error(`[BaseController] No handler registered for message type: "${message.type}"`)
+      console.error(`[ChromeBaseController] No handler registered for message type: "${message.type}"`)
       sendResponse(undefined)
       return
     }

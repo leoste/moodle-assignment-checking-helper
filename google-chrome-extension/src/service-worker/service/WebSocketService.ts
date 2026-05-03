@@ -1,6 +1,6 @@
 import WebSocketProvider from '../provider/WebSocketProvider'
 import type { WebSocketResponse } from '../../shared/types'
-import BaseService from './BaseService'
+import BaseService from '@shared/service/BaseService'
 
 interface PendingRequest {
   resolve: (value: unknown) => void

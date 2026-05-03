@@ -1,4 +1,4 @@
-import BaseController from './BaseController'
+import ChromeBaseController from './ChromeBaseController'
 import type { AutoGradeId } from '../../shared/types'
 import { quizService } from '../service/QuizService'
 import {
@@ -7,10 +7,8 @@ import {
   QUIZ_AUTO_GRADE_IS_ACTIVE,
 } from '../../shared/constants/messages'
 
-class QuizController extends BaseController {
-  override init(): void {
-    super.init()
-
+class QuizController extends ChromeBaseController {
+  protected override async onInit(): Promise<void> {
     this.addMessageHandler(QUIZ_AUTO_GRADE_BEGIN, async (content) => {
       await quizService.beginAutoGrade(content.autoGradeId as AutoGradeId)
     })

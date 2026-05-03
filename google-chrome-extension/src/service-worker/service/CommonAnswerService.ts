@@ -1,6 +1,6 @@
 import type { CommonAnswer } from '../../shared/types'
 import { commonAnswerRepository } from '../repository/CommonAnswerRepository'
-import BaseService from './BaseService'
+import BaseService from '@shared/service/BaseService'
 
 /*
 TODO: important changes before can add features!

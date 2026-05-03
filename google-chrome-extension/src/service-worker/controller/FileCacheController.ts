@@ -1,11 +1,10 @@
 import { FILES_GET_SOURCES, FILES_UPDATE_CACHE } from '../../shared/constants/messages'
 import FileCacheRepository from '../repository/FileCacheRepository'
-import BaseController from './BaseController'
+import ChromeBaseController from './ChromeBaseController'
 
-class FileCacheController extends BaseController {
-  override init(): void {
+class FileCacheController extends ChromeBaseController {
+  protected override async onInit(): Promise<void> {
     // TODO: make this message transaction clearer semantically. it is built correctly but holy how annoying to understand
-    super.init()
     this.addMessageHandler(FILES_GET_SOURCES, async () =>
       FileCacheRepository.getRegistry().map(r => r.fileSourceInfo)
     )

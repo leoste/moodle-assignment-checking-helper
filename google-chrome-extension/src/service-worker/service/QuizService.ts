@@ -1,6 +1,6 @@
 import type { AutoGradeId } from '../../shared/types'
 import { quizRepository } from '../repository/QuizRepository'
-import BaseService from './BaseService'
+import BaseService from '@shared/service/BaseService'
 
 class QuizService extends BaseService {
   async beginAutoGrade(id: AutoGradeId): Promise<void> {

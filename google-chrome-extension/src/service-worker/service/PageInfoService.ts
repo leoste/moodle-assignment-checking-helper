@@ -1,4 +1,4 @@
-import BaseService from './BaseService'
+import BaseService from '@shared/service/BaseService'
 import { webSocketService } from './WebSocketService'
 
 class PageInfoService extends BaseService {

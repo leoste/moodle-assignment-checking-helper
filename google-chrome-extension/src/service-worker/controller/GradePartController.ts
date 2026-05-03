@@ -1,10 +1,9 @@
 import { gradePartService } from '../service/GradePartService'
-import BaseController from './BaseController'
+import ChromeBaseController from './ChromeBaseController'
 import { GRADE_PARTS_GET } from '../../shared/constants/messages'
 
-class GradePartController extends BaseController {
-  override init(): void {
-    super.init()
+class GradePartController extends ChromeBaseController {
+  protected override async onInit(): Promise<void> {
     this.addMessageHandler(GRADE_PARTS_GET, async (content) => {
       return gradePartService.getAll(content.assignmentId as string)
     })

@@ -1,6 +1,6 @@
 import type { GradePart } from '../../shared/types'
 import { gradePartRepository } from '../repository/GradePartRepository'
-import BaseService from './BaseService'
+import BaseService from '@shared/service/BaseService'
 
 class GradePartService extends BaseService {
   async getAll(assignmentId: string): Promise<GradePart[] | undefined> {

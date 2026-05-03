@@ -1,4 +1,4 @@
-import type { AutoGradeId } from '../../shared/types'
+import type { AutoGradeId } from '../../shared/types/AutoGradeId'
 import { quizRepository } from '../repository/QuizRepository'
 import BaseService from '@shared/service/BaseService'
 

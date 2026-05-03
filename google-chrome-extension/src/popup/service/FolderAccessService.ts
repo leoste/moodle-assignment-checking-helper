@@ -1,5 +1,5 @@
 import { fileHandleRepository } from '../../shared/repository/FileHandleRepository'
-import type { FileSourceInfo } from '../../shared/types'
+import type { FileSourceInfo } from '../../shared/types/FileSourceInfo'
 import { fileCacheClient } from '../client/FileCacheClient'
 
 /*

@@ -1,4 +1,7 @@
-import type { AssignmentDefinition, CommonAnswer, FileSourceInfo, GradePart } from '../../shared/types'
+import type { Assignment } from '../../shared/types/Assignment'
+import type { CommonAnswer } from '../../shared/types/CommonAnswer'
+import type { FileSourceInfo } from '../../shared/types/FileSourceInfo'
+import type { GradePart } from '../../shared/types/GradePart'
 import FileCacheRepository from './FileCacheRepository'
 
 export default class AssignmentRepository extends FileCacheRepository {
@@ -18,12 +21,12 @@ export default class AssignmentRepository extends FileCacheRepository {
     }
   }
 
-  async getAllDefinitions(): Promise<AssignmentDefinition[]> {
+  async getAllDefinitions(): Promise<Assignment[]> {
     const fileContents = await this.getFileContents()
-    const definitions: AssignmentDefinition[] = []
+    const definitions: Assignment[] = []
     for (const content of fileContents) {
       try {
-        definitions.push(JSON.parse(content) as AssignmentDefinition)
+        definitions.push(JSON.parse(content) as Assignment)
       } catch {
         // skip files that are not valid JSON or don't match the expected shape
       }
@@ -31,7 +34,7 @@ export default class AssignmentRepository extends FileCacheRepository {
     return definitions
   }
 
-  async findByMoodleId(moodleId: string): Promise<AssignmentDefinition | undefined> {
+  async findByMoodleId(moodleId: string): Promise<Assignment | undefined> {
     const definitions = await this.getAllDefinitions()
     return definitions.find(d => d.moodleIds.some(id => String(id) === moodleId))
   }

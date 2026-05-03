@@ -1,4 +1,5 @@
-import type { CommonAnswer, GradePart } from '../../shared/types';
+import type { CommonAnswer } from '../../shared/types/CommonAnswer';
+import type { GradePart } from '../../shared/types/GradePart';
 import { createElementWithClasses, createAndAddChildElement } from '../pagemanager/element-creation-helper';
 import { ClickableListItemRenderer } from './ClickableListItemRenderer';
 

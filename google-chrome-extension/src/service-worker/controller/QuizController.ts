@@ -1,5 +1,5 @@
 import ChromeBaseController from './ChromeBaseController'
-import type { AutoGradeId } from '../../shared/types'
+import type { AutoGradeId } from '../../shared/types/AutoGradeId'
 import { quizService } from '../service/QuizService'
 import {
   QUIZ_AUTO_GRADE_BEGIN,

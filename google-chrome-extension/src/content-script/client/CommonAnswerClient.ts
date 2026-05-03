@@ -1,4 +1,4 @@
-import type { CommonAnswer } from '../../shared/types'
+import type { CommonAnswer } from '../../shared/types/CommonAnswer'
 import BaseClient from '../../shared/client/BaseClient'
 import { COMMON_ANSWERS_GET } from '../../shared/constants/messages'
 

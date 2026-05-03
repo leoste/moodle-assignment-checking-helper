@@ -1,4 +1,5 @@
-import type { GradePart, CommonAnswer } from '../../shared/types';
+import type { GradePart } from '../../shared/types/GradePart';
+import type { CommonAnswer } from '../../shared/types/CommonAnswer';
 import deepCopy from '../../shared/util/deepCopy';
 import { getGradeInput } from '../pagemanager/assignment-moodle-helper';
 import { ClickableListRenderer } from './ClickableListRenderer';

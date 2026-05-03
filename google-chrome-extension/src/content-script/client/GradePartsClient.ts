@@ -1,4 +1,4 @@
-import type { GradePart } from '../../shared/types'
+import type { GradePart } from '../../shared/types/GradePart'
 import BaseClient from '../../shared/client/BaseClient'
 import { GRADE_PARTS_GET } from '../../shared/constants/messages'
 

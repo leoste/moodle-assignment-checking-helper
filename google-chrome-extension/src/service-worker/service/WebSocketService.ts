@@ -1,5 +1,5 @@
 import WebSocketProvider from '../provider/WebSocketProvider'
-import type { WebSocketResponse } from '../../shared/types'
+import type { WebSocketResponse } from '@shared/types/WebSocketProtocol'
 import BaseService from '@shared/service/BaseService'
 
 interface PendingRequest {

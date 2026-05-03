@@ -1,4 +1,5 @@
-import type { CommonAnswer, GradePart } from '../../shared/types';
+import type { CommonAnswer } from '../../shared/types/CommonAnswer';
+import type { GradePart } from '../../shared/types/GradePart';
 import { getCommentTextarea, getCommentLink } from '../pagemanager/assignment-moodle-helper';
 import { ClickableListRenderer } from './ClickableListRenderer';
 

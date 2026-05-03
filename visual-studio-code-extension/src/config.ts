@@ -1,5 +1,5 @@
 /*
-TODO! websocket port on hetkel dual-confitud nii chrome kui vscodes. peaks liigutama shared-isse
+TODO: websocket port on hetkel dual-confitud nii chrome kui vscodes. peaks liigutama shared-isse
 see tekitaks ka pretsedendi mingite asjade hiljem koos confimisele
 */
 

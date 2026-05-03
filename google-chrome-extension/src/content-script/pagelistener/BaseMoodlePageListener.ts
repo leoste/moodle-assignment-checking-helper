@@ -1,4 +1,4 @@
-import AsyncInitialisable from '../../shared/AsyncInitialisable'
+import AsyncInitialisable from '../../../../shared/AsyncInitialisable'
 import executeOnPageLoad from '../pagemanager/executeOnPageLoad'
 
 export default class BaseMoodlePageListener extends AsyncInitialisable {

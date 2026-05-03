@@ -1,6 +1,6 @@
 import { fileHandleRepository } from '../../shared/repository/FileHandleRepository'
 import { FILES_GET_SOURCES } from '../../shared/constants/messages'
-import type { FileSourceInfo } from '../../shared/types'
+import type { FileSourceInfo } from '../../shared/types/FileSourceInfo'
 import { folderAccessService } from '../service/FolderAccessService'
 
 export default class PopupRenderer {

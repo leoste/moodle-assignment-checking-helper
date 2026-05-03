@@ -1,5 +1,5 @@
 import type { GradePart } from '../../shared/types'
-import BaseClient from './BaseClient'
+import BaseClient from '../../shared/client/BaseClient'
 import { GRADE_PARTS_GET } from '../../shared/constants/messages'
 
 export default class GradePartsClient extends BaseClient {

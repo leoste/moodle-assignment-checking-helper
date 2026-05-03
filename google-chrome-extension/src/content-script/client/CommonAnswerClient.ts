@@ -1,5 +1,5 @@
 import type { CommonAnswer } from '../../shared/types'
-import BaseClient from './BaseClient'
+import BaseClient from '../../shared/client/BaseClient'
 import { COMMON_ANSWERS_GET } from '../../shared/constants/messages'
 
 export default class CommonAnswersClient extends BaseClient {

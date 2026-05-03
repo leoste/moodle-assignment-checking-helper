@@ -1,13 +1,6 @@
 import { fileHandleRepository } from '../../shared/repository/FileHandleRepository'
-import { FILES_UPDATE_CACHE } from '../../shared/constants/messages'
 import type { FileSourceInfo } from '../../shared/types'
-
-/*
-TODO: important before can add new features!
-folderaccessservice shouldn't contain chrome.runtime.sendmessage in it plainly.
-message sending should be abstracted away into FileCacheClient, cause it's talking with FileCacheController using these messages.
-this might also need baseclient to be moved into shared folder, if it isn't already.
-*/
+import { fileCacheClient } from '../client/FileCacheClient'
 
 /*
 TODO: there is some weird feel of wrongness around popup structure, this service, popuprenderer and popup.ts
@@ -32,7 +25,7 @@ class FolderAccessService {
     const permission = await handle.requestPermission({ mode: 'read' })
     if (permission !== 'granted') return false
     const files = await this.#readDirectory(handle)
-    await chrome.runtime.sendMessage({ type: FILES_UPDATE_CACHE, content: { cacheKey: source.cacheKey, files } })
+    await fileCacheClient.updateCache(source.cacheKey, files)
     return true
   }
 

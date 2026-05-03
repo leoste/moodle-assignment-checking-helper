@@ -1,5 +1,5 @@
 import type { AutoGradeId } from '../../shared/types'
-import BaseClient from './BaseClient'
+import BaseClient from '../../shared/client/BaseClient'
 import {
   QUIZ_AUTO_GRADE_BEGIN,
   QUIZ_AUTO_GRADE_END,

@@ -1,29 +1,37 @@
 import { getSaveGradeAndShowNextButton } from '../pagemanager/assignment-moodle-helper';
 import { FeedbackSectionRenderer } from './FeedbackSectionRenderer';
 import { createAndAddChildImage } from '../pagemanager/element-creation-helper';
+import BaseRenderer from './BaseRenderer';
 
-export class QuickSubmitRenderer {
+export class QuickSubmitRenderer extends BaseRenderer {
   readonly #parentElement: HTMLElement
   readonly #feedbackManager: FeedbackSectionRenderer
 
-  constructor(parentElement: HTMLElement, feedbackManager: FeedbackSectionRenderer) {
+  #onClick!: () => void
+  #img: HTMLElement | undefined
+
+  constructor(parentElement: HTMLElement, feedbackRenderer: FeedbackSectionRenderer) {
+    super()
+
     this.#parentElement = parentElement
-    this.#feedbackManager = feedbackManager
+    this.#feedbackManager = feedbackRenderer
   }
 
-  create(): void {
-    const img = createAndAddChildImage(this.#parentElement, 'images/double-thumbs-up-emoji.png');
-    img.addEventListener('click', () => {
+  async render() {
+    this.#img = createAndAddChildImage(this.#parentElement, 'images/double-thumbs-up-emoji.png');
+    this.#onClick = () => {
       this.#feedbackManager.setPointsMax();
       this.#feedbackManager.setCommentEmpty();
       // this also automatically submits the comment
       getSaveGradeAndShowNextButton().click();
-    }, {
+    }
+    this.#img.addEventListener('click', this.#onClick, {
       once: true
     });
   }
 
-  destroy(): void {
-    // TODO: implement removing listeners here
+  async clear() {
+    this.#img!.removeEventListener('click', this.#onClick)
+    this.#img?.remove()
   }
 }

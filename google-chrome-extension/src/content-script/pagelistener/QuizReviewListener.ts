@@ -5,7 +5,7 @@ import QuizDataClient from '../client/QuizClient'
 
 class QuizReviewListener extends BaseMoodlePageListener {
 
-    onPageLoad() {
+    async onPageLoad() {
         this.#createAutoGradeButtons()
     }
 

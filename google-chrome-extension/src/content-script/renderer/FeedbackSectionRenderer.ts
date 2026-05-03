@@ -2,15 +2,20 @@ import type { Feedback } from '../../shared/types/Feedback';
 import type { FeedbackPart } from '../../shared/types/FeedbackPart';
 import deepCopy from '../../shared/util/deepCopy';
 import { getGradeInput, getCommentTextarea, getCommentLink } from '../pagemanager/assignment-moodle-helper';
+import BaseRenderer from './BaseRenderer';
 import { ClickableListRenderer } from './ClickableListRenderer';
 
-export class FeedbackSectionRenderer {
+export class FeedbackSectionRenderer extends BaseRenderer {
   readonly #parentElement: HTMLElement
   readonly #feedbackItems: Feedback[]
   #gradeInput!: HTMLInputElement
   #commentTextarea!: HTMLTextAreaElement
 
+  #clickableListRenderers: ClickableListRenderer[] = []
+
   constructor(parentElement: HTMLElement, feedbackItems: Feedback[] | undefined) {
+    super()
+
     this.#parentElement = parentElement
     this.#feedbackItems = deepCopy(feedbackItems ?? [])
 
@@ -20,15 +25,21 @@ export class FeedbackSectionRenderer {
     })
   }
 
-  create(): void {
+  async render() {
     this.#gradeInput = getGradeInput()
     this.#commentTextarea = getCommentTextarea()
     this.#expandCommentSection()
-    this.#feedbackItems.forEach(item => this.#createFeedbackList(item))
+    
+    for (const item of this.#feedbackItems) {
+        await this.#createFeedbackList(item)
+    }
   }
 
-  destroy(): void {
-    // TODO: implement actual removal of callbacks, destruction of the list renderers etc
+  async clear() {
+    for (const renderer of this.#clickableListRenderers) {
+        await renderer.clear()
+    }
+    this.#clickableListRenderers = []
   }
 
   setPointsMax(): void {
@@ -39,7 +50,7 @@ export class FeedbackSectionRenderer {
     this.#setCommentText('')
   }
 
-  #createFeedbackList(item: Feedback): void {
+  async #createFeedbackList(item: Feedback) {
     const onClickCallback = (parts: FeedbackPart[]) => this.#onFeedbackPartClick(parts, item._id!)
 
     const listRenderer = new ClickableListRenderer(
@@ -52,7 +63,9 @@ export class FeedbackSectionRenderer {
         listItemClass: 'common-answer-list',
       }
     )
-    listRenderer.create()
+    this.#clickableListRenderers.push(listRenderer)
+
+    await listRenderer.render()
   }
 
   #onFeedbackPartClick(parts: FeedbackPart[], id: number): void {

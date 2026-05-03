@@ -4,7 +4,7 @@ import BaseMoodlePageListener from './BaseMoodlePageListener'
 
 class QuizCommentListener extends BaseMoodlePageListener {
 
-    onPageLoad() {
+    async onPageLoad() {
         this.#autoGradeIfActive()
     }
 

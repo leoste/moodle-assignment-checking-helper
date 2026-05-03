@@ -1,15 +1,22 @@
 import type { FeedbackPart } from '../../shared/types/FeedbackPart';
 import { createAndAddChildElement, createAndAddChildImage } from '../pagemanager/element-creation-helper';
+import BaseRenderer from './BaseRenderer';
 
-export class ClickableListItemRenderer {
+export class ClickableListItemRenderer extends BaseRenderer {
   readonly #list: HTMLElement
   readonly #listItem: FeedbackPart
-  #itemUpdatedCallback: () => void = () => {}
+  #itemUpdatedCallback: (() => void) | undefined
 
-  #addButton!: HTMLImageElement
-  #buttonsSection!: HTMLElement
+  #addButton: HTMLImageElement | undefined
+  #buttonsSection: HTMLElement | undefined
+
+  #item: HTMLElement | undefined
+  #container: HTMLElement | undefined
+  #otherContainer: HTMLElement | undefined  
 
   constructor(list: HTMLElement, item: FeedbackPart) {
+    super()
+
     this.#list = list
     this.#listItem = item
   }
@@ -18,19 +25,29 @@ export class ClickableListItemRenderer {
     this.#itemUpdatedCallback = callback
   }
 
-  createItem(): void {
-    const item = createAndAddChildElement(this.#list, 'li', 'clickable-list-item');
-    const container = createAndAddChildElement(item, 'div', 'item-container');
-    createAndAddChildElement(container, 'div', 'text-section', this.#getDisplayText());
-    this.#buttonsSection = createAndAddChildElement(container, 'div', 'buttons-section');
+  async render() {
+    this.#item = createAndAddChildElement(this.#list, 'li', 'clickable-list-item');
+    this.#container = createAndAddChildElement(this.#item, 'div', 'item-container');
+    this.#otherContainer = createAndAddChildElement(this.#container, 'div', 'text-section', this.#getDisplayText());
+    this.#buttonsSection = createAndAddChildElement(this.#container, 'div', 'buttons-section');
     this.createAddButton();
+  }
+
+  async clear() {
+    this.#itemUpdatedCallback = undefined
+    this.#item?.remove()
+    this.#container?.remove()
+    this.#otherContainer?.remove()
+    this.#addButton!.removeEventListener('click', this.#addButtonOnClick);
+    this.#addButton?.remove()
+    this.#buttonsSection?.remove()
   }
 
   createAddButton(): void {
     const classList = ['add-button'];
     const extraClass = this.#listItem.enabled ? 'active' : 'inactive';
     classList.push(extraClass);
-    this.#addButton = createAndAddChildImage(this.#buttonsSection, 'images/laughing-pointing-emoji.png', classList);
+    this.#addButton = createAndAddChildImage(this.#buttonsSection!, 'images/laughing-pointing-emoji.png', classList);
     this.#addButton.addEventListener('click', this.#addButtonOnClick);
   }
 
@@ -48,8 +65,8 @@ export class ClickableListItemRenderer {
   #toggleItem(): void {
     const newState = !this.#listItem.enabled;
     this.#listItem.enabled = newState;
-    this.#addButton.classList.toggle('active', newState);
-    this.#addButton.classList.toggle('inactive', !newState);
-    this.#itemUpdatedCallback();
+    this.#addButton!.classList.toggle('active', newState);
+    this.#addButton!.classList.toggle('inactive', !newState);
+    this.#itemUpdatedCallback!();
   }
 }

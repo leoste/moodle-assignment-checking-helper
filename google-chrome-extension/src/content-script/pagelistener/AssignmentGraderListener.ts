@@ -5,9 +5,17 @@ import CheckingHelperPanelRenderer from '../renderer/CheckingHelperPanelRenderer
 
 class AssignmentGraderListener extends BaseMoodlePageListener {
 
-    onPageLoad() {
-        new CheckingHelperPanelRenderer().render()
-        this.#sendStudentName()
+    static #renderer: CheckingHelperPanelRenderer | null
+
+    async onPageLoad() {
+        if (!AssignmentGraderListener.#renderer) {
+            AssignmentGraderListener.#renderer = new CheckingHelperPanelRenderer()
+        }
+
+        await AssignmentGraderListener.#renderer.clear()
+        await AssignmentGraderListener.#renderer.render()
+        
+        await this.#sendStudentName()
     }
 
     async #sendStudentName() {

@@ -1,5 +1,6 @@
 import type { FeedbackPart } from '../../shared/types/FeedbackPart';
 import { createElementWithClasses, createAndAddChildElement } from '../pagemanager/element-creation-helper';
+import BaseRenderer from './BaseRenderer';
 import { ClickableListItemRenderer } from './ClickableListItemRenderer';
 
 interface ClickableListProperties {
@@ -8,13 +9,18 @@ interface ClickableListProperties {
   listItemClass: string
 }
 
-export class ClickableListRenderer {
+export class ClickableListRenderer extends BaseRenderer {
   readonly #parentElement: HTMLElement
   readonly #onClickCallback: (states: FeedbackPart[]) => void
-  readonly #states: FeedbackPart[]
+  readonly #parts: FeedbackPart[]
   readonly #properties: ClickableListProperties
 
-  #list!: HTMLElement
+
+  #section: HTMLElement | undefined
+  #header: HTMLElement | undefined
+  #list: HTMLElement | undefined
+
+  #renderers: ClickableListItemRenderer[] = []
 
   constructor(
     parentElement: HTMLElement,
@@ -22,32 +28,46 @@ export class ClickableListRenderer {
     items: FeedbackPart[],
     properties: ClickableListProperties
   ) {
+    super()
+
     this.#parentElement = parentElement
     this.#onClickCallback = onClickCallback
-    this.#states = items
+    this.#parts = items
     this.#properties = properties
   }
 
-  create(): void {
-    const section = createElementWithClasses('div', [this.#properties.sectionDivClass]);
-    createAndAddChildElement(section, 'h3', null, this.#properties.sectionTitle);
-    this.#list = createAndAddChildElement(section, 'ul', this.#properties.listItemClass);
-    this.#states.forEach(this.#createItem);
+  async render() {
+    this.#section = createElementWithClasses('div', [this.#properties.sectionDivClass]);
+    this.#header = createAndAddChildElement(this.#section, 'h3', null, this.#properties.sectionTitle);
+    this.#list = createAndAddChildElement(this.#section, 'ul', this.#properties.listItemClass);
+    
+    for (const part of this.#parts) {
+        await this.#createItem(part)
+    }
+    
     this.#itemUpdatedCallback();
-    this.#parentElement.appendChild(section);
+    this.#parentElement.appendChild(this.#section);
   }
 
-  destroy(): void {
-    // TODO: implement
+  async clear() {
+    this.#section?.remove()
+    this.#header?.remove()
+    this.#list?.remove()
+
+    for (const renderer of this.#renderers) {
+        await renderer.clear()
+    }
+    this.#renderers = []
   }
 
-  #createItem = (item: FeedbackPart): void => {
-    const renderer = new ClickableListItemRenderer(this.#list, item);
+  #createItem = async (item: FeedbackPart) => {
+    const renderer = new ClickableListItemRenderer(this.#list!, item);
+    this.#renderers.push(renderer)
     renderer.setItemUpdatedCallback(this.#itemUpdatedCallback);
-    renderer.createItem();
+    await renderer.render();
   };
 
   #itemUpdatedCallback = (): void => {
-    this.#onClickCallback(this.#states);
+    this.#onClickCallback(this.#parts);
   };
 }

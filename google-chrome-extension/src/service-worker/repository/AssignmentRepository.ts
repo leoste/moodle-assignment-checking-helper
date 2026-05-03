@@ -1,7 +1,6 @@
 import type { Assignment } from '../../shared/types/Assignment'
-import type { CommonAnswer } from '../../shared/types/CommonAnswer'
+import type { Feedback } from '../../shared/types/Feedback'
 import type { FileSourceInfo } from '../../shared/types/FileSourceInfo'
-import type { GradePart } from '../../shared/types/GradePart'
 import FileCacheRepository from './FileCacheRepository'
 
 export default class AssignmentRepository extends FileCacheRepository {
@@ -39,14 +38,9 @@ export default class AssignmentRepository extends FileCacheRepository {
     return definitions.find(d => d.moodleIds.some(id => String(id) === moodleId))
   }
 
-  async getCommonAnswers(assignmentId: string): Promise<CommonAnswer[] | undefined> {
+  async getFeedback(assignmentId: string): Promise<Feedback[] | undefined> {
     const definition = await this.findByMoodleId(assignmentId)
-    return definition?.commonAnswers
-  }
-
-  async getGradeParts(assignmentId: string): Promise<GradePart[] | undefined> {
-    const definition = await this.findByMoodleId(assignmentId)
-    return definition?.gradeParts
+    return definition?.feedback
   }
 }
 

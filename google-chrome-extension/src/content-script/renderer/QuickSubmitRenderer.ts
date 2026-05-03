@@ -1,29 +1,21 @@
 import { getSaveGradeAndShowNextButton } from '../pagemanager/assignment-moodle-helper';
-import { CommentSectionRenderer } from './CommentSectionRenderer';
+import { FeedbackSectionRenderer } from './FeedbackSectionRenderer';
 import { createAndAddChildImage } from '../pagemanager/element-creation-helper';
-import { GradeSectionRenderer } from './GradeSectionRenderer';
-
 
 export class QuickSubmitRenderer {
   readonly #parentElement: HTMLElement
-  readonly #gradeManager: GradeSectionRenderer
-  readonly #commentManager: CommentSectionRenderer
+  readonly #feedbackManager: FeedbackSectionRenderer
 
-  constructor(
-    parentElement: HTMLElement,
-    gradeManager: GradeSectionRenderer,
-    commentManager: CommentSectionRenderer
-  ) {
+  constructor(parentElement: HTMLElement, feedbackManager: FeedbackSectionRenderer) {
     this.#parentElement = parentElement
-    this.#gradeManager = gradeManager
-    this.#commentManager = commentManager
+    this.#feedbackManager = feedbackManager
   }
 
   create(): void {
     const img = createAndAddChildImage(this.#parentElement, 'images/double-thumbs-up-emoji.png');
     img.addEventListener('click', () => {
-      this.#gradeManager.setPointsMax();
-      this.#commentManager.setCommentEmpty();
+      this.#feedbackManager.setPointsMax();
+      this.#feedbackManager.setCommentEmpty();
       // this also automatically submits the comment
       getSaveGradeAndShowNextButton().click();
     }, {

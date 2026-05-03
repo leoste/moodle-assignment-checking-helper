@@ -1,20 +1,16 @@
-import CommonAnswersClient from "../client/CommonAnswerClient";
-import GradePartsClient from "../client/GradePartsClient";
+import FeedbackClient from '../client/FeedbackClient';
 import { QuickSubmitRenderer } from './QuickSubmitRenderer';
-import { GradeSectionRenderer } from './GradeSectionRenderer';
-import { CommentSectionRenderer } from './CommentSectionRenderer';
-import { getAssignmentId, getGradePanel, getMainDiv } from "../pagemanager/assignment-moodle-helper";
-import { createAndAddChildElement, createElementWithClasses } from "../pagemanager/element-creation-helper";
+import { FeedbackSectionRenderer } from './FeedbackSectionRenderer';
+import { getAssignmentId, getGradePanel, getMainDiv } from '../pagemanager/assignment-moodle-helper';
+import { createAndAddChildElement, createElementWithClasses } from '../pagemanager/element-creation-helper';
 
 export default class CheckingHelperPanelRenderer {
   #checkingHelperPanel: HTMLElement | undefined
-  #gradeManager: GradeSectionRenderer | undefined
-  #commentManager: CommentSectionRenderer | undefined
+  #feedbackManager: FeedbackSectionRenderer | undefined
   #quickSubmitManager: QuickSubmitRenderer | undefined
 
   async render(): Promise<void> {
-    this.#gradeManager?.destroy()
-    this.#commentManager?.destroy()
+    this.#feedbackManager?.destroy()
     this.#quickSubmitManager?.destroy()
     this.#checkingHelperPanel?.remove()
     await this.#setupCheckingHelperPanel()
@@ -23,13 +19,11 @@ export default class CheckingHelperPanelRenderer {
   async #setupCheckingHelperPanel(): Promise<void> {
     this.#insertCheckingHelperPanelElement()
 
-    const leftDiv = createAndAddChildElement(this.#checkingHelperPanel!, 'div', ['grade-subpanel', 'checking-helper-subpanel'])
-    const rightDiv = createAndAddChildElement(this.#checkingHelperPanel!, 'div', ['common-answer-subpanel', 'checking-helper-subpanel'])
-    const rightBottomDiv = createAndAddChildElement(this.#checkingHelperPanel!, 'div', ['quick-submit-subpanel', 'checking-helper-subpanel'])
+    const feedbackDiv = createAndAddChildElement(this.#checkingHelperPanel!, 'div', ['feedback-subpanel', 'checking-helper-subpanel'])
+    const quickSubmitDiv = createAndAddChildElement(this.#checkingHelperPanel!, 'div', ['quick-submit-subpanel', 'checking-helper-subpanel'])
 
-    await this.#setupGradeSection(leftDiv)
-    await this.#setupCommentSection(rightDiv)
-    this.#setupQuickSubmit(rightBottomDiv)
+    await this.#setupFeedbackSection(feedbackDiv)
+    this.#setupQuickSubmit(quickSubmitDiv)
   }
 
   #insertCheckingHelperPanelElement(): void {
@@ -39,28 +33,18 @@ export default class CheckingHelperPanelRenderer {
     mainDiv.insertBefore(this.#checkingHelperPanel, gradePanel.nextSibling)
   }
 
-  async #setupGradeSection(parentDiv: HTMLElement): Promise<void> {
-    createAndAddChildElement(parentDiv, 'h2', null, 'Hinde kujunemine')
+  async #setupFeedbackSection(parentDiv: HTMLElement): Promise<void> {
+    createAndAddChildElement(parentDiv, 'h2', null, 'Tagasiside')
 
     const assignmentId = getAssignmentId()
-    const data = await new GradePartsClient().getData(assignmentId)
+    const data = await new FeedbackClient().getData(assignmentId)
 
-    this.#gradeManager = new GradeSectionRenderer(parentDiv, data)
-    this.#gradeManager.create()
-  }
-
-  async #setupCommentSection(parentDiv: HTMLElement): Promise<void> {
-    createAndAddChildElement(parentDiv, 'h2', null, 'Kommentaari koostamine')
-
-    const assignmentId = getAssignmentId()
-    const data = await new CommonAnswersClient().getData(assignmentId)
-
-    this.#commentManager = new CommentSectionRenderer(parentDiv, data)
-    this.#commentManager.create()
+    this.#feedbackManager = new FeedbackSectionRenderer(parentDiv, data)
+    this.#feedbackManager.create()
   }
 
   #setupQuickSubmit(parentDiv: HTMLElement): void {
-    this.#quickSubmitManager = new QuickSubmitRenderer(parentDiv, this.#gradeManager!, this.#commentManager!)
+    this.#quickSubmitManager = new QuickSubmitRenderer(parentDiv, this.#feedbackManager!)
     this.#quickSubmitManager.create()
   }
 }

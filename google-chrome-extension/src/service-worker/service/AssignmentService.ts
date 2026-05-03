@@ -1,15 +1,10 @@
-import type { CommonAnswer } from '../../shared/types/CommonAnswer'
-import type { GradePart } from '../../shared/types/GradePart'
+import type { Feedback } from '../../shared/types/Feedback'
 import { assignmentRepository } from '../repository/AssignmentRepository'
 import BaseService from '@shared/service/BaseService'
 
 export default class AssignmentService extends BaseService {
-  async getCommonAnswers(assignmentId: string): Promise<CommonAnswer[] | undefined> {
-    return assignmentRepository.getCommonAnswers(assignmentId)
-  }
-
-  async getGradeParts(assignmentId: string): Promise<GradePart[] | undefined> {
-    return assignmentRepository.getGradeParts(assignmentId)
+  async getFeedback(assignmentId: string): Promise<Feedback[] | undefined> {
+    return assignmentRepository.getFeedback(assignmentId)
   }
 }
 

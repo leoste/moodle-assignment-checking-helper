@@ -1,16 +1,15 @@
-import { CommonAnswer } from '../../shared/types/CommonAnswer';
-import { GradePart } from '../../shared/types/GradePart';
+import type { FeedbackPart } from '../../shared/types/FeedbackPart';
 import { createAndAddChildElement, createAndAddChildImage } from '../pagemanager/element-creation-helper';
 
 export class ClickableListItemRenderer {
   readonly #list: HTMLElement
-  readonly #listItem: CommonAnswer | GradePart['parts'][number]
+  readonly #listItem: FeedbackPart
   #itemUpdatedCallback: () => void = () => {}
 
   #addButton!: HTMLImageElement
   #buttonsSection!: HTMLElement
 
-  constructor(list: HTMLElement, item: CommonAnswer | GradePart['parts'][number]) {
+  constructor(list: HTMLElement, item: FeedbackPart) {
     this.#list = list
     this.#listItem = item
   }
@@ -22,7 +21,7 @@ export class ClickableListItemRenderer {
   createItem(): void {
     const item = createAndAddChildElement(this.#list, 'li', 'clickable-list-item');
     const container = createAndAddChildElement(item, 'div', 'item-container');
-    createAndAddChildElement(container, 'div', 'text-section', this.#listItem.text);
+    createAndAddChildElement(container, 'div', 'text-section', this.#getDisplayText());
     this.#buttonsSection = createAndAddChildElement(container, 'div', 'buttons-section');
     this.createAddButton();
   }
@@ -33,6 +32,13 @@ export class ClickableListItemRenderer {
     classList.push(extraClass);
     this.#addButton = createAndAddChildImage(this.#buttonsSection, 'images/laughing-pointing-emoji.png', classList);
     this.#addButton.addEventListener('click', this.#addButtonOnClick);
+  }
+
+  #getDisplayText(): string | null {
+    const parts: string[] = []
+    if (this.#listItem.text) parts.push(this.#listItem.text)
+    if (this.#listItem.points) parts.push(`(${this.#listItem.points}p)`)
+    return parts.length > 0 ? parts.join(' ') : null
   }
 
   #addButtonOnClick = (): void => {

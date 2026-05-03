@@ -1,9 +1,7 @@
-import type { CommonAnswer } from './CommonAnswer'
-import type { GradePart } from './GradePart'
+import type { Feedback } from './Feedback'
 
 export interface Assignment {
   name: string
   moodleIds: string[]
-  commonAnswers: CommonAnswer[]
-  gradeParts: GradePart[]
+  feedback: Feedback[]
 }

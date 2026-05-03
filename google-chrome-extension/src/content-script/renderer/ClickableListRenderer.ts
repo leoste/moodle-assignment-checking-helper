@@ -1,5 +1,4 @@
-import type { CommonAnswer } from '../../shared/types/CommonAnswer';
-import type { GradePart } from '../../shared/types/GradePart';
+import type { FeedbackPart } from '../../shared/types/FeedbackPart';
 import { createElementWithClasses, createAndAddChildElement } from '../pagemanager/element-creation-helper';
 import { ClickableListItemRenderer } from './ClickableListItemRenderer';
 
@@ -11,16 +10,16 @@ interface ClickableListProperties {
 
 export class ClickableListRenderer {
   readonly #parentElement: HTMLElement
-  readonly #onClickCallback: (states: CommonAnswer[] | GradePart['parts']) => void
-  readonly #states: CommonAnswer[] | GradePart['parts']
+  readonly #onClickCallback: (states: FeedbackPart[]) => void
+  readonly #states: FeedbackPart[]
   readonly #properties: ClickableListProperties
 
   #list!: HTMLElement
 
   constructor(
     parentElement: HTMLElement,
-    onClickCallback: (states: CommonAnswer[] | GradePart['parts']) => void,
-    items: CommonAnswer[] | GradePart['parts'],
+    onClickCallback: (states: FeedbackPart[]) => void,
+    items: FeedbackPart[],
     properties: ClickableListProperties
   ) {
     this.#parentElement = parentElement
@@ -42,7 +41,7 @@ export class ClickableListRenderer {
     // TODO: implement
   }
 
-  #createItem = (item: CommonAnswer | GradePart['parts'][number]): void => {
+  #createItem = (item: FeedbackPart): void => {
     const renderer = new ClickableListItemRenderer(this.#list, item);
     renderer.setItemUpdatedCallback(this.#itemUpdatedCallback);
     renderer.createItem();

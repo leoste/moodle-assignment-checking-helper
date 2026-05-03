@@ -1,15 +1,16 @@
-import MessageHandlerMap from '../object/MessageHandlerMap'
+import ChromeMessageHandlerMap from '../../shared/object/ChromeMessageHandlerMap'
+import type { ChromeMessageHandler } from '../../shared/types/ChromeMessageHandler'
 
 export default class BaseController {
 
   static #oneTimeInitiated = false
-  static #messageHandlerMap: MessageHandlerMap
+  static #messageHandlerMap: ChromeMessageHandlerMap
 
   init(): void {
     this.#tryOneTimeInit()
   }
 
-  addMessageHandler(messageType: string, messageHandler: (content: Record<string, unknown>) => Promise<unknown>): void {
+  addMessageHandler(messageType: string, messageHandler: ChromeMessageHandler): void {
     BaseController.#messageHandlerMap.add(messageType, messageHandler)
   }
 
@@ -26,7 +27,7 @@ export default class BaseController {
   }
 
   #initMessageHandlerMap(): void {
-    BaseController.#messageHandlerMap = new MessageHandlerMap()
+    BaseController.#messageHandlerMap = new ChromeMessageHandlerMap()
   }
 
   #initListener(): void {

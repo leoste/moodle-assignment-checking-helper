@@ -17,7 +17,7 @@ class VsCodeConnectionProvider {
     this.#provider.onDisconnect = () => this.#cancelAll()
   }
 
-  async post(channel: string, content: unknown): Promise<unknown> {
+  post(channel: string, content: unknown): Promise<unknown> {
     return new Promise((resolve, reject) => {
       const id = crypto.randomUUID()
       const timer = setTimeout(() => {

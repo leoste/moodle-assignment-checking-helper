@@ -1,18 +1,16 @@
 import { FILES_GET_SOURCES, FILES_UPDATE_CACHE } from '../../shared/constants/messages'
-import FileCacheRepository from '../repository/FileCacheRepository'
 import ChromeExtensionMessageController from './ChromeExtensionMessageController'
+import { fileCacheService } from '../service/FileCacheService'
 
 class FileCacheController extends ChromeExtensionMessageController {
   protected override async onInit(): Promise<void> {
-    
     this.addMessageHandler(FILES_GET_SOURCES, async () =>
-      FileCacheRepository.getRegistry().map(r => r.fileSourceInfo)
+      fileCacheService.getFileSources()
     )
 
     this.addMessageHandler(FILES_UPDATE_CACHE, async (content) => {
       const { cacheKey, files } = content as { cacheKey: string; files: string[] }
-      const repo = FileCacheRepository.getRegistry().find(r => r.fileSourceInfo.cacheKey === cacheKey)
-      await repo?.setFileContents(files)
+      await fileCacheService.updateCache(cacheKey, files)
     })
   }
 }

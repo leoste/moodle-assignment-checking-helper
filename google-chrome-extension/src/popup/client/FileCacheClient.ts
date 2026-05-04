@@ -1,5 +1,5 @@
 import { FILES_GET_SOURCES, FILES_UPDATE_CACHE } from '../../shared/constants/messages'
-import ChromeExtensionMessageClient from '../../shared/client/BaseClient'
+import ChromeExtensionMessageClient from '../../shared/client/ChromeExtensionMessageClient'
 import type { FileSourceInfo } from '../../shared/types/FileSourceInfo'
 
 class FileCacheClient extends ChromeExtensionMessageClient {

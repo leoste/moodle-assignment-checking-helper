@@ -1,4 +1,4 @@
-import ChromeExtensionMessageClient from '../../shared/client/BaseClient'
+import ChromeExtensionMessageClient from '../../shared/client/ChromeExtensionMessageClient'
 import { PAGE_INFO_POST_STUDENT_NAME } from '../../shared/constants/messages'
 
 // This is the Visual Studio Code communicating client

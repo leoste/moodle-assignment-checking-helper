@@ -4,10 +4,6 @@ import type { ChromeMessageHandler } from '../../shared/types/ChromeMessageHandl
 
 export default class ChromeExtensionMessageController extends BaseController {
 
-    /*
-    TODO: implement close() by removing all added listeners
-    */
-
   static #messageHandlerMap: ChromeMessageHandlerMap
 
   protected override async onOneTimeInit(): Promise<void> {

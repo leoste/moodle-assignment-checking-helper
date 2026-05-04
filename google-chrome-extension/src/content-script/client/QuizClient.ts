@@ -1,5 +1,5 @@
 import type { AutoGradeId } from '../../shared/types/AutoGradeId'
-import ChromeExtensionMessageClient from '../../shared/client/BaseClient'
+import ChromeExtensionMessageClient from '../../shared/client/ChromeExtensionMessageClient'
 import {
   QUIZ_AUTO_GRADE_BEGIN,
   QUIZ_AUTO_GRADE_END,

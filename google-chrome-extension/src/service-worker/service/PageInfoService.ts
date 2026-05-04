@@ -1,11 +1,11 @@
 import BaseService from '@shared/service/BaseService'
-import { webSocketService } from './WebSocketService'
+import { chromeVsCodeClient } from '../client/ChromeVsCodeClient'
 
 class PageInfoService extends BaseService {
   static readonly #CHANNEL = 'page-info'
 
   async postStudentName(studentName: string): Promise<unknown> {
-    return webSocketService.post(PageInfoService.#CHANNEL, studentName)
+    return chromeVsCodeClient.postMessage(PageInfoService.#CHANNEL, studentName)
   }
 }
 

@@ -1,5 +1,5 @@
 import type { Feedback } from '../../shared/types/Feedback'
-import ChromeExtensionMessageClient from '../../shared/client/BaseClient'
+import ChromeExtensionMessageClient from '../../shared/client/ChromeExtensionMessageClient'
 import { FEEDBACK_GET } from '../../shared/constants/messages'
 
 export default class FeedbackClient extends ChromeExtensionMessageClient {

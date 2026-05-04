@@ -1,6 +1,5 @@
-import WebSocketProvider from '../provider/WebSocketProvider'
+import WebSocketProvider from './WebSocketProvider'
 import type { WebSocketResponse } from '@shared/types/WebSocketProtocol'
-import BaseService from '@shared/service/BaseService'
 
 interface PendingRequest {
   resolve: (value: unknown) => void
@@ -8,13 +7,12 @@ interface PendingRequest {
   timer: ReturnType<typeof setTimeout>
 }
 
-class WebSocketService extends BaseService {
+class VsCodeConnectionProvider {
   readonly #provider = new WebSocketProvider()
   readonly #requests = new Map<string, PendingRequest>()
   readonly #timeoutMs = 5000
 
-  async onInit() {
-    await super.onInit()
+  constructor() {
     this.#provider.onMessage = (raw) => this.#handleMessage(raw)
     this.#provider.onDisconnect = () => this.#cancelAll()
   }
@@ -42,8 +40,7 @@ class WebSocketService extends BaseService {
     try {
       parsed = JSON.parse(raw) as WebSocketResponse
     } catch {
-      // Cannot correlate to a request without an id — log and discard.
-      console.error('[WebSocketService] Failed to parse incoming message:', raw)
+      console.error('[VsCodeConnectionProvider] Failed to parse incoming message:', raw)
       return
     }
     this.#complete(parsed.id, parsed.content)
@@ -73,4 +70,4 @@ class WebSocketService extends BaseService {
   }
 }
 
-export const webSocketService = new WebSocketService()
+export const vsCodeConnectionProvider = new VsCodeConnectionProvider()

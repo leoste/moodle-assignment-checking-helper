@@ -1,11 +1,9 @@
-import { webSocketService } from './WebSocketService'
 import { assignmentService } from './AssignmentService'
 import { fileCacheService } from './FileCacheService'
 import { pageInfoService } from './PageInfoService'
 import { quizService } from './QuizService'
 
 export default function initServices(): void {
-  webSocketService.init()
   assignmentService.init()
   fileCacheService.init()
   pageInfoService.init()

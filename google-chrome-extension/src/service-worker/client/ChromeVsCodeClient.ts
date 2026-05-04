@@ -1,9 +1,9 @@
 import BaseClient from '@shared/client/BaseClient'
-import { webSocketService } from '../service/WebSocketService'
+import { vsCodeConnectionProvider } from '../provider/VsCodeConnectionProvider'
 
 class ChromeVsCodeClient extends BaseClient {
   async postMessage(channel: string, content: unknown): Promise<unknown> {
-    return webSocketService.post(channel, content)
+    return vsCodeConnectionProvider.post(channel, content)
   }
 }
 

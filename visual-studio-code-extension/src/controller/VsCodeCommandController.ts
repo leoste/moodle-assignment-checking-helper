@@ -1,7 +1,7 @@
 import * as vscode from 'vscode'
-import BaseController from '@shared/controller/BaseController'
+import CloseableBaseController from './CloseableBaseController'
 
-export default class VsCodeCommandController extends BaseController {
+export default class VsCodeCommandController extends CloseableBaseController {
   #subscriptions: vscode.Disposable[] = []
 
   registerCommand(id: string, callback: (...args: any[]) => any): void {

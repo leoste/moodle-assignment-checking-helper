@@ -1,4 +1,4 @@
-import ChromeExtensionMessageController from './ChromeWebSocketController'
+import ChromeExtensionMessageController from './ChromeExtensionMessageController'
 import { assignmentService } from '../service/AssignmentService'
 import { FEEDBACK_GET } from '../../shared/constants/messages'
 

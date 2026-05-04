@@ -1,5 +1,5 @@
 import { pageInfoService } from '../service/PageInfoService'
-import ChromeExtensionMessageController from './ChromeWebSocketController'
+import ChromeExtensionMessageController from './ChromeExtensionMessageController'
 import { PAGE_INFO_POST_STUDENT_NAME } from '../../shared/constants/messages'
 
 class PageInfoController extends ChromeExtensionMessageController {

@@ -1,4 +1,4 @@
-import ChromeExtensionMessageController from './ChromeWebSocketController'
+import ChromeExtensionMessageController from './ChromeExtensionMessageController'
 import type { AutoGradeId } from '../../shared/types/AutoGradeId'
 import { quizService } from '../service/QuizService'
 import {

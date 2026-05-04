@@ -1,4 +1,4 @@
-import BaseController from '@shared/controller/BaseController'
+import CloseableBaseController from './CloseableBaseController'
 import { WebSocketServer } from 'ws'
 import type { WebSocket } from 'ws'
 import type { WebSocketMessage } from '@shared/types/WebSocketProtocol'
@@ -6,7 +6,7 @@ import { WEBSOCKET_HOST, WEBSOCKET_PORT } from '../config'
 import VsCodeMessageHandlerMap from '../shared/object/VsCodeMessageHandlerMap'
 import type { VsCodeMessageHandler } from '../shared/types/VsCodeMessageHandler'
 
-export default class VsCodeWebSocketController extends BaseController {
+export default class VsCodeWebSocketController extends CloseableBaseController {
   static #messageHandlerMap: VsCodeMessageHandlerMap
   static #wss: WebSocketServer | null = null
 

@@ -11,12 +11,12 @@ class QuizReviewListener extends BaseMoodlePageListener {
 
     #createAutoGradeButtons() {
         void getQuizId()
-        // TODO: use quizid and questionid to fetch common answers
+        // TODO: use quizid and questionid to fetch newly added QuizFeedback
         // implement sidepanel similar like on assignments with my custom controls
         // print question number + common answers as buttons into sidepanel
         // when pressed, automatically assign answer and points.
         // this probably doesnt need the combination of multiple common answers into one
-        // split commonanswers into assignment and quiz separately as theyre different
+        // two types of feedback need to be implemented. 1) assignmentfeedback 2) quizfeedback
 
         const graderBoxes = getManualGradedBoxes()
 

@@ -1,8 +1,8 @@
 import { FILES_GET_SOURCES, FILES_UPDATE_CACHE } from '../../shared/constants/messages'
-import BaseClient from '../../shared/client/BaseClient'
+import ChromeExtensionMessageClient from '../../shared/client/BaseClient'
 import type { FileSourceInfo } from '../../shared/types/FileSourceInfo'
 
-class FileCacheClient extends BaseClient {
+class FileCacheClient extends ChromeExtensionMessageClient {
   async getFileSources(): Promise<FileSourceInfo[]> {
     return chrome.runtime.sendMessage(this.makeMessage(FILES_GET_SOURCES, {}))
   }

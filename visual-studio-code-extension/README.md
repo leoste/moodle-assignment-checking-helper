@@ -4,6 +4,8 @@ The Visual Studio Code Extension runs as a companion to the Google Chrome Extens
 
 The files must already be downloaded from Moodle all at once into separate folders and this folder must be already opened in Visual Studio Code.
 
+Also adds a right-click menu shortcut to run python files in terminal.
+
 ## Setup
 
 ### Prerequisites

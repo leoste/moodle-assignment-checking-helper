@@ -1,4 +1,4 @@
-import ChromeBaseController from './ChromeBaseController'
+import ChromeExtensionMessageController from './ChromeWebSocketController'
 import type { AutoGradeId } from '../../shared/types/AutoGradeId'
 import { quizService } from '../service/QuizService'
 import {
@@ -7,7 +7,7 @@ import {
   QUIZ_AUTO_GRADE_IS_ACTIVE,
 } from '../../shared/constants/messages'
 
-class QuizController extends ChromeBaseController {
+class QuizController extends ChromeExtensionMessageController {
   protected override async onInit(): Promise<void> {
     this.addMessageHandler(QUIZ_AUTO_GRADE_BEGIN, async (content) => {
       await quizService.beginAutoGrade(content.autoGradeId as AutoGradeId)

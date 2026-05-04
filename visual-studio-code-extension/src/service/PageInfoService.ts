@@ -7,6 +7,8 @@ class PageInfoService extends BaseService {
   async handlePageInfo(studentName: string): Promise<void> {
     if (!studentName) return
 
+    vscode.window.terminals.forEach(t => t.dispose())
+    await vscode.commands.executeCommand('workbench.files.action.collapseExplorerFolders')
     await vscode.commands.executeCommand('workbench.action.closeAllEditors')
 
     const folders = vscode.workspace.workspaceFolders

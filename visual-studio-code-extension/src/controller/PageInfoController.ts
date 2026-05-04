@@ -1,7 +1,7 @@
 import { pageInfoService } from '../service/PageInfoService'
-import VsCodeBaseController from './VsCodeBaseController'
+import VsCodeWebSocketController from './VsCodeWebSocketController'
 
-class PageInfoController extends VsCodeBaseController {
+class PageInfoController extends VsCodeWebSocketController {
   protected override async onInit(): Promise<void> {
     this.addMessageHandler('page-info', async (content) => {
       await pageInfoService.handlePageInfo(content as unknown as string)

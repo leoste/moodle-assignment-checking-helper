@@ -6,6 +6,30 @@
   "engines": { "vscode": "^1.90.0" },
   "categories": ["Other"],
   "activationEvents": ["onStartupFinished"],
+  "contributes": {
+    "commands": [
+      {
+        "command": "moodle-helper.runPythonInTerminal",
+        "title": "Run Python script in a new terminal"
+      }
+    ],
+    "menus": {
+      "explorer/context": [
+        {
+          "command": "moodle-helper.runPythonInTerminal",
+          "when": "resourceExtname == .py",
+          "group": "navigation"
+        }
+      ],
+      "editor/title/context": [
+        {
+          "command": "moodle-helper.runPythonInTerminal",
+          "when": "resourceExtname == .py",
+          "group": "navigation"
+        }
+      ]
+    }
+  },
   "main": "./dist/extension.js",
   "scripts": {
     "compile":          "node esbuild.js",

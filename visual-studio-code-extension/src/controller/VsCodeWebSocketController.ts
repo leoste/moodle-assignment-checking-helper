@@ -6,13 +6,13 @@ import { WEBSOCKET_HOST, WEBSOCKET_PORT } from '../config'
 import VsCodeMessageHandlerMap from '../shared/object/VsCodeMessageHandlerMap'
 import type { VsCodeMessageHandler } from '../shared/types/VsCodeMessageHandler'
 
-export default class VsCodeBaseController extends BaseController {
+export default class VsCodeWebSocketController extends BaseController {
   static #messageHandlerMap: VsCodeMessageHandlerMap
   static #wss: WebSocketServer | null = null
 
   close(): void {
-    VsCodeBaseController.#wss?.close()
-    VsCodeBaseController.#wss = null
+    VsCodeWebSocketController.#wss?.close()
+    VsCodeWebSocketController.#wss = null
   }
 
   protected override async onOneTimeInit(): Promise<void> {
@@ -21,16 +21,16 @@ export default class VsCodeBaseController extends BaseController {
   }
 
   addMessageHandler(channel: string, handler: VsCodeMessageHandler): void {
-    VsCodeBaseController.#messageHandlerMap.add(channel, handler)
+    VsCodeWebSocketController.#messageHandlerMap.add(channel, handler)
   }
 
   #initMessageHandlerMap(): void {
-    VsCodeBaseController.#messageHandlerMap = new VsCodeMessageHandlerMap()
+    VsCodeWebSocketController.#messageHandlerMap = new VsCodeMessageHandlerMap()
   }
 
   #initWebSocketServer(): void {
     const wss = new WebSocketServer({ port: WEBSOCKET_PORT, host: WEBSOCKET_HOST })
-    VsCodeBaseController.#wss = wss
+    VsCodeWebSocketController.#wss = wss
     wss.on('connection', (ws) => {
       console.log('Chrome extension connected.')
       ws.on('message', async (raw) => {
@@ -48,9 +48,9 @@ export default class VsCodeBaseController extends BaseController {
   }
 
   async #handleMessage(data: WebSocketMessage, ws: WebSocket): Promise<void> {
-    const handler = VsCodeBaseController.#messageHandlerMap.get(data.channel)
+    const handler = VsCodeWebSocketController.#messageHandlerMap.get(data.channel)
     if (!handler) {
-      console.warn(`[VsCodeBaseController] No handler for channel: "${data.channel}"`)
+      console.warn(`[VsCodeWebSocketController] No handler for channel: "${data.channel}"`)
       this.#sendResponse(ws, data.id, 'unhandled')
       return
     }

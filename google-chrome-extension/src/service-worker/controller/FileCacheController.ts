@@ -1,8 +1,8 @@
 import { FILES_GET_SOURCES, FILES_UPDATE_CACHE } from '../../shared/constants/messages'
 import FileCacheRepository from '../repository/FileCacheRepository'
-import ChromeBaseController from './ChromeBaseController'
+import ChromeExtensionMessageController from './ChromeWebSocketController'
 
-class FileCacheController extends ChromeBaseController {
+class FileCacheController extends ChromeExtensionMessageController {
   protected override async onInit(): Promise<void> {
     
     this.addMessageHandler(FILES_GET_SOURCES, async () =>

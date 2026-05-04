@@ -2,7 +2,12 @@ import BaseController from '@shared/controller/BaseController'
 import ChromeMessageHandlerMap from '../../shared/object/ChromeMessageHandlerMap'
 import type { ChromeMessageHandler } from '../../shared/types/ChromeMessageHandler'
 
-export default class ChromeBaseController extends BaseController {
+export default class ChromeExtensionMessageController extends BaseController {
+
+    /*
+    TODO: implement close() by removing all added listeners
+    */
+
   static #messageHandlerMap: ChromeMessageHandlerMap
 
   protected override async onOneTimeInit(): Promise<void> {
@@ -11,11 +16,11 @@ export default class ChromeBaseController extends BaseController {
   }
 
   addMessageHandler(messageType: string, messageHandler: ChromeMessageHandler): void {
-    ChromeBaseController.#messageHandlerMap.add(messageType, messageHandler)
+    ChromeExtensionMessageController.#messageHandlerMap.add(messageType, messageHandler)
   }
 
   #initMessageHandlerMap(): void {
-    ChromeBaseController.#messageHandlerMap = new ChromeMessageHandlerMap()
+    ChromeExtensionMessageController.#messageHandlerMap = new ChromeMessageHandlerMap()
   }
 
   #initListener(): void {
@@ -35,9 +40,9 @@ export default class ChromeBaseController extends BaseController {
     message: { type: string; content: Record<string, unknown> },
     sendResponse: (response: unknown) => void
   ): Promise<void> {
-    const messageHandler = ChromeBaseController.#messageHandlerMap.get(message.type)
+    const messageHandler = ChromeExtensionMessageController.#messageHandlerMap.get(message.type)
     if (!messageHandler) {
-      console.error(`[ChromeBaseController] No handler registered for message type: "${message.type}"`)
+      console.error(`[ChromeWebSocketController] No handler registered for message type: "${message.type}"`)
       sendResponse(undefined)
       return
     }

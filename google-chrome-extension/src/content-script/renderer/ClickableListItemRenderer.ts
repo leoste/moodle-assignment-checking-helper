@@ -47,7 +47,7 @@ export class ClickableListItemRenderer extends BaseRenderer {
     const classList = ['add-button'];
     const extraClass = this.#listItem.enabled ? 'active' : 'inactive';
     classList.push(extraClass);
-    this.#addButton = createAndAddChildImage(this.#buttonsSection!, 'images/laughing-pointing-emoji.png', classList);
+    this.#addButton = createAndAddChildImage(this.#buttonsSection!, 'images/double-thumbs-up-emoji.png', classList);
     this.#addButton.addEventListener('click', this.#addButtonOnClick);
   }
 

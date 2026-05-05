@@ -13,6 +13,13 @@ div.checking-helper-panel {
   right: 0;
   overflow-y: scroll;
   overflow-x: auto;
+
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-rows: 1fr;
+  gap: 1.2em;
+  align-items: stretch;
+  container-type: inline-size;
 }
 
 div[data-region="review-panel"] {
@@ -25,16 +32,6 @@ div[data-region="grade-panel"] {
   width: 20% !important;
 }
 
-/* -------- */
-
-div.checking-helper-panel {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  grid-template-rows: 1fr;
-  gap: 10px;
-  align-items: stretch;
-}
-
 .feedback-subpanel, .quick-submit-subpanel {
   margin: 10px;
 }
@@ -43,6 +40,20 @@ div.checking-helper-panel {
   grid-column: 1 / 2;
   grid-row: 1 / 2;
   height: auto;
+}
+
+.feedback-subpanel > h2 {
+  column-span: all;
+}
+
+@container (min-width: 1000px) {
+  .feedback-subpanel {
+    column-count: 2;
+  }
+}
+
+div.common-answer-section {
+  break-inside: avoid;
 }
 
 .quick-submit-subpanel {

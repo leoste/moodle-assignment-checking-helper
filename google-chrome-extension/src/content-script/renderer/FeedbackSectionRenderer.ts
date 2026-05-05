@@ -59,7 +59,7 @@ export class FeedbackSectionRenderer extends BaseRenderer {
       item.parts,
       {
         sectionDivClass: 'common-answer-section',
-        sectionTitle: `${item.title} (${item.max.points}p)`,
+        sectionTitle: `${item.title} (${item.max_points}p)`,
         listItemClass: 'common-answer-list',
       }
     )

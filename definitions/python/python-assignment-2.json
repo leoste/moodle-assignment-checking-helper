@@ -9,7 +9,7 @@
         { "points": 5, "text": "Projektis on csv faili lugemine ja kas muutujasse või andmebaasi salvestamine.", "enabled": true, "textDisabled": true },
         { "points": 5, "text": "Projektis on API kood.", "enabled": true, "textDisabled": true },
         { "points": 5, "text": "Projektis on veebiosa kood. Osad võivad olla samas failis.", "enabled": true, "textDisabled": true },
-        { "points": 0, "text": "API ja veebiosad võiksid olla eraldatud eraldi projektidesse ja kasutada erinevaid porte. Nii oleks võimalik neid üksteisest sõltumatult jooksutada.", "enabled": false },
+        { "points": 0, "text": "API ja veebiosad võiksid muidugi olla eraldatud eraldi projektidesse ja kasutada erinevaid porte. Nii oleks võimalik neid üksteisest sõltumatult jooksutada.", "enabled": false },
         {
           "text": "Üks miinuspunkt on selle eest, et üleslaetud fail sisaldab mõlema projekti kohta .idea ja .venv faile, mille eest on kodutöö kirjelduses eraldi punase kirjaga hoiatatud.",
           "points": -1,

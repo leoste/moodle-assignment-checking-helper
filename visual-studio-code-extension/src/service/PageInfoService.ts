@@ -1,6 +1,6 @@
 import * as vscode from 'vscode'
 import * as path from 'path'
-import { OPEN_SUB_DIRECTORIES, SAFE_BINARY_EXTENSIONS } from '../config'
+import { OPEN_SUB_DIRECTORIES, SAFE_BINARY_EXTENSIONS, MAX_AUTO_OPENED_FILES, BLACKLISTED_FOLDER_NAMES } from '../config'
 import BaseService from '@shared/service/BaseService'
 
 class PageInfoService extends BaseService {
@@ -39,6 +39,7 @@ class PageInfoService extends BaseService {
 
     let fileCount = 0
     for (const [dirUri, fileName] of files) {
+      if (fileCount >= MAX_AUTO_OPENED_FILES) break
       const column = (fileCount % 2) + 1
       const opened = await this.#openFile(dirUri, fileName, column)
       if (opened) fileCount++
@@ -51,7 +52,7 @@ class PageInfoService extends BaseService {
     for (const [name, type] of entries) {
       if (type === vscode.FileType.File) {
         result.push([dirUri, name])
-      } else if (type === vscode.FileType.Directory) {
+      } else if (type === vscode.FileType.Directory && !BLACKLISTED_FOLDER_NAMES.has(name)) {
         result = result.concat(await this.#collectFiles(vscode.Uri.joinPath(dirUri, name)))
       }
     }

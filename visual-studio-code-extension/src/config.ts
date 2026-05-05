@@ -8,6 +8,10 @@ export const WEBSOCKET_HOST = '127.0.0.1'
 
 export const OPEN_SUB_DIRECTORIES = true
 
+export const MAX_AUTO_OPENED_FILES = 20
+
+export const BLACKLISTED_FOLDER_NAMES = new Set(['.idea', '.venv'])
+
 export const SAFE_BINARY_EXTENSIONS = new Set([
   '.png', '.jpg', '.jpeg', '.gif', '.webp', '.svg', '.bmp', '.pdf',
 ])

@@ -4,7 +4,7 @@
   "feedback": [
     {
       "title": "Struktuur",
-      "max": { "points": 15 },
+      "max_points": 15,
       "parts": [
         { "points": 5, "text": "Projektis on csv faili lugemine ja kas muutujasse või andmebaasi salvestamine.", "enabled": true, "textDisabled": true },
         { "points": 5, "text": "Projektis on API kood.", "enabled": true, "textDisabled": true },
@@ -19,7 +19,7 @@
     },
     {
       "title": "Funktsionaalsus",
-      "max": { "points": -4 },
+      "max_points": -4,
       "parts": [
         { "points": -1, "text": "Kohvikute lisamine ei tööta.", "enabled": false },
         { "points": -1, "text": "Kohvikute muutmine ei tööta.", "enabled": false },
@@ -29,7 +29,7 @@
     },
     {
       "title": "Hilinemine",
-      "max": { "points": -6 },
+      "max_points": -6,
       "parts": [
         { "points": -1, "text": "12h", "enabled": false, "textDisabled": true },
         { "points": -1, "text": "1p", "enabled": false, "textDisabled": true },

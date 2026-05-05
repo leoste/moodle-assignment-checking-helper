@@ -4,7 +4,7 @@
   "feedback": [
     {
       "title": "default",
-      "max": { "points": 0, "text": null },
+      "max_points": 0,
       "parts": [
         { "text": "Hello!", "enabled": true },
         { "text": null, "enabled": true },
@@ -13,7 +13,7 @@
     },
     {
       "title": "Probleemituvastus",
-      "max": { "points": 30, "text": "Terve hulk probleeme, mõistlikult kategoriseeritud, lahendusi pakutud" },
+      "max_points": 30,
       "parts": [
         { "points": 10, "text": "välja toodud vähemalt 5 probleemi", "enabled": false },
         { "points": 10, "text": "ära märgitud probleemide tüüp ja olemus", "enabled": false },
@@ -22,7 +22,7 @@
     },
     {
       "title": "Schema design",
-      "max": { "points": 35, "text": "ER diagramm, normaliseeritud, tabelite ja constraintide kirjeldus (võib ka sql queryna olla)" },
+      "max_points": 35,
       "parts": [
         { "points": 10, "text": "ER diagramm olemas", "enabled": false },
         { "points": 10, "text": "andmebaas normaliseeritud", "enabled": false },
@@ -31,7 +31,7 @@
     },
     {
       "title": "Implementation",
-      "max": { "points": 20, "text": "normaalselt tehtud CREATE TABLE, INSERT INTO, SELECT queryd" },
+      "max_points": 20,
       "parts": [
         { "points": 8, "text": "SCHEMA queryd olemas ja korrektsed", "enabled": false },
         { "points": 8, "text": "MIGRATION queryd olemas ja toimivad", "enabled": false },
@@ -40,7 +40,7 @@
     },
     {
       "title": "Documentation",
-      "max": { "points": 15, "text": "hästi põhjendatud ja selgitatud" },
+      "max_points": 15,
       "parts": [
         { "points": 5, "text": "töösse on kirjutatud selgitusi", "enabled": false },
         { "points": 5, "text": "otsused on põhjendatud", "enabled": false },

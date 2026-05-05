@@ -4,7 +4,7 @@
   "feedback": [
     {
       "title": "default",
-      "max": { "points": 0, "text": null },
+      "max_points": 0,
       "parts": [
         {
           "text": "Everything is correct, the queries are well written and run successfully.",

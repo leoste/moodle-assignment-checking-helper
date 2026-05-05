@@ -4,6 +4,7 @@ import deepCopy from '../../shared/util/deepCopy';
 import { getGradeInput, getCommentTextarea, getCommentLink } from '../pagemanager/assignment-moodle-helper';
 import BaseRenderer from './BaseRenderer';
 import { ClickableListRenderer } from './ClickableListRenderer';
+import { CommentPrefixRenderer } from './CommentPrefixRenderer';
 
 export class FeedbackSectionRenderer extends BaseRenderer {
   readonly #parentElement: HTMLElement
@@ -11,6 +12,7 @@ export class FeedbackSectionRenderer extends BaseRenderer {
   #gradeInput!: HTMLInputElement
   #commentTextarea!: HTMLTextAreaElement
 
+  #commentPrefixRenderer: CommentPrefixRenderer | undefined
   #clickableListRenderers: ClickableListRenderer[] = []
 
   constructor(parentElement: HTMLElement, feedbackItems: Feedback[] | undefined) {
@@ -29,13 +31,19 @@ export class FeedbackSectionRenderer extends BaseRenderer {
     this.#gradeInput = getGradeInput()
     this.#commentTextarea = getCommentTextarea()
     this.#expandCommentSection()
-    
+
+    this.#commentPrefixRenderer = new CommentPrefixRenderer(this.#parentElement)
+    this.#commentPrefixRenderer.setOnChangeCallback(() => this.#updateComment())
+    await this.#commentPrefixRenderer.render()
+
     for (const item of this.#feedbackItems) {
         await this.#createFeedbackList(item)
     }
   }
 
   async clear() {
+    await this.#commentPrefixRenderer?.clear()
+    this.#commentPrefixRenderer = undefined
     for (const renderer of this.#clickableListRenderers) {
         await renderer.clear()
     }
@@ -94,9 +102,12 @@ export class FeedbackSectionRenderer extends BaseRenderer {
 
   #buildCommentText(): string {
     const texts: string[] = []
+    const prefix = this.#commentPrefixRenderer?.value
+    if (prefix) texts.push(prefix)
     for (const item of this.#feedbackItems) {
       for (const part of item.parts) {
-        if (part.enabled && part.text && !part.textDisabled) texts.push(part.text)
+        if (part.enabled && part.enabledText) texts.push(part.enabledText)
+        if (!part.enabled && part.disabledText) texts.push(part.disabledText)
       }
     }
     return texts.join('\n')

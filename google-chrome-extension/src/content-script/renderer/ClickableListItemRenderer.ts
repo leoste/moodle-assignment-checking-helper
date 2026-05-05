@@ -52,10 +52,15 @@ export class ClickableListItemRenderer extends BaseRenderer {
   }
 
   #getDisplayText(): string | null {
-    const parts: string[] = []
-    if (this.#listItem.text) parts.push(this.#listItem.text)
-    if (this.#listItem.points) parts.push(`(${this.#listItem.points}p)`)
-    return parts.length > 0 ? parts.join(' ') : null
+    const lines: string[] = []
+    if (this.#listItem.labelText) lines.push(`label: ${this.#listItem.labelText}`)
+    if (this.#listItem.enabledText) lines.push(`enabled: ${this.#listItem.enabledText}`)
+    if (this.#listItem.disabledText) lines.push(`disabled: ${this.#listItem.disabledText}`)
+    if (this.#listItem.points) {
+      if (lines.length > 0) lines[0] += ` (${this.#listItem.points}p)`
+      else lines.push(`(${this.#listItem.points}p)`)
+    }
+    return lines.length > 0 ? lines.join('\n') : null
   }
 
   #addButtonOnClick = (): void => {

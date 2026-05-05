@@ -6,20 +6,20 @@
             "title": "Kaabitsa funktsionaalsus",
             "max_points": 9,
             "parts": [
-                { "enabled": true, "textDisabled": true, "points": 5, "text": "Eksisteerib veebikaabits." },
-                { "enabled": true, "textDisabled": true, "points": 1, "text": "Valitud veebilehel on vähemalt 150 objekti ja 5 alamlehte." },
-                { "enabled": true, "textDisabled": true, "points": 1, "text": "Kaabits kasutab rekursiooni." },
-                { "enabled": true, "textDisabled": true, "points": 1, "text": "Salvestatud on vähemalt toodete nimed, hind ja pilt." },
-                { "enabled": true, "textDisabled": true, "points": 1, "text": "Andmed on automaatselt kantud andmebaasi." }
+                { "enabled": true, "points": 5, "labelText": "Eksisteerib veebikaabits." },
+                { "enabled": true, "points": 1, "labelText": "Valitud veebilehel on vähemalt 150 objekti ja 5 alamlehte." },
+                { "enabled": true, "points": 1, "labelText": "Kaabits kasutab rekursiooni." },
+                { "enabled": true, "points": 1, "labelText": "Salvestatud on vähemalt toodete nimed, hind ja pilt." },
+                { "enabled": true, "points": 1, "labelText": "Andmed on automaatselt kantud andmebaasi." }
             ]
         },
         {
             "title": "Veebilehe funktsionaalsus",
             "max_points": 6,
             "parts": [
-                { "enabled": true, "textDisabled": true, "points": 4, "text": "Eksisteerib veebileht või API koos veebilehega." },
-                { "enabled": true, "textDisabled": true, "points": 1, "text": "Veebilehel saab teha päringu kõigi kallim kui XX eurot kaupade nägemiseks." },
-                { "enabled": true, "textDisabled": true, "points": 1, "text": "Leht on funktsionaalne." }
+                { "enabled": true, "points": 4, "labelText": "Eksisteerib veebileht või API koos veebilehega." },
+                { "enabled": true, "points": 1, "labelText": "Veebilehel saab teha päringu kõigi kallim kui XX eurot kaupade nägemiseks." },
+                { "enabled": true, "points": 1, "labelText": "Leht on funktsionaalne." }
             ]
         }
     ]

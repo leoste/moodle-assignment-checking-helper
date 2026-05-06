@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "PowerShell(Get-ChildItem \"b:\\\\kood\\\\github\\\\moodle-assignment-checking-helper\\\\chrome-extension\" -Recurse -File | Where-Object { $_.Extension -in @\\('.ts', '.tsx', '.json'\\) } | Select-Object -ExpandProperty FullName)",
-      "Bash(npm run *)"
+      "Bash(npm run *)",
+      "Bash(Get-ChildItem -Path \"b:\\\\kood\\\\github\\\\moodle-assignment-checking-helper\" -Directory)"
     ]
   }
 }

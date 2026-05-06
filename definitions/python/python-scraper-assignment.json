@@ -1,6 +1,7 @@
 {
-    "name": "Python Assignment 3",
+    "name": "Python Web Scraper Assignment",
     "moodleIds": ["941898"],
+    "course_code": "ICS0019",
     "feedback": [
         {
             "title": "Kaabitsa funktsionaalsus",
@@ -20,6 +21,25 @@
                 { "enabled": true, "points": 4, "labelText": "Eksisteerib veebileht või API koos veebilehega." },
                 { "enabled": true, "points": 1, "labelText": "Veebilehel saab teha päringu kõigi kallim kui XX eurot kaupade nägemiseks." },
                 { "enabled": true, "points": 1, "labelText": "Leht on funktsionaalne." }
+            ]
+        },
+        {
+            "title": "Tähelepanekud",
+            "max_points": 0,
+            "parts": [
+                { "enabledText": "Veebi disaini juures soovitaksin kirjutada ikkagi html ja css eraldi, kuna siis te ei peaks duubeldama sama css iga kord, kui sama elementi uuesti kasutate.", "enabled": false }
+            ]
+        },
+        {
+            "title": "Hilinemine",
+            "max_points": -6,
+            "parts": [
+                { "points": -1, "labelText": "12h", "enabled": false },
+                { "points": -2, "labelText": "1p", "enabled": false },
+                { "points": -3, "labelText": "1p 12h", "enabled": false },
+                { "points": -4, "labelText": "2p", "enabled": false },
+                { "points": -5, "labelText": "2p 12h", "enabled": false },
+                { "points": -6, "labelText": "3p", "enabled": false }
             ]
         }
     ]

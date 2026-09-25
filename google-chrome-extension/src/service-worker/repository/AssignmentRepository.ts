@@ -3,13 +3,16 @@ import type { Feedback } from '../../shared/types/Feedback'
 import type { FileSourceInfo } from '../../shared/types/FileSourceInfo'
 import FileCacheRepository from './FileCacheRepository'
 
+const ASSIGNMENT_DIRECTORY_CONFIG_KEY = 'config.assignmentDirectory'
+const ASSIGNMENT_FILE_CACHE_KEY = 'file-cache.assignments'
+
 export default class AssignmentRepository extends FileCacheRepository {
   static #registered = false
 
   readonly fileSourceInfo: FileSourceInfo = {
     displayName: 'Definitsioonide kaust',
-    directoryConfigKey: 'config.assignmentDirectory',
-    cacheKey: 'file-cache.assignments',
+    directoryConfigKey: ASSIGNMENT_DIRECTORY_CONFIG_KEY,
+    cacheKey: ASSIGNMENT_FILE_CACHE_KEY,
   }
 
   override async init(): Promise<void> {

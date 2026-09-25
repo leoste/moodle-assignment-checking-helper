@@ -261,7 +261,15 @@ Järjekorra põhjendus:
 
 **Tegevus:** otsusta, kas juure package.json-i `@types/*` on üldse vajalikud. `shared/` kood ei tohiks sõltuda Chrome'i ega Node'i tüüpidest. Kui on vaja, lisa `shared/tsconfig.json`, mis kasutab ainult platvormineutraalset `lib`-i. Versioonid peavad olema ühtlustatud või selgelt eraldatud.
 
-### K2. Ühenduse ja Moodle'i hosti konfiguratsioon `[1.4]`, `[2.14]`
+### K2. Ühenduse ja Moodle'i hosti konfiguratsioon `[1.4]`, `[2.14]` ✅
+
+> **Tehtud:** tehti plaani järgi ja midagi ei otsustatud ümber.
+> - `shared/config/connection.ts` sisaldab `WEBSOCKET_HOST`, `WEBSOCKET_PORT` ja `WEBSOCKET_URL`. Neid kasutavad Chrome'i WebSocketProvider ja VS Code'i VsCodeWebSocketController.
+> - VS Code'i config.ts-ist eemaldati vanad konstandid ja TODO.
+> - Uus fail `google-chrome-extension/src/config.ts` sisaldab `MOODLE_ORIGIN`.
+> - `manifest.json` asendati failiga `manifest.config.ts` (`defineManifest`) ja autor kustutas vana faili. Uus fail on lisatud tsconfig'i `include`-i.
+> - `host_permissions` on endiselt ilma pordita (`ws://<host>/*`), sest Chrome'i match pattern'id pordi järgi ei filtreeri.
+> - Manifest impordib `shared`-i relatiivse teega, sest Vite laeb oma konfiguratsiooni enne aliaste rakendamist.
 **Leid:**
 - Host ja port on kolmes kohas: [WebSocketProvider.ts:2](../google-chrome-extension/src/service-worker/provider/WebSocketProvider.ts#L2) (`'ws://127.0.0.1:54321'`), [config.ts:6-7](../visual-studio-code-extension/src/config.ts#L6-L7) ja [manifest.json:45](../google-chrome-extension/manifest.json#L45) (`host_permissions`). Selle kohta on olemas autori TODO config.ts-is.
 - Moodle'i host `https://moodle.taltech.ee` on [manifest.json:20-31](../google-chrome-extension/manifest.json#L20) sees kolm korda.

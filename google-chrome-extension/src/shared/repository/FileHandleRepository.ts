@@ -1,4 +1,4 @@
-import IndexedDBRepository from '../../service-worker/repository/IndexedDBRepository'
+import IndexedDBRepository from './IndexedDBRepository'
 
 class FileHandleRepository extends IndexedDBRepository {
   async get<T>(key: string): Promise<T | undefined> {

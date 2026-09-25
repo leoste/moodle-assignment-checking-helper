@@ -1,13 +1,13 @@
-import BaseRepository from "./BaseRepository"
+import BaseRepository from './BaseRepository'
 
-export default class LocalStorageRepository extends BaseRepository {
-  protected async setValue(key: string, value: unknown): Promise<void> {
-    await chrome.storage.local.set({ [key]: value })
-  }
-
+export default abstract class LocalStorageRepository extends BaseRepository {
   protected async getValue<T>(key: string): Promise<T | undefined> {
     const result = await chrome.storage.local.get(key)
     return result[key] as T | undefined
+  }
+
+  protected async setValue<T>(key: string, value: T): Promise<void> {
+    await chrome.storage.local.set({ [key]: value })
   }
 
   protected async removeValue(key: string): Promise<void> {

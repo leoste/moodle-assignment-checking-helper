@@ -1,0 +1,23 @@
+{
+  // Editor-only config for code shared by both extensions. The real type checking of
+  // this code happens in each extension's own tsconfig, which includes ../shared.
+  // Shared code must stay platform neutral: no chrome.*, no Node.js APIs, no DOM APIs.
+  // "DOM" is in lib only to get `console`; using browser APIs here would still fail
+  // the VS Code extension's typecheck, which has no DOM lib.
+  // Keep "target" in sync with the extensions: esbuild reads the nearest tsconfig when
+  // bundling these files, and target affects how class fields are compiled.
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "isolatedModules": true,
+    "lib": ["ES2020", "DOM"],
+    "types": []
+  },
+  "include": ["**/*"]
+}

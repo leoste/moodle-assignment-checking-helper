@@ -24,6 +24,14 @@ Tegevused on kolmes grupis:
 
 Iga punkti juures on algse analüüsi number (näiteks `[1.1]`), et seoseid oleks lihtne jälgida. Tabelis 2 kasutatakse autori numeratsiooni 2.1–2.16. Autori kommentaarides on read 2.15 ja 2.16 kirjutatud kui „1.15“ ja „1.16“. Autori kommentaarid on tsiteeritud **sõna-sõnalt**.
 
+**Töötsükkel iga sammu jaoks:**
+1. Lahendaja lahendab sammu oma nägemuse järgi.
+2. Lahendaja esitab lahenduse autorile ja autor hindab seda.
+3. Kui on puudusi, parandab lahendaja need. Autori sõna jääb peale, aga lahendaja selgitab vajadusel tagamaid ja neid saab arutada. Samme 2–3 korratakse, kuni osa on valmis.
+4. Samm märgitakse selles failis tehtuks. Kui töö käigus tehti otsuseid või muudatusi, uuendatakse sammu kirjeldust nende põhjal.
+
+**Olekumärgid:** ✅ tähendab, et samm on tehtud ja autori poolt heaks kiidetud. Tehtud sammu juures olev plokk **„Tehtud“** kirjeldab, kuidas samm tegelikult lahendati ja kus see plaanist erines.
+
 Algse analüüsi soovitatud järjekorra jättis autor kõrvale:
 > seda kõike arvestades, ma praegu disregardiksin sinu soovitatud järjekorra, kuna ma mõtlesin kõige su öeldu üle nii nagu üleval näed ja see muudab pilti kõvasti.
 
@@ -31,9 +39,18 @@ Algse analüüsi soovitatud järjekorra jättis autor kõrvale:
 
 ---
 
-# 1. Väikesed muudatused (V): tehakse koos
+# 1. Väikesed muudatused (V): tehakse koos ✅
 
-### V1. `executeOnPageLoad` ajakonstandid `[2.2]`
+> **Tehtud:** kõik punktid V1–V15 tehti ühe sammuna ja autor kiitis need korraga heaks. Plaanist ei otsustatud midagi ümber. Täpsustused:
+> - **V1 + V15** tehti koos: luuakse uus fail `executeOnPageReady.ts` koos konstantidega. Vana fail `executeOnPageLoad.ts` tuleb **käsitsi kustutada**, sest failitööriistadega seda teha ei saanud. Sellele failile ei viita enam miski.
+> - **V8:** tehti WeakMap'i parandus, JSDoc ja kahe dispetšeri klassikommentaarid. Vabatahtlikke ümbernimetusi (`onSharedInit`, `static #sharedHandlerMap`) ei tehtud.
+> - **V9:** lisandus tüüp `FileEntry = [dirUri, fileName]`. Varasem `#collectFiles` sai nimeks `#collectFilesRecursively`.
+> - **V11:** lisaks eemaldati `#calculateAndSetTotalPoints` parameeter `overrideEnabledTrue`, mida kasutas ainult `setPointsMax`. Paneeli CSS gridi teine veerg (`1fr auto`) jäi alles, kuigi see on nüüd tühi.
+> - **V13:** repository saab ainult failide sisu, mitte nimesid, seega logitakse vea juures faili sisu esimesed 200 märki.
+> - **V14:** README sektsioon „Future concerns“ on inglise keeles, nagu ülejäänud README.
+> - Typecheck'i ei jooksutatud, sest shell'i ei kasutatud.
+
+### V1. `executeOnPageLoad` ajakonstandid `[2.2]` ✅
 **Leid:** [executeOnPageLoad.ts](../google-chrome-extension/src/content-script/pagemanager/executeOnPageLoad.ts) sisaldab nimeta numbreid `1200` (debounce, rida 8) ja `100` (URL-i pollingu intervall, rida 41).
 **Autori otsus:**
 > pageload intervallidel otseselt nime praegu pole, aga neil on täitsa eesmärk olemas. minu arust 1200 on mingi "minimumPracticalDelayBeforePageCanBeExpectedToBeLoaded" ja 100 on kiire kuid mitte spammav refresh rate.
@@ -47,21 +64,21 @@ const URL_CHANGE_POLL_INTERVAL_MS = 100
 ```
 Loogikat ei muudeta, sest see on eraldi teema E6.
 
-### V2. WebSocketi päringu timeout `[2.3]`
+### V2. WebSocketi päringu timeout `[2.3]` ✅
 **Leid:** [VsCodeConnectionProvider.ts:13](../google-chrome-extension/src/service-worker/provider/VsCodeConnectionProvider.ts#L13) kasutab `5000` ms. See on küll nimega väli, aga mitte konstant.
 **Autori otsus:**
 > see 5000 ma ei mäleta miks sai just nimetatud, aga jah. piisab faili tasemel constantist praegu.
 
 **Tegevus:** failitasemel `const REQUEST_TIMEOUT_MS = 5000`.
 
-### V3. Asset'i tee `[2.7]`
+### V3. Asset'i tee `[2.7]` ✅
 **Leid:** [ClickableListItemRenderer.ts:50](../google-chrome-extension/src/content-script/renderer/ClickableListItemRenderer.ts#L50) kasutab inline väärtust `'images/double-thumbs-up-emoji.png'`.
 **Autori otsus:**
 > asseti teed võiks ka olla constantid kuskil, kasvõi sams failis
 
 **Tegevus:** samas failis `const ADD_BUTTON_IMAGE_PATH = 'images/double-thumbs-up-emoji.png'`.
 
-### V4. Moodle'i ID parsimise indeksid `[2.8]`
+### V4. Moodle'i ID parsimise indeksid `[2.8]` ✅
 **Leid:** [quiz-moodle-helper.ts:22-25](../google-chrome-extension/src/content-script/pagemanager/quiz-moodle-helper.ts#L22-L25) teeb `box.id.split('-')` ja kasutab indekseid `1` ja `2` ilma selgituseta. Moodle'i elemendi ID on kujul `question-<usage id>-<slot>`.
 **Autori otsus:**
 > moodle id parseimisel mingi loogika oli, aga ma ei mäleta mis. aga 1 ja 2 indeksid võiks teha muutujatena, constantitena tegelt, ja nimedeks panna siis kas selle järgi kus neid kasutatakse midagi mis annab aimu mis nad on ja et keegi kogemata vale nr ei pane
@@ -73,14 +90,14 @@ const MANUAL_GRADED_BOX_ID_SEPARATOR = '-'
 const MANUAL_GRADED_BOX_ID_QUIZ_ID_INDEX = 1
 const MANUAL_GRADED_BOX_ID_QUESTION_NUMBER_INDEX = 2
 ```
-### V5. VS Code'i käsu ID `[2.11]`
+### V5. VS Code'i käsu ID `[2.11]` ✅
 **Leid:** `'moodle-helper.runPythonInTerminal'` on nii [PythonRunnerController.ts:9](../visual-studio-code-extension/src/controller/PythonRunnerController.ts#L9) kui kolm korda [package.json](../visual-studio-code-extension/package.json)-is. JSON-is ei saa kordamist vältida, TS-i poolel peaks see olema konstant.
 **Autori otsus:**
 > tee constantiks siis
 
 **Tegevus:** konstant `RUN_PYTHON_IN_TERMINAL_COMMAND` failis [config.ts](../visual-studio-code-extension/src/config.ts) (või samas kontrolleri failis). Kommentaaris märge, et väärtus peab ühtima `package.json`-iga.
 
-### V6. Pythoni interpretaator ja terminali nimi `[2.12]`
+### V6. Pythoni interpretaator ja terminali nimi `[2.12]` ✅
 **Leid:** [PythonRunnerService.ts:9, 13](../visual-studio-code-extension/src/service/PythonRunnerService.ts#L9) kasutab hardcoded väärtusi `python` ja `'Python Runner'`. Windowsis on käsk sageli `py`.
 **Autori otsus:**
 > interpretatori nimede hardcoded olemine mtea, see on seni töötanud, aga ig võib ju seda kuidagi parandada et teha constant list vms
@@ -88,7 +105,7 @@ const MANUAL_GRADED_BOX_ID_QUESTION_NUMBER_INDEX = 2
 **Lisaanalüüs:** kõige lihtsam on üks konstant `PYTHON_COMMAND = 'python'` ja `PYTHON_TERMINAL_NAME = 'Python Runner'` failis [config.ts](../visual-studio-code-extension/src/config.ts). *Nimekiri* (`['python', 'py', 'python3']`) tähendaks, et kood proovib neid järjest. See on käitumise muutus ja vajab lisaloogikat, mistõttu seda siin ei tehta.
 **Tegevus:** kaks konstanti failis config.ts.
 
-### V7. Editori veergude arv `[2.13]`
+### V7. Editori veergude arv `[2.13]` ✅
 **Leid:** [PageInfoService.ts:43](../visual-studio-code-extension/src/service/PageInfoService.ts#L43) sisaldab `(fileCount % 2) + 1`.
 **Autori otsus:**
 > % 2 no pane siis jah et 2 on veergudearv mitte ns 2, tee constant. lisaks see 2 ilmub ju mitmes kohas, nii et käi siis kõik üle, mtite niisama ära tuimalt replace 2 vaid ikka seal kus see tähendab veergude arvu
@@ -101,7 +118,7 @@ const MANUAL_GRADED_BOX_ID_QUESTION_NUMBER_INDEX = 2
 `+ 1` tuleb sellest, et VS Code'i `ViewColumn` algab 1-st.
 **Tegevus:** `EDITOR_COLUMN_COUNT = 2` failis config.ts ja kujul `vscode.ViewColumn.One + (fileCount % EDITOR_COLUMN_COUNT)`.
 
-### V8. `AsyncInitialisable` ühekordse init'i viga ja selgus `[3.1]`
+### V8. `AsyncInitialisable` ühekordse init'i viga ja selgus `[3.1]` ✅
 **Leid:** [AsyncInitialisable.ts](../shared/AsyncInitialisable.ts)
 - „Ühekordsus“ on seotud **meetodi implementatsiooniga**, mitte klassiga. Alamklassid, mis `onOneTimeInit`-i üle ei kirjuta, jagavad sama kirjet. Seda kasutatakse selleks, et baasklass (näiteks `ChromeExtensionMessageController`) oleks ühtlasi singleton-dispetšer.
 - **Latentne viga:** meetod märgitakse WeakSet'is tehtuks *enne*, kui `onOneTimeInit` lõpeb. Teine instants jätab ühekordse sammu vahele **ega oota** esimese lõpuni. Praegu töötab see ainult seetõttu, et `onOneTimeInit` sisu on sünkroonne. Kui sinna lisatakse `await`, kutsuvad järgmised kontrollerid `addMessageHandler`-it olematu mapi peal ja kood kukub.
@@ -131,7 +148,7 @@ const MANUAL_GRADED_BOX_ID_QUESTION_NUMBER_INDEX = 2
 
 **Tegevus:** AsyncInitialisable'i parandus ja dokumentatsioon ning kahe kontrolleri klassikommentaarid. Rollide eraldamine on eraldi teema E5.
 
-### V9. VS Code'i `handlePageInfo` jagamine orkestreerijaks ja funktsioonideks `[3.7]`
+### V9. VS Code'i `handlePageInfo` jagamine orkestreerijaks ja funktsioonideks `[3.7]` ✅
 **Leid:** [PageInfoService.handlePageInfo](../visual-studio-code-extension/src/service/PageInfoService.ts) teeb viit asja: sulgeb kõik terminalid, kollapseerib exploreri, sulgeb editorid, otsib kausta, kogub failid ja avab need veergudesse.
 **Autori otsus:**
 > meetod teeb neid kõiki koos, kuna need iseenesest on kõik ühe sama tegevuse osad. need peavadki koos toimuma. aga ma olen nõus, et peaks eraldama funktsioonide kaupa nii, et see põhiline on orkestreerija.
@@ -149,7 +166,7 @@ async handlePageInfo(studentName: string) {
 ```
 Käitumine jääb samaks, ka `startsWith` sobitamine (vaata E7).
 
-### V10. Nimede ebakõlad `[3.8.2]`
+### V10. Nimede ebakõlad `[3.8.2]` ✅
 **Leid:**
 - `FileCacheController` eksporditakse nimega `fileRefreshController` ([FileCacheController.ts:18](../google-chrome-extension/src/service-worker/controller/FileCacheController.ts#L18), kasutus [init-controllers.ts](../google-chrome-extension/src/service-worker/controller/init-controllers.ts)).
 - Fail `QuizClient.ts` ekspordib klassi `QuizDataClient` ([QuizClient.ts](../google-chrome-extension/src/content-script/client/QuizClient.ts), kasutus kahes listeneris).
@@ -160,7 +177,7 @@ Käitumine jääb samaks, ka `startsWith` sobitamine (vaata E7).
 
 **Tegevus:** `fileRefreshController` → `fileCacheController`, `QuizDataClient` → `QuizClient`, logi prefiks → `[ChromeExtensionMessageController]`. Kui K6 (singletonid) muudab klientide eksporti, arvestatakse sellega seal.
 
-### V11. Surnud koodi eemaldamine `[3.8.10]`
+### V11. Surnud koodi eemaldamine `[3.8.10]` ✅
 **Leid:** kasutamata on
 - `setPointsMax` ja `setCommentEmpty` ([FeedbackSectionRenderer.ts:53-59](../google-chrome-extension/src/content-script/renderer/FeedbackSectionRenderer.ts#L53-L59));
 - `getBottomDiv`, `getSaveCommentButton` ja `getSaveGradeAndShowNextButton` ([assignment-moodle-helper.ts:23-33](../google-chrome-extension/src/content-script/pagemanager/assignment-moodle-helper.ts#L23-L33));
@@ -173,21 +190,21 @@ Need viitavad eemaldatud „quick submit“ paneelile.
 **Märkus:** `getSaveGradeAndShowNextButton` ja sarnased võivad hiljem kasuks tulla submit-keelu (E4) või Moodle'i lehe halduse (E1) juures. Need on git'i ajaloost taastatavad.
 **Ei eemaldata:** `QuizReviewListener`-i `void getQuizId()` ja TODO jäävad alles, sest quizi loogika on tahtlikult pooleli. VS Code'i tühja `deactivate()` nõuab VS Code API. `OPEN_SUB_DIRECTORIES` `else` haru jääb alles (V14).
 
-### V12. `MessageHandlerMap` duplikaadi korral viga `[3.8.11]`
+### V12. `MessageHandlerMap` duplikaadi korral viga `[3.8.11]` ✅
 **Leid:** [MessageHandlerMap.add](../shared/object/MessageHandlerMap.ts#L7) ignoreerib duplikaati vaikselt. Esimene jääb kehtima ja keegi ei saa teada.
 **Autori otsus:**
 > duplikaadi ignoreerimise asemel võiks tõesti vea visata. vea võiks lihtsalt konsooli visata nagu kõik vead.
 
 **Tegevus:** kui `messageType` on juba registreeritud, kirjutatakse `console.error(...)`. Käitumine jääb samaks: esimene jääb kehtima ja erandit ei visata.
 
-### V13. Vigane definitsioonifail `console.error`-isse `[4.3.4]`
+### V13. Vigane definitsioonifail `console.error`-isse `[4.3.4]` ✅
 **Leid:** [AssignmentRepository.getAllDefinitions](../google-chrome-extension/src/service-worker/repository/AssignmentRepository.ts#L29) jätab vigase JSON-i teatamata vahele. Paneel on siis tühi ja põhjus ei selgu.
 **Autori otsus:**
 > pane siis console error log
 
 **Tegevus:** `catch` plokki `console.error` koos vea ja faili sisu algusega.
 
-### V14. README „Future concerns“: WebSocketi päritolukontroll ja `OPEN_SUB_DIRECTORIES` `[4.3.1]`, `[2.16]`
+### V14. README „Future concerns“: WebSocketi päritolukontroll ja `OPEN_SUB_DIRECTORIES` `[4.3.1]`, `[2.16]` ✅
 **Leid:** [VsCodeWebSocketController](../visual-studio-code-extension/src/controller/VsCodeWebSocketController.ts#L32) võtab ühendusi vastu igalt poolt. Brauseris saab **iga veebileht** ühenduda aadressile `ws://127.0.0.1:54321` ja saata `page-info` sõnumi. See sulgeb kõik editorid ja terminalid ning avab faile. Lahendus oleks kontrollida, et `Origin` on `chrome-extension://<id>`.
 **Autori otsus:**
 > päritolukontroll on natuke keerulisem teema, mida ma hetkel prototüübi raames ei lahenda. aga selle võiks readmesse eraldi sektsiooni "future concerns" alla kirja panna, see on oluline.
@@ -205,7 +222,7 @@ Kuna väärtus on koodis `true`, **ei käivitu `else` haru kunagi**. Käitumise 
 
 Pärast selgitust: jääb nii, nagu on. README „Future concerns“ alla lisatakse samasugune märge nagu päritolukontrolli kohta.
 
-### V15. `executeOnPageLoad` → `executeOnPageReady` `[3.8.6]`
+### V15. `executeOnPageLoad` → `executeOnPageReady` `[3.8.6]` ✅
 **Leid:** nimest ei selgunud, et funktsioon ei käivitu tehnilisel `load` hetkel, vaid ootab, kuni DOM on pärast laadimist või URL-i muutust rahunenud.
 **Autori selgitus:**
 > nimi vastab küll sellele. onpageload all pean silmas hetke, mil leht on laadinud täiesti sellisesse faasi, kus seda saab inimene kasutada. pärast tehnilist pageload hetke tulebki veel oodata, et moodle skriptid omi asju teeksid. seepärast ongi see eraldi funktsioon olemas. ära nüüd nii ka päris nitpicki, aga vb suudad soovitada paremat nime.

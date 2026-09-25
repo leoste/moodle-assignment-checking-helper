@@ -1,13 +1,18 @@
+import type BaseService from '@shared/service/BaseService'
 import { assignmentService } from './AssignmentService'
 import { fileCacheService } from './FileCacheService'
 import { pageInfoService } from './PageInfoService'
 import { quizService } from './QuizService'
 
+export const services: readonly BaseService[] = [
+  assignmentService,
+  fileCacheService,
+  pageInfoService,
+  quizService,
+]
+
 export default function initServices(): void {
-  assignmentService.init()
-  fileCacheService.init()
-  pageInfoService.init()
-  quizService.init()
+  services.forEach(service => service.init())
 }
 
 /*

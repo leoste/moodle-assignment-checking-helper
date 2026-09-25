@@ -1,7 +1,5 @@
-import { pageInfoController } from './PageInfoController'
-import { pythonRunnerController } from './PythonRunnerController'
+import { controllers } from './init-controllers'
 
 export default function closeControllers(): void {
-  pageInfoController.close()
-  pythonRunnerController.close()
+  controllers.forEach(controller => controller.close())
 }

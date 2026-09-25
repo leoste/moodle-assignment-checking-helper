@@ -32,6 +32,20 @@ Iga punkti juures on algse analüüsi number (näiteks `[1.1]`), et seoseid olek
 
 **Olekumärgid:** ✅ tähendab, et samm on tehtud ja autori poolt heaks kiidetud. Tehtud sammu juures olev plokk **„Tehtud“** kirjeldab, kuidas samm tegelikult lahendati ja kus see plaanist erines.
 
+**Kuidas plaani sisu tõlgendada (reeglid lahendajale):**
+- **Plaan põhineb ülevaatlikul, üldisel uurimisel.** Iga sammu mõte on käsitleda oma teemat põhjalikumalt, kui algses üldvaates võimalik oli. Kõik, mis plaanis on kirjas, tuleb sammu alguses koodi põhjal üle kontrollida.
+- **„Eesmärk“** kirjeldab, mida samm peab saavutama, ja selle piiranguid. Konkreetset lahendust see ette ei anna.
+- **„Esialgne soovitus (üldise plaani põhjal)“** on algse analüüsi lahendaja pakutud võimalik lahendus. See **ei ole autori otsus ega kohustuslik.** Lahendaja hindab selle põhjalikumalt ümber ja võib valida teise lahenduse.
+- **„Lahendaja analüüs“ / „Lisaanalüüs“** on algse lahendaja hinnang, mitte kontrollitud tõde. Need võivad olla aegunud, sest vahepeal tehtud sammud on koodi muutnud (ka reanumbreid).
+- **Autori nõusolek („nõus“, „ok“ jms) tähendab nõusolekut probleemi olemasoluga, mitte pakutud lahendusega,** kui autor pole lahendust eraldi kinnitanud. Kui lahenduse on välja pakkunud autor ise (näiteks K9 generaatorid ja K8 payload/message mudel), on see autori suunis.
+- **Probleemi raamistus tuleb autori sõnadest** (tsitaadid), mitte lahendaja leiust. Kui need erinevad, kehtib autori raamistus.
+- **Enne lahendamist vaata, milline muster projektis juba olemas on.** Kui olemasolev muster sobib, kasuta seda. Uut mustrit ära leiuta. Kui uus muster on siiski vajalik, põhjenda seda autorile.
+- **„Leid“ osad** on algse ülevaatliku analüüsi väited ja **„Kui ignoreerida“** osad on algse lahendaja riskihinnangud. Need võivad olla ebatäpsed või üle hinnatud, seega kontrolli neid koodi põhjal.
+- **Viited ja reanumbrid** võivad olla aegunud: tehtud sammud on faile muutnud, ümber nimetanud ja kustutanud. Tehtud sammude viited on ajaloolised. Otsi õige koht koodist nime järgi üles.
+- **Autentne on ainult tsitaat.** Kõik autori seisukohtade ümbersõnastused (näiteks „Suund“, „Tehtud“ kokkuvõtted) on lahendaja tõlgendus. Kahtluse korral lähtu tsitaadist või küsi autorilt.
+- **Teistesse sammudesse lükatud asjad** („lahendatakse K9-s“, „kuulub E2 alla“ jms) põhinevad esialgsetel lahendustel. Kui sammu lahendus muutub, kontrolli, et ükski selle sammuga seotud asi sammude vahele kaotsi ei läheks. Kui asi jääb katmata, ütle seda autorile ja lisa see plaani.
+- **Skoop:** refaktoreerimine ei muuda käitumist. Kui lahendus muudaks käitumist, küsi autorilt. Kui töö käigus leitakse skoobiväline probleem, seda sammus ei lahendata, vaid see lisatakse plaani eraldi punktina (näiteks E12).
+
 Algse analüüsi soovitatud järjekorra jättis autor kõrvale:
 > seda kõike arvestades, ma praegu disregardiksin sinu soovitatud järjekorra, kuna ma mõtlesin kõige su öeldu üle nii nagu üleval näed ja see muudab pilti kõvasti.
 
@@ -234,7 +248,7 @@ Pärast selgitust: jääb nii, nagu on. README „Future concerns“ alla lisata
 
 # 2. Keskmised muudatused (K): ükshaaval, soovitatud järjekorras
 
-Järjekorra põhjendus:
+Järjekorra põhjendus. See on samuti **esialgne soovitus üldise plaani põhjal**: K8–K10 järjekord tuleneb esialgsetest lahendussoovitustest ja võib muutuda, kui lahendus muutub.
 - K1 ja K2 loovad `shared/` aluse (tüübid ja konfiguratsioon), millele hilisemad sammud toetuvad.
 - K3–K4 korrastavad repository kihi.
 - K5–K6 paika panevad elutsükli ja singletonide reeglid, enne kui sõnumisüsteemi klassid neid kasutama hakkavad.
@@ -364,10 +378,16 @@ Järjekorra põhjendus:
 - Popupi `new PopupRenderer().init()` on üksik sisendpunkt.
 
 Seega on **tegelik paralleelsus ainult VS Code'i kontrolleritel**. Ühtlustada tasub siiski kõik kuus `init-*` faili sama mustri järgi.
-**Tegevus:**
+
+**Eesmärk:** kontrolleri (ja teiste elutsükliga objektide) lisamiseks piisab, kui see lisatakse ühte kohta, ning selle avamine ja sulgemine tuleneb sellest automaatselt. Init- ja close-loetelud ei tohi olla paralleelsed. Arvesta autori märkusega, et sama võib puudutada ka teenuseid, kliente jm.
+**Piirangud:**
+- Init-süsteemi enda parandamine (näiteks init'ide ootamine) on skoobist väljas, vaata E12.
+- Projektis on juba `CloseableBaseController`. Uus paralleelne mehhanism ei tohi tekkida.
+
+**Esialgne soovitus (üldise plaani põhjal):**
 1. Igas `init-*` failis on üks eksporditud massiiv (`export const controllers = [...]`) ja `init*()` itereerib selle üle.
 2. VS Code'is itereerib `closeControllers()` **sama** massiivi üle ja eraldi `close-controllers.ts` loetelu kaob.
-3. `shared/`-i lisatakse väike `Closeable` (`close(): void`) liides. `CloseableBaseController` implementeerib selle ja kontrollerid, millel pole midagi sulgeda, pärivad no-op implementatsiooni nagu praegu.
+3. `shared/`-i lisatakse väike `Closeable` (`close(): void`) liides, mida `CloseableBaseController` implementeerib. See pärineb algse analüüsi punktist 4.2 („kontrolleri elutsükli liides puudub shared-ist“). Vaata enne üle, kas see on vajalik või piisab olemasolevast `CloseableBaseController`-ist.
 
 ### K6. Singletonide ühtlustamine ja määratlemine `[3.8.3]`, `[3.8.8]`
 **Leid:**
@@ -379,28 +399,37 @@ Seega on **tegelik paralleelsus ainult VS Code'i kontrolleritel**. Ühtlustada t
 
 > okei see seostub varasemate singleton segadustega ja näitab, et singleton käitumisega objekte peaks kuidagi eraldiseisvalt ära määratlema et on aru saada mis nad on. aga static väljal ta võib ju ikka olla? või mitte?
 
-**Lisaanalüüs (3.8.3):** kogu koodibaasi `new X()` kasutus on läbi vaadatud.
+**Lisaanalüüs (3.8.3), algse lahendaja oma:** kogu koodibaasi `new X()` kasutus on läbi vaadatud. Märkus: V10-s nimetati `QuizDataClient` ümber `QuizClient`-iks.
 - **Singletonid** (`export const x = new X()`) on kõik controllerid, service'id, repositoryd, listenerid, `vsCodeConnectionProvider`, `chromeVsCodeClient`, `pageInfoClient`, `fileCacheClient`, `fileHandleRepository` ja `folderAccessService`.
 - **Iga kasutuse jaoks luuakse uuesti** ainult `FeedbackClient` ([CheckingHelperPanelRenderer.ts:45](../google-chrome-extension/src/content-script/renderer/CheckingHelperPanelRenderer.ts#L45)) ja `QuizDataClient` ([QuizReviewListener.ts:35](../google-chrome-extension/src/content-script/pagelistener/QuizReviewListener.ts#L35), [QuizCommentListener.ts:12](../google-chrome-extension/src/content-script/pagelistener/QuizCommentListener.ts#L12)).
 - **Renderer'id** luuakse samuti iga kasutuse jaoks. See on õige, sest neil on oma DOM-olek.
 
 Mõlemad erandlikud kliendid on olekuta, seega **põhjust mitte-singleton olla ei ole**. Tõenäoliselt on tegu juhusega, sest need on tehtud teistest klientidest erinevas stiilis (`export default class`).
 
-**Vastus (3.8.8):** tehniliselt võib renderer static väljas olla. Singletoni puhul pole käitumises vahet, sest instantse on üks. Aga `static` ütleb lugejale *„jagatud kõigi selle klassi instantside vahel“*, mis vihjab, et instantse on mitu. See on sama segadus, mida autor kirjeldab. Instantsi väli (`#renderer = new CheckingHelperPanelRenderer()`) on ausam ja kaotab ühtlasi null-kontrolli. Oluline vahe: kontrollerite dispetšeri staatilised väljad (V8) **on** õigustatud, sest seal jagavad tõesti mitu alamklassi instantsi ühte olekut.
+**Lahendaja vastus (3.8.8):** tehniliselt võib renderer static väljas olla. Singletoni puhul pole käitumises vahet, sest instantse on üks. Aga `static` ütleb lugejale *„jagatud kõigi selle klassi instantside vahel“*, mis vihjab, et instantse on mitu. See on sama segadus, mida autor kirjeldab. Instantsi väli (`#renderer = new CheckingHelperPanelRenderer()`) on ausam ja kaotab ühtlasi null-kontrolli. Oluline vahe: kontrollerite dispetšeri staatilised väljad (V8) **on** õigustatud, sest seal jagavad tõesti mitu alamklassi instantsi ühte olekut.
 
-**Tegevus:**
-1. Konventsioon kirja (README või koodikommentaar): *singleton = klass, mida ei ekspordita, ja ainult `export const camelCaseNimi = new Klass()`. Klass eksporditakse (`export default class`) ainult siis, kui see on mõeldud pärimiseks või mitmeks instantsiks.*
+**Eesmärk:** singleton-käitumisega objektid on selgelt ära määratletud, nii et koodist on aru saada, mis nad on (autori sõnastus: *„singleton käitumisega objekte peaks kuidagi eraldiseisvalt ära määratlema et on aru saada mis nad on“*). Instantsieerimine on ühtlane ja kogemata erandid on parandatud.
+**Piirang:** autor ei ole kinnitanud ühtegi konkreetset konventsiooni. Lähtu sellest, kuidas projektis enamik singletone juba tehtud on.
+
+**Esialgne soovitus (üldise plaani põhjal):**
+1. Pane konventsioon kirja (README või koodikommentaar). Algne ettepanek: *singleton = klass, mida ei ekspordita, ja ainult `export const camelCaseNimi = new Klass()`. Klass eksporditakse ainult siis, kui see on mõeldud pärimiseks või mitmeks instantsiks.* See ettepanek on algse lahendaja oma ja autor pole seda kinnitanud.
 2. `FeedbackClient` → `feedbackClient` singleton ja `QuizClient` → `quizClient` singleton. Kasutuskohad uuendatakse.
 3. `AssignmentGraderListener` staatiline `#renderer` muutub instantsi väljaks.
-4. Kontrolli ka, et `AssignmentService` ja `AssignmentRepository` ekspordivad nii klassi kui instantsi. Kui klassi ei päri keegi, eemalda klassi eksport konventsiooni järgi.
+4. `AssignmentService` ja `AssignmentRepository` ekspordivad nii klassi kui instantsi. Kas klassi eksport eemaldada, sõltub kokkulepitud konventsioonist.
 
 ### K7. Popupi elemendiloome ja element-creation-helperi liigutamine `[1.12 popup]`
 **Leid:** [PopupRenderer](../google-chrome-extension/src/popup/renderer/PopupRenderer.ts) loob elemente käsitsi (`document.createElement` ja `className`), kuigi [element-creation-helper](../google-chrome-extension/src/content-script/pagemanager/element-creation-helper.ts) on selleks olemas, aga content-script kaustas.
 **Autori otsus:**
 > nupu teksti osa ignoreeriks praegu, kuna see on väga väikese impactiga kõigega muuga võrreldes. moodlei sektorite osa ignoreerime seoses 1.7-ga. popuprenderi käsitsi elementide loomine, siinkohal võid vaadata kas täpselt õige funktsioon on element-creation-helperis olemas, kui jah siis võiks seda vb täitsa kasutada ja content-script kaustast shared kausta liigutada.
 
-**Lisaanalüüs:** sobiv funktsioon on olemas. `createAndAddChildElement(parent, tag, classes, textContent)` teeb täpselt seda, mida PopupRenderer käsitsi teeb: `div.source`, `div.source-folder-name` koos tekstiga ja nupp koos tekstiga. Ainus erinevus on see, et popup loob `div.source` enne ja lisab selle konteinerisse hiljem. Helperiga lisatakse see kohe konteinerisse ja tulemus on sama. `createAndAddChildImage` kasutab `chrome.runtime.getURL`-i, mis töötab ka popupis. Failis on ka `getDirectTextContent` (lugemisfunktsioon), mis liigub kaasa. Helperit impordib praegu kuus faili (4 renderer'it, QuizReviewListener ja assignment-moodle-helper).
-**Tegevus:** liiguta `element-creation-helper.ts` → `google-chrome-extension/src/shared/util/`, uuenda kuus importi ja kasuta helperit PopupRendereris. Nupu teksti dubleerimine jääb E9 alla. Popupi otse `sendMessage` kutse lahendatakse K9-s.
+**Lisaanalüüs (algse lahendaja oma):** sobiv funktsioon on olemas. `createAndAddChildElement(parent, tag, classes, textContent)` teeb täpselt seda, mida PopupRenderer käsitsi teeb: `div.source`, `div.source-folder-name` koos tekstiga ja nupp koos tekstiga. Ainus erinevus on see, et popup loob `div.source` enne ja lisab selle konteinerisse hiljem. Helperiga lisatakse see kohe konteinerisse ja tulemus on sama. `createAndAddChildImage` kasutab `chrome.runtime.getURL`-i, mis töötab ka popupis. Failis on ka `getDirectTextContent` (lugemisfunktsioon), mis liigub kaasa. Helperit impordib praegu kuus faili (4 renderer'it, QuizReviewListener ja assignment-moodle-helper).
+**Eesmärk:** PopupRenderer ei loo elemente käsitsi, vaid kasutab olemasolevat helperit, ja helper on kohas, kust nii content-script kui popup seda kasutada saavad (autori sõnul „shared kausta“).
+**Piirangud:**
+- Nupu teksti dubleerimine jääb E9 alla.
+- Popupi otse `sendMessage` kutse kuulub K9 alla.
+- Helperi failis on ka `getDirectTextContent`, mis on lugemisfunktsioon, mitte elemendi loomine. Selle ümberkorraldamine ei kuulu sellesse sammu (Moodle'i lehe halduse osa, E1).
+
+**Esialgne soovitus (üldise plaani põhjal):** liiguta `element-creation-helper.ts` → `google-chrome-extension/src/shared/util/`, uuenda kõik importid ja kasuta helperit PopupRendereris.
 
 ### K8. Payload ja sõnumid: Chrome↔VS Code protokoll `[1.3]`, `[2.4]`, `[4.2]`
 **Leid:**
@@ -413,18 +442,23 @@ See on ainus koht, kus kaks eraldi buildi peavad kokku sobima, ja praegu kontrol
 
 > miks chrome neid protokolli väärtusi ei tea su arust? ja arvesta ka, et meil on mängus kolme tüüpi sõnumeid: 1) sõnum chrome ja vscode vahel 2) sõnum chrome ja chrome vahel 3) sõnum vscode ja vscode vahel (vist). need ongi erinevad. seda arvestades hinda see punkt üle.
 
-**Ümberhinnang (2.4):**
+**Lahendaja ümberhinnang (2.4):**
 1. **Chrome ↔ VS Code (WebSocket):** VS Code vastab `{ id, content: 'ok' | 'error' | 'unhandled' }`. Chrome'i [VsCodeConnectionProvider](../google-chrome-extension/src/service-worker/provider/VsCodeConnectionProvider.ts#L46) annab `content`-i tõlgendamata edasi. See jõuab content-scripti ja [AssignmentGraderListener](../google-chrome-extension/src/content-script/pagelistener/AssignmentGraderListener.ts#L24) lihtsalt logib selle. Chrome'is pole neid väärtusi ei konstandi ega tüübina ning keegi neid ei kontrolli. **`'error'` näeb Chrome'i jaoks välja nagu edu.** Seda mõtlesin väitega „Chrome ei tea neid“. Need väärtused kuuluvad ainult sõnumitüübile 1, seega on nende õige koht juure `shared/`, sest mõlemad laiendused peavad neid samamoodi mõistma.
 2. **Chrome ↔ Chrome (`chrome.runtime.sendMessage`):** siin staatuse kontseptsiooni pole. Vastus on handleri tagastusväärtus ja puuduva handleri korral `undefined`. Vea korral ei vasta Chrome'i kontroller üldse (vaata K10). See on eraldi sõnumitüüp ja staatuse väärtusi talle praegu külge ei panda.
 3. **VS Code ↔ VS Code:** laienduse sees sõnumeid ei edastata. Ainus sarnane asi on `vscode.commands.registerCommand` ([PythonRunnerController](../visual-studio-code-extension/src/controller/PythonRunnerController.ts)), mis on VS Code'i käsusüsteem, mitte sõnumiprotokoll. Protokolli konstante siin vaja ei ole.
 
-**Järeldus:** punkt jääb kehtima, aga kitsamalt. Staatuse väärtused on **ainult tüübi 1** osa ja lähevad juure `shared/` alla. Tüüp 2 saab oma veakäitumise K10 käigus.
+**Lahendaja järeldus:** punkt jääb kehtima, aga kitsamalt. Staatuse väärtused on **ainult tüübi 1** osa ja nende koht oleks juure `shared/`. Tüübi 2 veakäitumine on K10 teema.
 
-**Tegevus:**
-1. Uuri, kuidas Chrome ja VS Code sõnumeid tõlgendavad: WebSocketi JSON-string vs `chrome.runtime` struktureeritud kloonimine. Otsusta, kas mõni sõnumitüüp saab olla ühine.
-2. Autori mudeli järgi: **payload** on laienduste vahel ühine infot kandev osa (`PayloadType`). **Message** on Chrome'i- või VS Code'i-spetsiifiline ümbris, mis lisab payloadile transpordi väljad (`id`, `channel`/`type` jms). Ühine loogika tõstetakse sõnumi baasklassi, analoogselt K10 handleriga.
-3. Laienda [shared/types/WebSocketProtocol.ts](../shared/types/WebSocketProtocol.ts)-i: kanalite konstandid (`'page-info'` ühes kohas), payloadide tüübid (näiteks `StudentNamePayload`) ja vastuse staatuse tüüp/konstandid (`'ok' | 'error' | 'unhandled'`).
-4. Chrome'i pool kasutab samu staatuse konstante. Kas `'error'` peaks Chrome'is midagi muutma (näiteks logima), on käitumise otsus ja seda tehakse minimaalselt.
+**Eesmärk:** Chrome↔VS Code sõnumi kuju (kanal, payload, vastus) on defineeritud ühes kohas, nii et kaks buildi ei saa vaikselt lahkneda.
+**Autori suunis (autori enda mudel):** **payload** on laienduste vahel ühine infot kandev osa (`PayloadType` vms). **Message** on Chrome'i- või VS Code'i-spetsiifiline kontseptsioon, mis lisab payloadile oma spetsiifika. VS Code'i ja Chrome'i sõnumitel võib olla ühist loogikat, mille saab tõsta baasklassi, analoogselt K10 handleriga.
+**Piirangud:**
+- Autor palus kõigepealt uurida, kas Chrome ja VS Code saavad sõnumite tõlgendamise erinevuste tõttu üldse sama tüüpi kasutada. Payload/message jaotus on lahendus juhuks, kui ei saa.
+- Käitumist ei muudeta ilma autori nõusolekuta, näiteks see, et Chrome hakkab `'error'` vastust tõlgendama.
+
+**Esialgne soovitus (üldise plaani põhjal):**
+1. Uuri, kuidas Chrome ja VS Code sõnumeid tõlgendavad: WebSocketi JSON-string vs `chrome.runtime` struktureeritud kloonimine.
+2. Laienda [shared/types/WebSocketProtocol.ts](../shared/types/WebSocketProtocol.ts)-i: kanalite konstandid (`'page-info'` ühes kohas), payloadide tüübid (näiteks `StudentNamePayload`) ja vastuse staatuse tüüp/konstandid (`'ok' | 'error' | 'unhandled'`).
+3. Chrome'i pool kasutab samu staatuse konstante. Kas `'error'` peaks Chrome'is midagi muutma, on käitumise otsus ja see küsitakse autorilt.
 
 ### K9. Sõnumigeneraatorid ja kliendi `send` `[1.2]`, `[1.8]`
 **Leid:**
@@ -436,16 +470,19 @@ See on ainus koht, kus kaks eraldi buildi peavad kokku sobima, ja praegu kontrol
 
 > okei tundub et baasklassi peab siis tegema ka send funktsiooni. popuprenderer ei tohiks ka dubleerida, tundub et sa tead kuidas seda lahendada
 
-**Tegevus:**
-1. Loo `MessageGenerator` baasklass, mis sisaldab universaalset kokkupanemist: `type` + `content` ümbris ja K8 sõnumi baaskuju. Alamklassid on funktsionaalsuse kaupa, näiteks `QuizMessageGenerator`, mille meetodid on `getBeginAutoGradeMessage(id)`, `getEndAutoGradeMessage(id)` ja `getIsAutoGradeActiveMessage(id)`. Meetodi parameetrid on selle sõnumi olulised osad.
-2. `ChromeExtensionMessageClient`-i lisatakse `protected send(message)`. Kliendid kasutavad generaatorit ja `send`-i. Iseseisev `makeMessage` kaob avalikust API-st.
-3. PopupRenderer kasutab `fileCacheClient.getFileSources()`-i ega koosta sõnumit ise.
+**Eesmärk:** sõnumite kokkupanek ja saatmine on ühes kohas ega ole iga kliendi sees dubleeritud. PopupRenderer ei koosta sõnumeid ise.
+**Autori suunis (autori enda disain):** `MessageGenerator` baasklass, mis teeb kogu universaalse kokkupanemise, ja alamklassid sõnumitüüpide või funktsionaalsuste kaupa. Alamklass annab ainult selle tüübi olulise osa. Ühe `getMessage` asemel on alamklassis mitu spetsiifilise nimega `get<???>Message` meetodit, sest mõne funktsionaalsuse jaoks on vaja mitut sõnumit. Kliendi baasklassile tuleb `send` funktsioon.
+
+**Esialgne soovitus (üldise plaani põhjal):**
+1. Alamklassid funktsionaalsuse kaupa, näiteks `QuizMessageGenerator` meetoditega `getBeginAutoGradeMessage(id)`, `getEndAutoGradeMessage(id)` ja `getIsAutoGradeActiveMessage(id)`. Nimed on ainult näited.
+2. `ChromeExtensionMessageClient`-i tuleb `protected send(message)`. Kas `makeMessage` jääb avalikku API-sse, otsustatakse sammu käigus.
+3. PopupRenderer kasutab `fileCacheClient.getFileSources()`-i.
 4. **Avatud küsimus:** generaator katab saatmise poole. Vastuvõtja (kontroller) loeb praegu `content.assignmentId as string`. Et see ei lahkneks, peaksid kontrollerid kasutama samu payload-tüüpe (K8), mida generaator täidab. Täpne lahendus selgub K8 ja K10 käigus.
 
 ### K10. Sõnumite handleri baasklass `[1.1]`, `[1.10]`
 **Leid:** [ChromeExtensionMessageController](../google-chrome-extension/src/service-worker/controller/ChromeExtensionMessageController.ts) ja [VsCodeWebSocketController](../visual-studio-code-extension/src/controller/VsCodeWebSocketController.ts) on peaaegu identsed: staatiline handler-map, `onOneTimeInit` loob mapi ja kuulaja, `addMessageHandler`, handleri otsing ja „handlerit pole“ haru. Erinev on ainult transport. Lahknemine on juba alanud:
 - VS Code püüab handleri vea kinni (`try/catch` → `'error'`). Chrome seda ei tee, nii et vea korral `sendResponse` ei käivitu ja klient saab `undefined` või ootab.
-- Chrome'i logi prefiks on vale (parandatakse V10-s).
+- Chrome'i logi prefiks oli vale (parandati V10-s).
 
 Kui seda ignoreerida, tuleb iga veakäsitluse või logimise parandus teha kaks korda ja üks jääb tegemata.
 *(1.10)* Algses analüüsis soovitati tühjad alias-tüübid (`ChromeMessageHandler`, `VsCodeMessageHandler`, `ChromeMessageHandlerMap`, `VsCodeMessageHandlerMap`) eemaldada. **Autor ei nõustunud.**
@@ -454,13 +491,19 @@ Kui seda ignoreerida, tuleb iga veakäsitluse või logimise parandus teha kaks k
 
 > kusjuures siin ei saa ma sinuga nõustuda. kuigi need failid sisu poolest ei lisa midagi, on need ikkagi väga olulised abstraktsuse poolest. need näitavad, et chrome ja vscode message-d on juba olemuslikult väga erinevad üksteisest. 1.1 ja 1.3 kombineeritud lahenemise käigus võib juhtuda, et need muutuvad teiseks, aga sellien põhimõtteline abstraktsioon mingil kujul peab jääma. võibolla see liitub mingi uue või olemasolema struktuuriga, aga peab alles jääma mingil kujul. see on meelega lisatud.
 
-**Kaalutlus ja soovitus:** autori kirjeldatud lähenemine (baasklass + abstraktsed meetodid transpordispetsiifilistele osadele) **on piisav ja kõige lihtsam**. Eraldi message router on rollide eraldamine, mis on teema E5. Seda praegu ei tehta. Tähelepanekud:
-- Baasklass `shared/controller/`-is sisaldab handleri registreerimist, otsingut, „handlerit pole“ käitumist ja **veakäsitlust** (try/catch → vea vastus). Seda Chrome'is praegu pole, nii et see on väike käitumise parandus. Alamklass implementeerib `startListening()` (chrome.runtime vs WebSocketServer) ja `sendResponse(...)`.
-- **Oht 1: jagatud staatiline map.** Kui map on staatiline väli *baasklassis*, jagaksid kõik transpordid samas bundle'is ühte mapi. Praegu on igas bundle'is üks transport, aga ohutum on hoida mapi staatilise väljana **transpordi alamklassis**, nagu praegu. Baasklass küsib selle abstraktse getteri kaudu.
-- **Oht 2: `onOneTimeInit` semantika.** Ühekordsus on seotud meetodi implementatsiooniga (V8). Kui ühekordne init oleks *ainult* baasklassis, käivituks see samas bundle'is kõigi transportide peale kokku üks kord. Seega kirjutab iga transpordi alamklass `onOneTimeInit`-i ise üle, nagu praegu.
-- *(1.10)* `ChromeMessageHandler` ja `VsCodeMessageHandler` (ning mapid) **jäävad alles** kui olemuslikult erinevate sõnumite abstraktsioon. Kui K8 ja K10 kombineeritud lahendus annab neile uue kuju (näiteks tüübiparameeter baasklassis), säilib abstraktsioon ikka nimeliselt eraldi tüübina.
+**Eesmärk:** kahe dispetšeri ühine struktuur on ühes baasklassis ja transpordispetsiifiline osa alamklassides. Sihiks on autori sõnadega *„kõige lihtsam viis, et saavutada korralik robustne ilma duplikatsioonita süsteem, aga süsteemi ei tehta ka keerulisemaks kui ta peab olema“*. Autori sõnul *„seda kohta tuleb kaalutleda“*.
+**Autori suunis:** baasklass defineerib abstraktse meetodi transpordispetsiifilise osa jaoks ja alamklass implementeerib selle. Eraldi message routeri võib kaaluda, kui see osutub vajalikuks.
+**Piirangud:**
+- *(1.10)* `ChromeMessageHandler` ja `VsCodeMessageHandler` (ning mapid) peavad **mingil kujul alles jääma** kui olemuslikult erinevate sõnumite abstraktsioon.
+- Baasklass on tahtlikult ka singleton-dispetšer (V8). Rollide eraldamine on E5.
+- Kasuta olemasolevat mustrit: staatilised väljad ja `onOneTimeInit`.
+- Käitumise muudatused, näiteks veakäsitluse lisamine Chrome'i, küsitakse autorilt.
 
-**Tegevus:** baasklass ja kaks transpordi alamklassi ülaltoodud kujul. Chrome saab VS Code'iga sama veakäsitluse.
+**Esialgne soovitus (üldise plaani põhjal):**
+- Autori lähenemine on tõenäoliselt piisav. Eraldi router kuuluks E5 alla.
+- Baasklass (näiteks `shared/controller/`-is) sisaldab handleri registreerimist, otsingut, „handlerit pole“ käitumist ja veakäsitlust. Alamklass implementeerib transpordi (`startListening()`, `sendResponse(...)`). Veakäsitluse ühtlustamine tähendaks Chrome'ile **käitumise muutust**, sest praegu vea korral ei vastata üldse.
+- **Tähelepanek 1: jagatud staatiline map.** Kui map on staatiline väli *baasklassis*, jagaksid kõik transpordid samas bundle'is ühte mapi. Praegu on igas bundle'is üks transport. Võimalik lahendus: map on transpordi alamklassis, nagu praegu.
+- **Tähelepanek 2: `onOneTimeInit` semantika.** Ühekordsus on seotud meetodi implementatsiooniga (V8). Kui ühekordne init oleks *ainult* baasklassis, käivituks see samas bundle'is kõigi transportide peale kokku üks kord.
 
 ### K11. Püsiandmete ja vaate oleku eraldamine andmetüüpides `[3.6]`
 **Leid:**
@@ -471,17 +514,20 @@ Kui seda ignoreerida, tuleb iga veakäsitluse või logimise parandus teha kaks k
 **Autori otsus:**
 > okei jah võiks teha küll eralduse siia.
 
-**Tegevus:**
+**Eesmärk:** püsiandmete tüübid (definitsioonid, konfiguratsioon) ja vaate või runtime'i olek on andmetüüpides eraldatud.
+**Piirang:** `Feedback`-i osa kattub tugevalt eraldiseisvate teemadega E2 (äriloogika vs renderdus) ja E3 (feedbacki tähendus). Kui E3 muudab seda, mida feedback üldse tähendab, võib see töö muutuda uuesti. Enne `Feedback`-i puudutamist küsi autorilt, kas see osa tehakse K11-s või jääb E2/E3 juurde.
+
+**Esialgne soovitus (üldise plaani põhjal):**
 1. `FileSourceInfo`: eralda salvestusvõtmed (`directoryConfigKey`, `cacheKey`) ja kuvatav info (`displayName`), näiteks kahe tüübina, millest üks sisaldab teist.
 2. `Feedback`/`FeedbackPart`: eraldi vaate olek, näiteks `FeedbackSelectionState` (valitud osad), ja `_id` eemaldatakse definitsioonitüübist.
-
-**Märkus:** punkt 2 kattub tugevalt eraldiseisvate teemadega E2 (äriloogika vs renderdus) ja E3 (feedbacki tähendus). Kui E3 muudab seda, mida feedback üldse tähendab, võib punkt 2 muutuda uuesti. Autor võib otsustada teha K11-s ainult punkti 1 ja jätta punkti 2 E2/E3 juurde.
 
 ---
 
 # 3. Eraldiseisvad teemad (E): praegu ei tehta
 
 Need tehakse eraldi ülesannetena pärast V- ja K-gruppi. Kui autor on punktid sidunud, on need koos.
+
+Kõik E-punktides kirjeldatud lahendused („Algne ettepanek“, koodinäited, „Suund“, „Võimalik suund“) on **esialgsed soovitused üldise plaani põhjal**, v.a kui need on autori tsitaadid. Just nendes teemades tuleb lahendus autoriga põhjalikult läbi mõelda.
 
 ### E1. Brauseri- ja Moodle'i lehe haldus: page objectid ja workflow `[1.7]`, `[1.12 selektorid]`, `[4.1]`
 **Leid:**
@@ -616,7 +662,7 @@ Leid ja autori otsus on punktis V14. Seal tehakse ainult README märge ja lahend
 
 > rendereride selle "lepingu" osas on probleem see, et tegelt css ei määra ju käitumist, vaid välimust. seega otseselt pole siin lepingut, vaid css on otsa liituv asi. et mingit lepingut loota teha, peaksin ma minema juba scss peale ja kasutama mingeid ekstra faile, mtea tundub natuke nuss ja lõpuks ikka peab ju css käsitsi kirjutama iga case jaoks. nii et tundub nagu asi mida ignoreerime, v.a kui sa ei suuda mulle väga hästi ära põhjendada või arvad et see on ikka oluline, minu arust pole.
 
-**Vastus (2.9):** tugevat vastuargumenti pole ja autoriga võib nõustuda. Klassinime kirjaviga TS-is kaotab ainult välimuse, mitte käitumise. Ainus pisiasi: `'active'` ja `'inactive'` on samas failis kahes kohas ([ClickableListItemRenderer.ts:48 ja 73-74](../google-chrome-extension/src/content-script/renderer/ClickableListItemRenderer.ts#L48)). Seda saab korrastada E2 käigus. Eraldi tegevust pole.
+**Lahendaja vastus (2.9):** tugevat vastuargumenti pole ja autoriga võib nõustuda. Klassinime kirjaviga TS-is kaotab ainult välimuse, mitte käitumise. Ainus pisiasi: `'active'` ja `'inactive'` on samas failis kahes kohas ([ClickableListItemRenderer.ts:48 ja 73-74](../google-chrome-extension/src/content-script/renderer/ClickableListItemRenderer.ts#L48)). Seda saab korrastada E2 käigus. Eraldi tegevust pole.
 
 ### E11. Andmebaasi skeem ja migratsioonid `[2.6 edasilükatud osa]`
 Autori sõnul (vaata K3): *„andmebaasi ilusti tegemine on asi, mida ma tahaks praegu edasi lükata kuna praegu pole selge, kui head andmebaasi on vaja.“* K3 teeb ainult klassitaseme konstandid. Migratsioonid ja skeemi disain tulevad siia.

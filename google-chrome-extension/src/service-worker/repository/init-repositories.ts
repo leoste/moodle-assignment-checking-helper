@@ -1,7 +1,12 @@
+import type BaseRepository from '../../shared/repository/BaseRepository'
 import { assignmentRepository } from './AssignmentRepository'
 import { quizRepository } from './QuizRepository'
 
+export const repositories: readonly BaseRepository[] = [
+  assignmentRepository,
+  quizRepository,
+]
+
 export default function initRepositories(): void {
-  assignmentRepository.init()
-  quizRepository.init()
+  repositories.forEach(repository => repository.init())
 }

@@ -42,7 +42,7 @@ Algse analüüsi soovitatud järjekorra jättis autor kõrvale:
 # 1. Väikesed muudatused (V): tehakse koos ✅
 
 > **Tehtud:** kõik punktid V1–V15 tehti ühe sammuna ja autor kiitis need korraga heaks. Plaanist ei otsustatud midagi ümber. Täpsustused:
-> - **V1 + V15** tehti koos: luuakse uus fail `executeOnPageReady.ts` koos konstantidega. Vana fail `executeOnPageLoad.ts` tuleb **käsitsi kustutada**, sest failitööriistadega seda teha ei saanud. Sellele failile ei viita enam miski.
+> - **V1 + V15** tehti koos: luuakse uus fail `executeOnPageReady.ts` koos konstantidega. Vana faili `executeOnPageLoad.ts` kustutas autor käsitsi.
 > - **V8:** tehti WeakMap'i parandus, JSDoc ja kahe dispetšeri klassikommentaarid. Vabatahtlikke ümbernimetusi (`onSharedInit`, `static #sharedHandlerMap`) ei tehtud.
 > - **V9:** lisandus tüüp `FileEntry = [dirUri, fileName]`. Varasem `#collectFiles` sai nimeks `#collectFilesRecursively`.
 > - **V11:** lisaks eemaldati `#calculateAndSetTotalPoints` parameeter `overrideEnabledTrue`, mida kasutas ainult `setPointsMax`. Paneeli CSS gridi teine veerg (`1fr auto`) jäi alles, kuigi see on nüüd tühi.
@@ -284,7 +284,14 @@ Järjekorra põhjendus:
 1. `shared/config/connection.ts`: `WEBSOCKET_HOST`, `WEBSOCKET_PORT` ja nendest tuletatud `WEBSOCKET_URL`. Seda kasutavad WebSocketProvider ja VS Code'i config.ts. VS Code'i config.ts TODO eemaldatakse.
 2. `manifest.json` → `manifest.config.ts` crxjs-i `defineManifest` abil. `host_permissions` tuletatakse connection.ts-ist ja content-scriptide `matches` Moodle'i hosti konstandist (näiteks `MOODLE_ORIGIN` Chrome'i konfis). [vite.config.ts](../google-chrome-extension/vite.config.ts) impordib uue faili.
 
-### K3. Repository kiht: baasklass, võtmed, andmebaas, FileHandleRepository asukoht `[1.6]`, `[2.5]`, `[2.6]`, `[3.8.1]`
+### K3. Repository kiht: baasklass, võtmed, andmebaas, FileHandleRepository asukoht `[1.6]`, `[2.5]`, `[2.6]`, `[3.8.1]` ✅
+
+> **Tehtud:**
+> - **Erinevus plaanist:** Chrome'i `src/shared/repository/` alla liigutati kõik üldised salvestuse baasklassid (`BaseRepository`, `IndexedDBRepository`, `LocalStorageRepository`), mitte ainult `IndexedDBRepository`. Muidu oleks `shared` jätkuvalt `service-worker`-ist importinud. Konkreetsed repositoryd jäid `service-worker`-isse. Vanad failid kustutas autor.
+> - `BaseRepository` on abstraktne ja deklareerib `getValue`, `setValue` ja `removeValue`. `KeyValueStore` liidest ei tehtud.
+> - IndexedDB sai `removeValue` meetodi, ühise privaatse `#write` kirjutamistransaktsiooni jaoks ja konstandi `DB_VERSION`.
+> - `LocalStorageRepository` on abstraktne ja selle `setValue` on geneeriline.
+> - Salvestusvõtmed on failitasemel konstandid AssignmentRepository's ja QuizRepository's. Väärtused on muutmata, seega olemasolevad andmed jäävad kehtima.
 **Leid:**
 - *(1.6)* Key-value salvestus on kaks korda, ilma ühise lepinguta: [IndexedDBRepository](../google-chrome-extension/src/service-worker/repository/IndexedDBRepository.ts) (`getValue`/`setValue`) ja [LocalStorageRepository](../google-chrome-extension/src/service-worker/repository/LocalStorageRepository.ts) (`getValue`/`setValue`/`removeValue`). [BaseRepository](../google-chrome-extension/src/service-worker/repository/BaseRepository.ts) on tühi. [FileHandleRepository](../google-chrome-extension/src/shared/repository/FileHandleRepository.ts) teeb kolmanda, avaliku get/set ümbrise. IndexedDB-l pole `remove`-i ja storage'id ei ole vahetatavad.
 - *(2.5)* Salvestusvõtmed on inline: `'config.assignmentDirectory'` ja `'file-cache.assignments'` ([AssignmentRepository.ts:10-12](../google-chrome-extension/src/service-worker/repository/AssignmentRepository.ts#L10-L12)) ning `` `autograde:${...}` `` võtme formaat ([QuizRepository.ts:6](../google-chrome-extension/src/service-worker/repository/QuizRepository.ts#L6)).
@@ -311,22 +318,31 @@ Järjekorra põhjendus:
 3. IndexedDBRepository-sse `DB_VERSION = 1` samade konstantide juurde. Migratsioone ei tehta (E11).
 4. `IndexedDBRepository` liigub `google-chrome-extension/src/shared/repository/` alla, FileHandleRepository kõrvale. Nii on sõltuvuse suund õige: service-worker → shared.
 
-### K4. FileCache register ja AssignmentRepository `init()` ülekirjutus `[1.5]`, `[3.4]`
+### K4. AssignmentRepository ja FileCacheRepository projekti init-süsteemi järgi `[1.5]`, `[3.4]` ✅
+
+> **Tehtud:**
+> - **Analüüs kinnitus:** AssignmentRepository `init()` ülekirjutus oli refaktoreerimisest maha jäänud. See registreeris repository `FileCacheRepository` staatilisse registrisse ja muud põhjust sellel ei olnud. Git'i ajalugu ei vaadatud, sest shell'i ei kasutata.
+> - **Lahendus järgib projekti olemasolevat mustrit** (sama nagu kontrollerites: baasklass omab staatilist registrit, registreerimine toimub `onInit`-is). Staatiline register jäi `FileCacheRepository` baasklassi. Iga instants registreerib end baasklassi `onInit`-is, nii et alamklass ei pea midagi tegema. Kommentaar ütleb, et `onInit`-i üle kirjutav alamklass peab kutsuma `super.onInit()`-i.
+> - AssignmentRepository'st eemaldati `init()` ülekirjutus ja `#registered` lipp. Lippu pole vaja, sest `onInit` käivitub iga instantsi kohta üks kord.
+> - `FileCacheService` jäi endiseks: kasutab `FileCacheRepository.getRegistry()`-d ega tunne konkreetseid repositorysid.
+> - **Tagasi lükatud lähenemised:**
+>   - Otsene nimekiri `FileCacheService`-is. See pani teenuse määrama, millised repositoryd on failiallikad, ei lubanud teistel repositorydel registrit kasutada ja oli projekti mustriga vastuolus custom lahendus.
+>   - Registreerimine konstruktoris. See oleks läinud mööda projekti elutsüklist ja teinud initsialiseerimata objekti teistele nähtavaks.
+> - **Skoobist välja jäi** init-süsteemi enda parandamine (näiteks see, et init'e ei oodata ära). Autori otsus:
+>   > initi parandamine on kompleksne ja põhjalikku läbimõtlemist vajav probleem, mis vajab täiesti eraldi käsitlust. praegu on skoobis ainult see, et assignmentrepository ja filecacherepository järgiksid projektis kehtivat init süsteemi.
+>
+>   See on eraldi teema E12.
+
 **Leid:**
-- *(1.5)* On kaks ühekordse init'i mehhanismi: [AsyncInitialisable](../shared/AsyncInitialisable.ts) (`onOneTimeInit`) ja [AssignmentRepository.ts:15-21](../google-chrome-extension/src/service-worker/repository/AssignmentRepository.ts#L15-L21). Viimane kirjutab `init()` üle ja teeb sama asja staatilise `#registered` lipuga, minnes mööda `onInit` mallist.
-- *(3.4)* [FileCacheRepository](../google-chrome-extension/src/service-worker/repository/FileCacheRepository.ts) teeb korraga salvestust ja haldab staatilist globaalset registrit. Register täitub kõrvalmõjuna `init()`-i sees. [FileCacheService](../google-chrome-extension/src/service-worker/service/FileCacheService.ts) sõltub sellest, et init on kutsutud ja üks microtask on möödunud. Kui init jääb kutsumata, kaob allikas popupist ilma veata.
+- *(1.5)* On kaks ühekordse init'i mehhanismi: [AsyncInitialisable](../shared/AsyncInitialisable.ts) (`onOneTimeInit`) ja AssignmentRepository `init()` ülekirjutus. Viimane kirjutab `init()` üle ja teeb sama asja staatilise `#registered` lipuga, minnes mööda `onInit` mallist.
+- *(3.4)* [FileCacheRepository](../google-chrome-extension/src/service-worker/repository/FileCacheRepository.ts) teeb korraga salvestust ja haldab staatilist globaalset registrit. Register täitub kõrvalmõjuna `init()`-i sees, mida teeb alamklass käsitsi.
 
 **Autori otsused:**
 > minu arust võib see et assignmentrepository kirjutab üle võib olla mingi viga. asyncinitialisable loodi kunagi varem refaktorina ja vb assignmentrepository jäi meelest ära. aga see vajaks eraldi lähenemist ja analüüsi, et see tõepoolest nii on ja seal ei ole mingi muu põhjus asjal.
 
 > okei pmst nõus
 
-**Esialgne analüüs (kinnitada selle sammu alguses):**
-- Ülekirjutus kutsub `super.init()`, nii et `onInit` ja `onOneTimeInit` jooksevad endiselt. Pärast seda registreerib see `this` ühe korra.
-- Sama tulemuse annaks `onOneTimeInit` üle kirjutamine AssignmentRepository's (käivitub üks kord selle implementatsiooni kohta) või `onInit` (üks kord instantsi kohta ja instants on singleton).
-- Koodis pole ühtegi kohta, mis sõltuks sellest, et registreerimine toimub just pärast `super.init()` lõppu. Tõenäoliselt on tegu refaktoreerimisest mahajäänud kohaga, aga see tuleb kinnitada (vaata ka git'i ajalugu).
-
-**Tegevus:** kui analüüs seda kinnitab, kaotatakse ülekirjutus ja `#registered` lipp. Register kirjeldatakse **otse nimekirjana**, näiteks `const fileCacheRepositories = [assignmentRepository]` failis init-repositories.ts või FileCacheService'is. Nii kaob vajadus registreerida `init()`-i kõrvalmõjuna, FileCacheRepository staatiline register jääb üleliigseks ja init'i järjekorrast sõltumine kaob.
+**Tegevus:** AssignmentRepository ja FileCacheRepository viiakse projektis kehtiva init-süsteemi järgi. Täpne lahendus on kirjas ülal plokis „Tehtud“.
 
 ### K5. Elutsükli nimekirjad ja `Disposable` `[1.9]`, `[4.2]`
 **Leid:** [init-controllers.ts](../visual-studio-code-extension/src/controller/init-controllers.ts) ja [close-controllers.ts](../visual-studio-code-extension/src/controller/close-controllers.ts) loetlevad samu kontrollereid kahes paralleelses nimekirjas. Kui uus WebSocket-kontroller lisatakse ainult init-nimekirja, jääb port pärast deaktiveerimist kinni ja järgmisel aktiveerimisel tuleb `EADDRINUSE`. Kontrolleri elutsükli liides (`close`) on ainult VS Code'i [CloseableBaseController](../visual-studio-code-extension/src/controller/CloseableBaseController.ts)-is.
@@ -604,3 +620,17 @@ Leid ja autori otsus on punktis V14. Seal tehakse ainult README märge ja lahend
 
 ### E11. Andmebaasi skeem ja migratsioonid `[2.6 edasilükatud osa]`
 Autori sõnul (vaata K3): *„andmebaasi ilusti tegemine on asi, mida ma tahaks praegu edasi lükata kuna praegu pole selge, kui head andmebaasi on vaja.“* K3 teeb ainult klassitaseme konstandid. Migratsioonid ja skeemi disain tulevad siia.
+
+### E12. Init-süsteemi korrastamine `[K4 käigus leitud]`
+**Taust:** tekkis K4 käigus. K4 viis AssignmentRepository ja FileCacheRepository projekti init-süsteemi järgi, aga init-süsteemi enda nõrkused jäid skoobist välja.
+**Autori otsus:**
+> initi parandamine on kompleksne ja põhjalikku läbimõtlemist vajav probleem, mis vajab täiesti eraldi käsitlust.
+
+**Esialgne hinnang.** See on K4 lahendaja **esialgne hinnang**. Tegelik põhjus ja vajalik tegevus tuleb kindlasti põhjalikumalt läbi uurida.
+- [service-worker.ts](../google-chrome-extension/src/service-worker/service-worker.ts) kutsub `initRepositories()`, `initServices()` ja `initControllers()` järjest, aga **ei oota** neid ära. Ka init-funktsioonid ise kutsuvad `.init()`-e ootamata. Kontrollerid võivad seega sõnumeid vastu võtta enne, kui repositoryde ja teenuste init on lõppenud.
+- Praegu see probleemi ei tekita, sest repositoryde `onInit` teeb ainult sünkroonset tööd (näiteks FileCacheRepository registreerimine) ja lõpeb mõne microtask'i jooksul. Kui mõni `onInit` teeks päris asünkroonset tööd (näiteks IndexedDB päringu), oleks näiteks failiallikate register esimese sõnumi ajal veel tühi.
+- **Piirang lahendusele:** Manifest V3 service worker peab `chrome.runtime.onMessage` kuulaja registreerima kohe skripti käivitumisel. Kui kuulaja registreerimist oodatakse asünkroonse init'i järel, võib sõnum, mis service workeri üles äratas, kaduma minna. Seega ei saa lahendus olla lihtsalt „oota kõik init'id ära ja siis registreeri kontrollerid“.
+- **Võimalik suund (vajab uurimist):** kuulaja registreeritakse kohe, nagu praegu, aga kontroller ootab enne sõnumi töötlemist, kuni repositoryde ja teenuste init on lõppenud.
+- Sama küsimus võib puudutada ka VS Code'i laiendust (`activate()` kutsub `initServices()` ja `initControllers()` ootamata) ning content-scripte.
+
+**Seosed:** K5 (elutsükli nimekirjad), V8 (`onOneTimeInit` parandus).

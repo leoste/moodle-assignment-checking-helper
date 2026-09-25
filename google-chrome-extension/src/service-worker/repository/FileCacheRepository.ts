@@ -8,11 +8,13 @@ export default abstract class FileCacheRepository extends IndexedDBRepository {
     return FileCacheRepository.#registry
   }
 
-  protected static register(instance: FileCacheRepository): void {
-    FileCacheRepository.#registry.push(instance)
-  }
-
   abstract readonly fileSourceInfo: FileSourceInfo
+
+  // Every file cache repository registers itself as a file source when initialised.
+  // Subclasses overriding onInit must call super.onInit().
+  protected override async onInit(): Promise<void> {
+    FileCacheRepository.#registry.push(this)
+  }
 
   async getFileContents(): Promise<string[]> {
     return (await this.getValue<string[]>(this.fileSourceInfo.cacheKey)) ?? []

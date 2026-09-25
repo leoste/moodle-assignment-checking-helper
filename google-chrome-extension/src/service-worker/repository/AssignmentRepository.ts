@@ -7,20 +7,10 @@ const ASSIGNMENT_DIRECTORY_CONFIG_KEY = 'config.assignmentDirectory'
 const ASSIGNMENT_FILE_CACHE_KEY = 'file-cache.assignments'
 
 export default class AssignmentRepository extends FileCacheRepository {
-  static #registered = false
-
   readonly fileSourceInfo: FileSourceInfo = {
     displayName: 'Definitsioonide kaust',
     directoryConfigKey: ASSIGNMENT_DIRECTORY_CONFIG_KEY,
     cacheKey: ASSIGNMENT_FILE_CACHE_KEY,
-  }
-
-  override async init(): Promise<void> {
-    await super.init()
-    if (!AssignmentRepository.#registered) {
-      AssignmentRepository.#registered = true
-      FileCacheRepository.register(this)
-    }
   }
 
   async getAllDefinitions(): Promise<Assignment[]> {

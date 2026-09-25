@@ -6,6 +6,14 @@ what is the structure and talking between different services. maybe even add doc
 The Moodle ASsignment Checking Helper consists of two extensions that interact to significantly speed up assignment checking in Moodle.
 Automatically open necessary files in VSCode, run custom scripts, easily compose typical grades and responses.
 
+## Code conventions
+
+### Singletons
+
+Controllers, services, repositories, clients, providers and page listeners are singletons. Only the instance is exported, not the class: `export const quizService = new QuizService()`.
+A class is exported only if it is a base class, has multiple instances (renderers) or is owned by another object (`WebSocketProvider`).
+`static` fields are only for state shared by a whole class hierarchy, e.g. the handler map of a controller base class.
+
 ## Future concerns
 
 Known issues that are consciously left unsolved for now.

@@ -1,4 +1,4 @@
-import FeedbackClient from '../client/FeedbackClient';
+import { feedbackClient } from '../client/FeedbackClient';
 import { FeedbackSectionRenderer } from './FeedbackSectionRenderer';
 import { getAssignmentId, getGradePanel, getMainDiv } from '../pagemanager/assignment-moodle-helper';
 import { createAndAddChildElement, createElementWithClasses } from '../pagemanager/element-creation-helper';
@@ -42,7 +42,7 @@ export default class CheckingHelperPanelRenderer extends BaseRenderer {
     this.#feedbackElement = createAndAddChildElement(parentDiv, 'h2', null, 'Tagasiside')
 
     const assignmentId = getAssignmentId()
-    const data = await new FeedbackClient().getData(assignmentId)
+    const data = await feedbackClient.getData(assignmentId)
 
     this.#feedbackRenderer = new FeedbackSectionRenderer(parentDiv, data)
     this.#feedbackRenderer.render()

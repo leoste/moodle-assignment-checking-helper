@@ -1,7 +1,7 @@
 import { getManualGradedBoxes, getCommentFromManualGradedBox, getAutoGradeId, getCommentActionLink, getQuizId } from '../pagemanager/quiz-moodle-helper'
 import { createAndAddChildElement } from '../pagemanager/element-creation-helper'
 import BaseMoodlePageListener from './BaseMoodlePageListener'
-import QuizClient from '../client/QuizClient'
+import { quizClient } from '../client/QuizClient'
 
 class QuizReviewListener extends BaseMoodlePageListener {
 
@@ -32,8 +32,7 @@ class QuizReviewListener extends BaseMoodlePageListener {
 
         console.log(autoGradeId)
 
-        const client = new QuizClient()
-        await client.beginAutoGrade(autoGradeId)
+        await quizClient.beginAutoGrade(autoGradeId)
 
         console.log("meh")
 

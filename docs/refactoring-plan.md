@@ -358,7 +358,15 @@ Järjekorra põhjendus. See on samuti **esialgne soovitus üldise plaani põhjal
 
 **Tegevus:** AssignmentRepository ja FileCacheRepository viiakse projektis kehtiva init-süsteemi järgi. Täpne lahendus on kirjas ülal plokis „Tehtud“.
 
-### K5. Elutsükli nimekirjad ja `Disposable` `[1.9]`, `[4.2]`
+### K5. Elutsükli nimekirjad ja `Disposable` `[1.9]`, `[4.2]` ✅
+
+> **Tehtud:**
+> - Kõik kuus init-faili (Chrome'i repositoryd, teenused ja kontrollerid; VS Code'i teenused ja kontrollerid) ekspordivad nüüd massiivi (`controllers`, `services`, `repositories`), mille üle `init*()` itereerib. Massiivi tüüp on olemasolev baasklass.
+> - VS Code'i `closeControllers()` itereerib sama `controllers` massiivi üle, nii et paralleelne loetelu kadus.
+> - Käitumine ei muutunud: järjekord on sama ja init'e ei oodata (E12).
+> - **`Closeable` liidest ei lisatud,** sest olemasolev `CloseableBaseController` katab vajaduse.
+> - **Tagasi lükatud:** registri muster (`CloseableBaseController` registreerib end `onInit`-is). Kontrollerid kirjutavad `onInit`-i üle ilma `super.onInit()`-ita, mistõttu registreerimine jääks vahele. Lisaks peab init-loetelu niikuinii olemas olema.
+> - Kliendid ja providerid on kontrollitud: neil pole elutsüklit ja nimekirja pole vaja.
 **Leid:** [init-controllers.ts](../visual-studio-code-extension/src/controller/init-controllers.ts) ja [close-controllers.ts](../visual-studio-code-extension/src/controller/close-controllers.ts) loetlevad samu kontrollereid kahes paralleelses nimekirjas. Kui uus WebSocket-kontroller lisatakse ainult init-nimekirja, jääb port pärast deaktiveerimist kinni ja järgmisel aktiveerimisel tuleb `EADDRINUSE`. Kontrolleri elutsükli liides (`close`) on ainult VS Code'i [CloseableBaseController](../visual-studio-code-extension/src/controller/CloseableBaseController.ts)-is.
 **Autori otsus:**
 > see on tegelikult väga väike probleem iseenesest, aga okei teeme selle. see teeks mõnes mõttes küll asja lihtsamaks, et kontrolleri lisamisel peab siis selle lihtsalt listi panema ja ei pea mõtlema kuidas see sulgetakse õi avatakse. pane tähele - sama asi võib vist rakenduda ka service-tele, client-itele ja muudele asjadele, vaata igat tüüpi sellised asjad üle. minu teada on selliseid sarnaseid asju mujal ka.

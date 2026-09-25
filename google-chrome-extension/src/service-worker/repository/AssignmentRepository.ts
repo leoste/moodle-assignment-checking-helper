@@ -6,7 +6,7 @@ import FileCacheRepository from './FileCacheRepository'
 const ASSIGNMENT_DIRECTORY_CONFIG_KEY = 'config.assignmentDirectory'
 const ASSIGNMENT_FILE_CACHE_KEY = 'file-cache.assignments'
 
-export default class AssignmentRepository extends FileCacheRepository {
+class AssignmentRepository extends FileCacheRepository {
   readonly fileSourceInfo: FileSourceInfo = {
     displayName: 'Definitsioonide kaust',
     directoryConfigKey: ASSIGNMENT_DIRECTORY_CONFIG_KEY,

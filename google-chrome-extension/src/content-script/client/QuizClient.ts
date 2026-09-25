@@ -6,7 +6,7 @@ import {
   QUIZ_AUTO_GRADE_IS_ACTIVE,
 } from '../../shared/constants/messages'
 
-export default class QuizClient extends ChromeExtensionMessageClient {
+class QuizClient extends ChromeExtensionMessageClient {
   async beginAutoGrade(id: AutoGradeId): Promise<void> {
     await chrome.runtime.sendMessage(this.makeMessage(QUIZ_AUTO_GRADE_BEGIN, { autoGradeId: id }))
   }
@@ -19,3 +19,5 @@ export default class QuizClient extends ChromeExtensionMessageClient {
     return chrome.runtime.sendMessage(this.makeMessage(QUIZ_AUTO_GRADE_IS_ACTIVE, { autoGradeId: id })) as Promise<boolean>
   }
 }
+
+export const quizClient = new QuizClient()

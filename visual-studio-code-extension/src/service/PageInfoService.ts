@@ -1,62 +1,45 @@
 import * as vscode from 'vscode'
 import * as path from 'path'
-import { OPEN_SUB_DIRECTORIES, SAFE_BINARY_EXTENSIONS, MAX_AUTO_OPENED_FILES, BLACKLISTED_FOLDER_NAMES } from '../config'
+import { OPEN_SUB_DIRECTORIES, SAFE_BINARY_EXTENSIONS, MAX_AUTO_OPENED_FILES, BLACKLISTED_FOLDER_NAMES, EDITOR_COLUMN_COUNT } from '../config'
 import BaseService from '@shared/service/BaseService'
+
+type FileEntry = [dirUri: vscode.Uri, fileName: string]
 
 class PageInfoService extends BaseService {
   async handlePageInfo(studentName: string): Promise<void> {
     if (!studentName) return
 
+    await this.#resetWorkspace()
+
+    const studentFolderUri = await this.#findStudentFolder(studentName)
+    if (!studentFolderUri) return
+
+    const files = await this.#collectSubmissionFiles(studentFolderUri)
+    await this.#openFiles(files)
+  }
+
+  async #resetWorkspace(): Promise<void> {
     vscode.window.terminals.forEach(t => t.dispose())
     await vscode.commands.executeCommand('workbench.files.action.collapseExplorerFolders')
     await vscode.commands.executeCommand('workbench.action.closeAllEditors')
+  }
 
+  async #findStudentFolder(studentName: string): Promise<vscode.Uri | undefined> {
     const folders = vscode.workspace.workspaceFolders
     if (!folders || folders.length === 0) {
       vscode.window.showWarningMessage('Moodle Helper: No workspace folder open.')
-      return
+      return undefined
     }
 
     const rootUri = folders[0].uri
-    const targetEntry = await this.#findDirectoryByName(rootUri, studentName)
+    const folderName = await this.#findDirectoryByName(rootUri, studentName)
 
-    if (!targetEntry) {
+    if (!folderName) {
       vscode.window.showWarningMessage(`Moodle Helper: No folder found for "${studentName}".`)
-      return
+      return undefined
     }
 
-    const targetUri = vscode.Uri.joinPath(rootUri, targetEntry)
-    let files: [vscode.Uri, string][]
-
-    if (OPEN_SUB_DIRECTORIES) {
-      files = await this.#collectFiles(targetUri)
-    } else {
-      const entries = await vscode.workspace.fs.readDirectory(targetUri)
-      files = entries
-        .filter(([_, type]) => type === vscode.FileType.File)
-        .map(([fileName]) => [targetUri, fileName])
-    }
-
-    let fileCount = 0
-    for (const [dirUri, fileName] of files) {
-      if (fileCount >= MAX_AUTO_OPENED_FILES) break
-      const column = (fileCount % 2) + 1
-      const opened = await this.#openFile(dirUri, fileName, column)
-      if (opened) fileCount++
-    }
-  }
-
-  async #collectFiles(dirUri: vscode.Uri): Promise<[vscode.Uri, string][]> {
-    let result: [vscode.Uri, string][] = []
-    const entries = await vscode.workspace.fs.readDirectory(dirUri)
-    for (const [name, type] of entries) {
-      if (type === vscode.FileType.File) {
-        result.push([dirUri, name])
-      } else if (type === vscode.FileType.Directory && !BLACKLISTED_FOLDER_NAMES.has(name)) {
-        result = result.concat(await this.#collectFiles(vscode.Uri.joinPath(dirUri, name)))
-      }
-    }
-    return result
+    return vscode.Uri.joinPath(rootUri, folderName)
   }
 
   async #findDirectoryByName(rootUri: vscode.Uri, wantedName: string): Promise<string | undefined> {
@@ -65,6 +48,39 @@ class PageInfoService extends BaseService {
       ([name, type]) => type === vscode.FileType.Directory && name.startsWith(wantedName)
     )
     return match?.[0]
+  }
+
+  async #collectSubmissionFiles(folderUri: vscode.Uri): Promise<FileEntry[]> {
+    if (OPEN_SUB_DIRECTORIES) {
+      return this.#collectFilesRecursively(folderUri)
+    }
+    const entries = await vscode.workspace.fs.readDirectory(folderUri)
+    return entries
+      .filter(([_, type]) => type === vscode.FileType.File)
+      .map(([fileName]): FileEntry => [folderUri, fileName])
+  }
+
+  async #collectFilesRecursively(dirUri: vscode.Uri): Promise<FileEntry[]> {
+    let result: FileEntry[] = []
+    const entries = await vscode.workspace.fs.readDirectory(dirUri)
+    for (const [name, type] of entries) {
+      if (type === vscode.FileType.File) {
+        result.push([dirUri, name])
+      } else if (type === vscode.FileType.Directory && !BLACKLISTED_FOLDER_NAMES.has(name)) {
+        result = result.concat(await this.#collectFilesRecursively(vscode.Uri.joinPath(dirUri, name)))
+      }
+    }
+    return result
+  }
+
+  async #openFiles(files: FileEntry[]): Promise<void> {
+    let fileCount = 0
+    for (const [dirUri, fileName] of files) {
+      if (fileCount >= MAX_AUTO_OPENED_FILES) break
+      const column = vscode.ViewColumn.One + (fileCount % EDITOR_COLUMN_COUNT)
+      const opened = await this.#openFile(dirUri, fileName, column)
+      if (opened) fileCount++
+    }
   }
 
   async #openFile(dirUri: vscode.Uri, fileName: string, column: number): Promise<boolean> {

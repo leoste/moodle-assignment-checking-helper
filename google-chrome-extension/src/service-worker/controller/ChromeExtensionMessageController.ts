@@ -2,6 +2,11 @@ import BaseController from '@shared/controller/BaseController'
 import ChromeMessageHandlerMap from '../../shared/object/ChromeMessageHandlerMap'
 import type { ChromeMessageHandler } from '../../shared/types/ChromeMessageHandler'
 
+/**
+ * Base class for controllers handling chrome.runtime messages, and at the same time the
+ * singleton dispatcher for them: the handler map and the listener are static and shared
+ * by all subclasses (set up once via onOneTimeInit).
+ */
 export default class ChromeExtensionMessageController extends BaseController {
 
   static #messageHandlerMap: ChromeMessageHandlerMap
@@ -38,7 +43,7 @@ export default class ChromeExtensionMessageController extends BaseController {
   ): Promise<void> {
     const messageHandler = ChromeExtensionMessageController.#messageHandlerMap.get(message.type)
     if (!messageHandler) {
-      console.error(`[ChromeWebSocketController] No handler registered for message type: "${message.type}"`)
+      console.error(`[ChromeExtensionMessageController] No handler registered for message type: "${message.type}"`)
       sendResponse(undefined)
       return
     }

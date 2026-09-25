@@ -15,4 +15,4 @@ class FileCacheController extends ChromeExtensionMessageController {
   }
 }
 
-export const fileRefreshController = new FileCacheController()
+export const fileCacheController = new FileCacheController()

@@ -6,6 +6,11 @@ import { WEBSOCKET_HOST, WEBSOCKET_PORT } from '../config'
 import VsCodeMessageHandlerMap from '../shared/object/VsCodeMessageHandlerMap'
 import type { VsCodeMessageHandler } from '../shared/types/VsCodeMessageHandler'
 
+/**
+ * Base class for controllers handling WebSocket messages from the Chrome extension, and at the
+ * same time the singleton dispatcher for them: the handler map and the WebSocket server are
+ * static and shared by all subclasses (set up once via onOneTimeInit).
+ */
 export default class VsCodeWebSocketController extends CloseableBaseController {
   static #messageHandlerMap: VsCodeMessageHandlerMap
   static #wss: WebSocketServer | null = null

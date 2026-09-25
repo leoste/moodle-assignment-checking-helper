@@ -1,9 +1,9 @@
 import AsyncInitialisable from '../../../../shared/AsyncInitialisable'
-import executeOnPageLoad from '../pagemanager/executeOnPageLoad'
+import executeOnPageReady from '../pagemanager/executeOnPageReady'
 
 export default class BaseMoodlePageListener extends AsyncInitialisable {
   protected override async onInit(): Promise<void> {
-    executeOnPageLoad(this.onPageLoad.bind(this))
+    executeOnPageReady(this.onPageLoad.bind(this))
   }
 
   async onPageLoad() {}

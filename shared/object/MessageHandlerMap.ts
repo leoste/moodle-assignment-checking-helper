@@ -4,9 +4,11 @@ export default class MessageHandlerMap<T extends MessageHandler> {
   readonly #handlers = new Map<string, T>()
 
   add(messageType: string, handler: T): void {
-    if (!this.#handlers.has(messageType)) {
-      this.#handlers.set(messageType, handler)
+    if (this.#handlers.has(messageType)) {
+      console.error(`[MessageHandlerMap] Handler already registered for message type: "${messageType}". Keeping the first one.`)
+      return
     }
+    this.#handlers.set(messageType, handler)
   }
 
   get(messageType: string): T | undefined {

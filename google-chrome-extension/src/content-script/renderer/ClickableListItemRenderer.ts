@@ -2,6 +2,8 @@ import type { FeedbackPart } from '../../shared/types/FeedbackPart';
 import { createAndAddChildElement, createAndAddChildImage } from '../pagemanager/element-creation-helper';
 import BaseRenderer from './BaseRenderer';
 
+const ADD_BUTTON_IMAGE_PATH = 'images/double-thumbs-up-emoji.png'
+
 export class ClickableListItemRenderer extends BaseRenderer {
   readonly #list: HTMLElement
   readonly #listItem: FeedbackPart
@@ -47,7 +49,7 @@ export class ClickableListItemRenderer extends BaseRenderer {
     const classList = ['add-button'];
     const extraClass = this.#listItem.enabled ? 'active' : 'inactive';
     classList.push(extraClass);
-    this.#addButton = createAndAddChildImage(this.#buttonsSection!, 'images/double-thumbs-up-emoji.png', classList);
+    this.#addButton = createAndAddChildImage(this.#buttonsSection!, ADD_BUTTON_IMAGE_PATH, classList);
     this.#addButton.addEventListener('click', this.#addButtonOnClick);
   }
 

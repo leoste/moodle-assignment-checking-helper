@@ -26,8 +26,9 @@ export default class AssignmentRepository extends FileCacheRepository {
     for (const content of fileContents) {
       try {
         definitions.push(JSON.parse(content) as Assignment)
-      } catch {
-        // skip files that are not valid JSON or don't match the expected shape
+      } catch (err) {
+        // skip files that are not valid JSON, but make the reason visible
+        console.error('[AssignmentRepository] Skipping definition file that is not valid JSON:', err, content.slice(0, 200))
       }
     }
     return definitions

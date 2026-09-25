@@ -1,6 +1,8 @@
 import WebSocketProvider from './WebSocketProvider'
 import type { WebSocketResponse } from '@shared/types/WebSocketProtocol'
 
+const REQUEST_TIMEOUT_MS = 5000
+
 interface PendingRequest {
   resolve: (value: unknown) => void
   reject: (reason: unknown) => void
@@ -10,7 +12,6 @@ interface PendingRequest {
 class VsCodeConnectionProvider {
   readonly #provider = new WebSocketProvider()
   readonly #requests = new Map<string, PendingRequest>()
-  readonly #timeoutMs = 5000
 
   constructor() {
     this.#provider.onMessage = (raw) => this.#handleMessage(raw)
@@ -23,7 +24,7 @@ class VsCodeConnectionProvider {
       const timer = setTimeout(() => {
         this.#cleanup(id)
         reject(new Error('WebSocket request timed out'))
-      }, this.#timeoutMs)
+      }, REQUEST_TIMEOUT_MS)
 
       this.#requests.set(id, { resolve, reject, timer })
 

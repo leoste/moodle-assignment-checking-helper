@@ -20,18 +20,6 @@ export function getGradeInput(): HTMLInputElement {
   return document.querySelector<HTMLInputElement>('input#id_grade')!
 }
 
-export function getBottomDiv(): HTMLElement {
-  return document.querySelector<HTMLElement>('div[data-region="grade-actions"] > div:has(> form)')!
-}
-
-export function getSaveCommentButton(): HTMLElement {
-  return document.querySelector<HTMLElement>('a[id^="comment-action-post-"]')!
-}
-
-export function getSaveGradeAndShowNextButton(): HTMLButtonElement {
-  return document.querySelector<HTMLButtonElement>('button[name="saveandshownext"]')!
-}
-
 export function getAssignmentId(): string {
   const urlParams = new URLSearchParams(window.location.search)
   return urlParams.get('id') ?? ''

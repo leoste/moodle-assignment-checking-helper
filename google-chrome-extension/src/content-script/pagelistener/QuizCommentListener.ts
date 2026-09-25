@@ -1,4 +1,4 @@
-import QuizDataClient from '../client/QuizClient'
+import QuizClient from '../client/QuizClient'
 import { getManualGradedBox, getGradeInput, getMaxMark, getSubmitButton, getAutoGradeId } from '../pagemanager/quiz-moodle-helper'
 import BaseMoodlePageListener from './BaseMoodlePageListener'
 
@@ -9,7 +9,7 @@ class QuizCommentListener extends BaseMoodlePageListener {
     }
 
     async #autoGradeIfActive() {
-        const client = new QuizDataClient()
+        const client = new QuizClient()
 
         const box = getManualGradedBox()
         const autoGradeId = getAutoGradeId(box)

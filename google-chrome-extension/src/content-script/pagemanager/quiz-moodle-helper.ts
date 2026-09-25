@@ -1,5 +1,10 @@
 import type { AutoGradeId } from '../../shared/types/AutoGradeId'
 
+// Moodle's manual graded box id format: "question-<quiz id>-<question number>"
+const MANUAL_GRADED_BOX_ID_SEPARATOR = '-'
+const MANUAL_GRADED_BOX_ID_QUIZ_ID_INDEX = 1
+const MANUAL_GRADED_BOX_ID_QUESTION_NUMBER_INDEX = 2
+
 export function getManualGradedBox(): HTMLElement {
   return document.querySelector<HTMLElement>('div.manualgraded.complete')!
 }
@@ -18,11 +23,10 @@ export function getSubmitButton(): HTMLInputElement {
 }
 
 function getQuizIdAndQuestionNumberFromManualGradedBox(box: HTMLElement): { quizId: string; questionNumber: string } {
-  const id = box.id
-  const parts = id.split('-')
+  const parts = box.id.split(MANUAL_GRADED_BOX_ID_SEPARATOR)
   return {
-    quizId: parts[1] ?? '',
-    questionNumber: parts[2] ?? ''
+    quizId: parts[MANUAL_GRADED_BOX_ID_QUIZ_ID_INDEX] ?? '',
+    questionNumber: parts[MANUAL_GRADED_BOX_ID_QUESTION_NUMBER_INDEX] ?? ''
   }
 }
 

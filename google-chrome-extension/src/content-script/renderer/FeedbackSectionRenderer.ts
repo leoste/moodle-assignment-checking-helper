@@ -50,14 +50,6 @@ export class FeedbackSectionRenderer extends BaseRenderer {
     this.#clickableListRenderers = []
   }
 
-  setPointsMax(): void {
-    this.#calculateAndSetTotalPoints(true)
-  }
-
-  setCommentEmpty(): void {
-    this.#setCommentText('')
-  }
-
   async #createFeedbackList(item: Feedback) {
     const onClickCallback = (parts: FeedbackPart[]) => this.#onFeedbackPartClick(parts, item._id!)
 
@@ -91,10 +83,10 @@ export class FeedbackSectionRenderer extends BaseRenderer {
     this.#setCommentText(this.#buildCommentText())
   }
 
-  #calculateAndSetTotalPoints(overrideEnabledTrue?: boolean): void {
+  #calculateAndSetTotalPoints(): void {
     const totalPoints = this.#feedbackItems.reduce((sum, item) => {
       return sum + item.parts.reduce((ps, p) => {
-        return ps + ((p.enabled || overrideEnabledTrue) ? (p.points ?? 0) : 0)
+        return ps + (p.enabled ? (p.points ?? 0) : 0)
       }, 0)
     }, 0)
     this.#gradeInput.value = String(totalPoints > 0 ? totalPoints : 100)

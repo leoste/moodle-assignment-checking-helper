@@ -32,7 +32,7 @@ div[data-region="grade-panel"] {
   width: 20% !important;
 }
 
-.feedback-subpanel, .quick-submit-subpanel {
+.feedback-subpanel {
   margin: 10px;
 }
 
@@ -54,12 +54,6 @@ div[data-region="grade-panel"] {
 
 div.common-answer-section {
   break-inside: avoid;
-}
-
-.quick-submit-subpanel {
-  grid-column: 2 / 3;
-  grid-row: 1 / 2;
-  height: 100%;
 }
 
 

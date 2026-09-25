@@ -1,10 +1,10 @@
 import { assignmentController } from './AssignmentController'
-import { fileRefreshController } from './FileCacheController'
+import { fileCacheController } from './FileCacheController'
 import { pageInfoController } from './PageInfoController'
 import { quizController } from './QuizController'
 
 export default function initControllers(): void {
-  fileRefreshController.init()
+  fileCacheController.init()
   assignmentController.init()
   pageInfoController.init()
   quizController.init()

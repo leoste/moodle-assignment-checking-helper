@@ -242,7 +242,14 @@ Järjekorra põhjendus:
 - K8–K10 on sõnumisüsteem sõltuvuste järjekorras: payload/sõnum → generaator → handler.
 - K11 on viimane, sest see puudutab eraldiseisvate feedback-teemadega kattuvat ala.
 
-### K1. `shared/` tüübisõltuvused ja tsconfig `[4.2]`, `[1.12 sõltuvused]`
+### K1. `shared/` tüübisõltuvused ja tsconfig `[4.2]`, `[1.12 sõltuvused]` ✅
+
+> **Tehtud:**
+> - Täpsem põhjus selgus alles töö käigus. VS Code'i tsconfig'is ei olnud `types` välja, nii et TypeScript lisas automaatselt kõik `@types` paketid ka **ülemkaustade** `node_modules`-ist. Juure `@types/chrome` ja `@types/node 25` oleksid sattunud VS Code'i typecheck'i. Chrome'i laiendust see ei mõjutanud, sest seal on `"types": ["chrome"]`.
+> - VS Code'i tsconfig'i lisati `"types": ["node"]`.
+> - Juure `package.json` ja `package-lock.json` kustutas autor, sest nende tüüpe ei kasutanud keegi.
+> - Lisati `shared/tsconfig.json`, mis on ainult editori jaoks: laiendustega samad seaded ja `"types": []`. `lib` sisaldab `DOM`-i ainult `console` pärast. Kommentaar hoiatab, et `target` peab ühtima laiendustega, sest esbuild loeb bundle'imisel lähimat tsconfig'i.
+> - Typecheck'i ei jooksutatud, sest shell'i ei kasutata. Kontrollitud on IDE diagnostika põhjal.
 **Leid:**
 - Juure [package.json](../package.json) sisaldab `@types/chrome ^0.1.40` ja `@types/node ^25`. Chrome'i laiendus kasutab `@types/chrome ^0.0.320` ja VS Code `@types/node 22.x`.
 - Juure `shared/` failid võtavad tüübid juure `node_modules`-ist. Seega kontrollitakse jagatud koodi **teiste tüübiversioonidega** kui seda kasutavat koodi.

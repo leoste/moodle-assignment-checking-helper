@@ -2,7 +2,7 @@ import CloseableBaseController from './CloseableBaseController'
 import { WebSocketServer } from 'ws'
 import type { WebSocket } from 'ws'
 import type { WebSocketMessage } from '@shared/types/WebSocketProtocol'
-import { WEBSOCKET_HOST, WEBSOCKET_PORT } from '../config'
+import { WEBSOCKET_HOST, WEBSOCKET_PORT } from '@shared/config/connection'
 import VsCodeMessageHandlerMap from '../shared/object/VsCodeMessageHandlerMap'
 import type { VsCodeMessageHandler } from '../shared/types/VsCodeMessageHandler'
 

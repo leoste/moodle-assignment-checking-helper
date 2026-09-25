@@ -1,5 +1,7 @@
+import { WEBSOCKET_URL } from '@shared/config/connection'
+
 export default class WebSocketProvider {
-  readonly #address = 'ws://127.0.0.1:54321'
+  readonly #address = WEBSOCKET_URL
   #socket: WebSocket | null = null
 
   onMessage: (rawString: string) => void = () => {}

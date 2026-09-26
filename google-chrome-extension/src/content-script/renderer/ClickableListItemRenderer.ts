@@ -1,5 +1,5 @@
 import type { FeedbackPart } from '../../shared/types/FeedbackPart';
-import { createAndAddChildElement, createAndAddChildImage } from '../pagemanager/element-creation-helper';
+import { createAndAddChildElement, createAndAddChildImage } from '../../shared/util/element-creation-helper';
 import BaseRenderer from '../../shared/renderer/BaseRenderer';
 
 const ADD_BUTTON_IMAGE_PATH = 'images/double-thumbs-up-emoji.png'

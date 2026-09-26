@@ -1,5 +1,5 @@
 import type { FeedbackPart } from '../../shared/types/FeedbackPart';
-import { createElementWithClasses, createAndAddChildElement } from '../pagemanager/element-creation-helper';
+import { createElementWithClasses, createAndAddChildElement } from '../../shared/util/element-creation-helper';
 import BaseRenderer from '../../shared/renderer/BaseRenderer';
 import { ClickableListItemRenderer } from './ClickableListItemRenderer';
 

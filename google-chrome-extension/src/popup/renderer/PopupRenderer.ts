@@ -2,6 +2,7 @@ import { fileHandleRepository } from '../../shared/repository/FileHandleReposito
 import { FILES_GET_SOURCES } from '../../shared/constants/messages'
 import type { FileSourceInfo } from '../../shared/types/FileSourceInfo'
 import BaseRenderer from '../../shared/renderer/BaseRenderer'
+import { createAndAddChildElement } from '../../shared/util/element-creation-helper'
 import { folderAccessService } from '../service/FolderAccessService'
 
 export default class PopupRenderer extends BaseRenderer {
@@ -19,9 +20,7 @@ export default class PopupRenderer extends BaseRenderer {
   async render(): Promise<void> {
     const sources = await this.#getSources()
     for (const source of sources) {
-      const element = await this.#createSourceElement(source)
-      this.#sourcesContainer.appendChild(element)
-      this.#sourceElements.push(element)
+      this.#sourceElements.push(await this.#addSourceElement(source))
     }
     this.#refreshBtn.addEventListener('click', this.#onRefreshClick)
   }
@@ -43,25 +42,18 @@ export default class PopupRenderer extends BaseRenderer {
     this.#refreshBtn.textContent = 'Uuenda definitsioonid'
   }
 
-  async #createSourceElement(source: FileSourceInfo): Promise<HTMLElement> {
-    const div = document.createElement('div')
-    div.className = 'source'
-
-    const nameEl = document.createElement('div')
-    nameEl.className = 'source-folder-name'
-
+  async #addSourceElement(source: FileSourceInfo): Promise<HTMLElement> {
     const handle = await fileHandleRepository.get<FileSystemDirectoryHandle>(source.directoryConfigKey)
-    nameEl.textContent = handle ? handle.name : 'Kaust valimata'
 
-    const selectBtn = document.createElement('button')
-    selectBtn.textContent = `Vali ${source.displayName.toLowerCase()}`
+    const div = createAndAddChildElement(this.#sourcesContainer, 'div', 'source')
+    const nameEl = createAndAddChildElement(div, 'div', 'source-folder-name', handle ? handle.name : 'Kaust valimata')
+    const selectBtn = createAndAddChildElement(div, 'button', null, `Vali ${source.displayName.toLowerCase()}`)
+
     selectBtn.addEventListener('click', async () => {
       const newHandle = await folderAccessService.selectFolder(source)
       if (newHandle) nameEl.textContent = newHandle.name
     })
 
-    div.appendChild(nameEl)
-    div.appendChild(selectBtn)
     return div
   }
 

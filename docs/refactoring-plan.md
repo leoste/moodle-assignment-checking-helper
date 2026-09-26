@@ -397,7 +397,18 @@ Seega on **tegelik paralleelsus ainult VS Code'i kontrolleritel**. Ühtlustada t
 2. VS Code'is itereerib `closeControllers()` **sama** massiivi üle ja eraldi `close-controllers.ts` loetelu kaob.
 3. `shared/`-i lisatakse väike `Closeable` (`close(): void`) liides, mida `CloseableBaseController` implementeerib. See pärineb algse analüüsi punktist 4.2 („kontrolleri elutsükli liides puudub shared-ist“). Vaata enne üle, kas see on vajalik või piisab olemasolevast `CloseableBaseController`-ist.
 
-### K6. Singletonide ühtlustamine ja määratlemine `[3.8.3]`, `[3.8.8]`
+### K6. Singletonide ühtlustamine ja määratlemine `[3.8.3]`, `[3.8.8]` ✅
+
+> **Tehtud:**
+> - Koodis oli selge valdav muster (umbes 25 juhtu): klassi ei ekspordita, eksporditakse ainult instants `export const camelCase = new Klass()`. Konventsioon tuletati sellest.
+> - Konventsioon on kirjas juure README sektsioonis „Code conventions → Singletons“. Autor palus kirjutada lühidalt ja tema stiilis, eeskujuks README avalõigud. Klass eksporditakse ainult siis, kui see on baasklass, sellel on mitu instantsi (renderer'id) või selle instants kuulub teisele objektile (`WebSocketProvider`). `static` väljad on ainult kogu klassihierarhia jagatud oleku jaoks.
+> - `FeedbackClient` ja `QuizClient` → singletonid `feedbackClient` ja `quizClient`. Kasutuskohad on uuendatud.
+> - `AssignmentService` ja `AssignmentRepository` klassi eksport eemaldati.
+> - `AssignmentGraderListener` staatiline `#renderer` muutus instantsi väljaks.
+> - Pärast muudatusi on kõik kontrollerid, teenused, repositoryd, kliendid, providerid ja listenerid ühtse mustri järgi.
+> - **Autori soovil lisaks** (et sama kategooria klassid käituksid ühtemoodi):
+>   - `FolderAccessService` pärib nüüd `BaseService`-t.
+>   - `PopupRenderer` pärib `BaseRenderer`-it: `init()` → `render()` ja uus `clear()`. `BaseRenderer` liigutati Chrome'i `src/shared/renderer/` alla, et popup ei impordiks content-scriptist. Vana faili kustutas autor.
 **Leid:**
 - *(3.8.3)* Instantsieerimine on ebaühtlane: `pageInfoClient` on singleton, aga `FeedbackClient` ja `QuizDataClient` luuakse igal kasutusel uuesti.
 - *(3.8.8)* [AssignmentGraderListener](../google-chrome-extension/src/content-script/pagelistener/AssignmentGraderListener.ts#L8) hoiab renderer'it `static` väljas, kuigi objekt on niikuinii singleton.

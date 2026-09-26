@@ -1,5 +1,5 @@
 import { getManualGradedBoxes, getCommentFromManualGradedBox, getAutoGradeId, getCommentActionLink, getQuizId } from '../pagemanager/quiz-moodle-helper'
-import { createAndAddChildElement } from '../pagemanager/element-creation-helper'
+import { createAndAddChildElement } from '../../shared/util/element-creation-helper'
 import BaseMoodlePageListener from './BaseMoodlePageListener'
 import { quizClient } from '../client/QuizClient'
 

@@ -1,4 +1,4 @@
-import { getDirectTextContent } from './element-creation-helper'
+import { getDirectTextContent } from '../../shared/util/element-creation-helper'
 
 export function getMainDiv(): HTMLElement {
   return document.querySelector<HTMLElement>('div[role="main"]')!

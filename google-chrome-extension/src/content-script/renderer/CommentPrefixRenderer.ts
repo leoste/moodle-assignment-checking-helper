@@ -1,4 +1,4 @@
-import { createAndAddChildElement } from '../pagemanager/element-creation-helper';
+import { createAndAddChildElement } from '../../shared/util/element-creation-helper';
 import BaseRenderer from '../../shared/renderer/BaseRenderer';
 
 export class CommentPrefixRenderer extends BaseRenderer {

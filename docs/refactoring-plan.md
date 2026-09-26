@@ -44,6 +44,7 @@ Iga punkti juures on algse analüüsi number (näiteks `[1.1]`), et seoseid olek
 - **Viited ja reanumbrid** võivad olla aegunud: tehtud sammud on faile muutnud, ümber nimetanud ja kustutanud. Tehtud sammude viited on ajaloolised. Otsi õige koht koodist nime järgi üles.
 - **Autentne on ainult tsitaat.** Kõik autori seisukohtade ümbersõnastused (näiteks „Suund“, „Tehtud“ kokkuvõtted) on lahendaja tõlgendus. Kahtluse korral lähtu tsitaadist või küsi autorilt.
 - **Teistesse sammudesse lükatud asjad** („lahendatakse K9-s“, „kuulub E2 alla“ jms) põhinevad esialgsetel lahendustel. Kui sammu lahendus muutub, kontrolli, et ükski selle sammuga seotud asi sammude vahele kaotsi ei läheks. Kui asi jääb katmata, ütle seda autorile ja lisa see plaani.
+- **Kommentaarid:** koodi ei kommenteerita, kui kommentaar ei lisa midagi väga väärtuslikku. Kommentaari, mis kordab seda, mida kood (nimed, struktuur, tüübid) juba ise ütleb, ei lisata, sest see on sisuliselt koodiduplikatsioon.
 - **Skoop:** refaktoreerimine ei muuda käitumist. Kui lahendus muudaks käitumist, küsi autorilt. Kui töö käigus leitakse skoobiväline probleem, seda sammus ei lahendata, vaid see lisatakse plaani eraldi punktina (näiteks E12).
 
 Algse analüüsi soovitatud järjekorra jättis autor kõrvale:
@@ -436,7 +437,12 @@ Mõlemad erandlikud kliendid on olekuta, seega **põhjust mitte-singleton olla e
 3. `AssignmentGraderListener` staatiline `#renderer` muutub instantsi väljaks.
 4. `AssignmentService` ja `AssignmentRepository` ekspordivad nii klassi kui instantsi. Kas klassi eksport eemaldada, sõltub kokkulepitud konventsioonist.
 
-### K7. Popupi elemendiloome ja element-creation-helperi liigutamine `[1.12 popup]`
+### K7. Popupi elemendiloome ja element-creation-helperi liigutamine `[1.12 popup]` ✅
+
+> **Tehtud:** tehti esialgse soovituse järgi.
+> - `element-creation-helper.ts` liigutati Chrome'i `src/shared/util/` alla, `deepCopy.ts` kõrvale, sest seal on jagatud utiliidid. Sisu on muutmata. Kuue kasutaja importid uuendati ja vana faili kustutas autor.
+> - PopupRenderer kasutab `createAndAddChildElement`-i. Meetodi nimi muutus: `#createSourceElement` → `#addSourceElement`, sest helper lisab elemendi kohe vanema alla. Kausta nimi loetakse enne elementide loomist, nii et plokk ilmub korraga, nagu varem.
+> - `getDirectTextContent` liikus failiga kaasa (E1). Otse `sendMessage` jäi K9 alla.
 **Leid:** [PopupRenderer](../google-chrome-extension/src/popup/renderer/PopupRenderer.ts) loob elemente käsitsi (`document.createElement` ja `className`), kuigi [element-creation-helper](../google-chrome-extension/src/content-script/pagemanager/element-creation-helper.ts) on selleks olemas, aga content-script kaustas.
 **Autori otsus:**
 > nupu teksti osa ignoreeriks praegu, kuna see on väga väikese impactiga kõigega muuga võrreldes. moodlei sektorite osa ignoreerime seoses 1.7-ga. popuprenderi käsitsi elementide loomine, siinkohal võid vaadata kas täpselt õige funktsioon on element-creation-helperis olemas, kui jah siis võiks seda vb täitsa kasutada ja content-script kaustast shared kausta liigutada.

@@ -1,10 +1,11 @@
 import WebSocketProvider from './WebSocketProvider'
-import type { WebSocketResponse } from '@shared/types/WebSocketProtocol'
+import type { WebSocketMessage, WebSocketResponse, WebSocketResponseStatus } from '@shared/types/WebSocketProtocol'
+import type { BasePayload } from '@shared/types/payload/BasePayload'
 
 const REQUEST_TIMEOUT_MS = 5000
 
 interface PendingRequest {
-  resolve: (value: unknown) => void
+  resolve: (value: WebSocketResponseStatus) => void
   reject: (reason: unknown) => void
   timer: ReturnType<typeof setTimeout>
 }
@@ -18,7 +19,7 @@ class VsCodeConnectionProvider {
     this.#provider.onDisconnect = () => this.#cancelAll()
   }
 
-  post(channel: string, content: unknown): Promise<unknown> {
+  post(channel: string, content: BasePayload): Promise<WebSocketResponseStatus> {
     return new Promise((resolve, reject) => {
       const id = crypto.randomUUID()
       const timer = setTimeout(() => {
@@ -28,8 +29,8 @@ class VsCodeConnectionProvider {
 
       this.#requests.set(id, { resolve, reject, timer })
 
-      const payload = JSON.stringify({ id, channel, content })
-      this.#provider.send(payload).catch((err) => {
+      const message: WebSocketMessage = { id, channel, content }
+      this.#provider.send(JSON.stringify(message)).catch((err) => {
         this.#cleanup(id)
         reject(err)
       })
@@ -47,7 +48,7 @@ class VsCodeConnectionProvider {
     this.#complete(parsed.id, parsed.content)
   }
 
-  #complete(id: string, content: unknown): void {
+  #complete(id: string, content: WebSocketResponseStatus): void {
     const req = this.#requests.get(id)
     if (!req) return
     clearTimeout(req.timer)

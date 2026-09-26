@@ -1,7 +1,8 @@
 import CloseableBaseController from './CloseableBaseController'
 import { WebSocketServer } from 'ws'
 import type { WebSocket } from 'ws'
-import type { WebSocketMessage } from '@shared/types/WebSocketProtocol'
+import type { WebSocketMessage, WebSocketResponse, WebSocketResponseStatus } from '@shared/types/WebSocketProtocol'
+import { RESPONSE_STATUS_ERROR, RESPONSE_STATUS_OK, RESPONSE_STATUS_UNHANDLED } from '@shared/constants/websocket'
 import { WEBSOCKET_HOST, WEBSOCKET_PORT } from '@shared/config/connection'
 import VsCodeMessageHandlerMap from '../shared/object/VsCodeMessageHandlerMap'
 import type { VsCodeMessageHandler } from '../shared/types/VsCodeMessageHandler'
@@ -56,19 +57,20 @@ export default class VsCodeWebSocketController extends CloseableBaseController {
     const handler = VsCodeWebSocketController.#messageHandlerMap.get(data.channel)
     if (!handler) {
       console.warn(`[VsCodeWebSocketController] No handler for channel: "${data.channel}"`)
-      this.#sendResponse(ws, data.id, 'unhandled')
+      this.#sendResponse(ws, data.id, RESPONSE_STATUS_UNHANDLED)
       return
     }
     try {
       await handler(data.content as Record<string, unknown>)
-      this.#sendResponse(ws, data.id, 'ok')
+      this.#sendResponse(ws, data.id, RESPONSE_STATUS_OK)
     } catch (err) {
       console.error(`Handler error for channel "${data.channel}":`, err)
-      this.#sendResponse(ws, data.id, 'error')
+      this.#sendResponse(ws, data.id, RESPONSE_STATUS_ERROR)
     }
   }
 
-  #sendResponse(ws: WebSocket, id: string, content: unknown): void {
-    ws.send(JSON.stringify({ id, content }))
+  #sendResponse(ws: WebSocket, id: string, status: WebSocketResponseStatus): void {
+    const response: WebSocketResponse = { id, content: status }
+    ws.send(JSON.stringify(response))
   }
 }

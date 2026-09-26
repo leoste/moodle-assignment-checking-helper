@@ -1,4 +1,4 @@
-import CloseableBaseController from './CloseableBaseController'
+import BaseMessageController from '@shared/controller/BaseMessageController'
 import { WebSocketServer } from 'ws'
 import type { WebSocket } from 'ws'
 import type { VsCodeRequest, VsCodeResponse, VsCodeResponseStatus } from '@shared/types/VsCodeMessage'
@@ -7,16 +7,21 @@ import { WEBSOCKET_HOST, WEBSOCKET_PORT } from '@shared/config/connection'
 import VsCodeMessageHandlerMap from '../shared/object/VsCodeMessageHandlerMap'
 import type { VsCodeMessageHandler } from '../shared/types/VsCodeMessageHandler'
 
+interface RequestResponder {
+  ws: WebSocket
+  id: string
+}
+
 /**
  * Base class for controllers handling WebSocket messages from the Chrome extension, and at the
  * same time the singleton dispatcher for them: the handler map and the WebSocket server are
  * static and shared by all subclasses (set up once via onOneTimeInit).
  */
-export default class VsCodeMessageController extends CloseableBaseController {
+export default class VsCodeMessageController extends BaseMessageController<VsCodeMessageHandler, RequestResponder> {
   static #messageHandlerMap: VsCodeMessageHandlerMap
   static #wss: WebSocketServer | null = null
 
-  close(): void {
+  override close(): void {
     VsCodeMessageController.#wss?.close()
     VsCodeMessageController.#wss = null
   }
@@ -26,8 +31,20 @@ export default class VsCodeMessageController extends CloseableBaseController {
     this.#initWebSocketServer()
   }
 
-  addMessageHandler(channel: string, handler: VsCodeMessageHandler): void {
-    VsCodeMessageController.#messageHandlerMap.add(channel, handler)
+  protected getHandlerMap(): VsCodeMessageHandlerMap {
+    return VsCodeMessageController.#messageHandlerMap
+  }
+
+  protected respondHandled(responder: RequestResponder): void {
+    this.#sendResponse(responder, RESPONSE_STATUS_OK)
+  }
+
+  protected respondUnhandled(responder: RequestResponder): void {
+    this.#sendResponse(responder, RESPONSE_STATUS_UNHANDLED)
+  }
+
+  protected respondError(responder: RequestResponder): void {
+    this.#sendResponse(responder, RESPONSE_STATUS_ERROR)
   }
 
   #initMessageHandlerMap(): void {
@@ -47,29 +64,13 @@ export default class VsCodeMessageController extends CloseableBaseController {
           console.error('Failed to parse incoming message:', raw.toString())
           return
         }
-        await this.#handleRequest(request, ws)
+        await this.dispatch(request.channel, request.content as Record<string, unknown>, { ws, id: request.id })
       })
       ws.on('close', () => console.log('Chrome extension disconnected.'))
     })
   }
 
-  async #handleRequest(request: VsCodeRequest, ws: WebSocket): Promise<void> {
-    const handler = VsCodeMessageController.#messageHandlerMap.get(request.channel)
-    if (!handler) {
-      console.warn(`[VsCodeMessageController] No handler for channel: "${request.channel}"`)
-      this.#sendResponse(ws, request.id, RESPONSE_STATUS_UNHANDLED)
-      return
-    }
-    try {
-      await handler(request.content as Record<string, unknown>)
-      this.#sendResponse(ws, request.id, RESPONSE_STATUS_OK)
-    } catch (err) {
-      console.error(`Handler error for channel "${request.channel}":`, err)
-      this.#sendResponse(ws, request.id, RESPONSE_STATUS_ERROR)
-    }
-  }
-
-  #sendResponse(ws: WebSocket, id: string, status: VsCodeResponseStatus): void {
+  #sendResponse({ ws, id }: RequestResponder, status: VsCodeResponseStatus): void {
     const response: VsCodeResponse = { id, content: status }
     ws.send(JSON.stringify(response))
   }

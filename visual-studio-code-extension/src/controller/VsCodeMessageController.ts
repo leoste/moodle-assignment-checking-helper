@@ -64,7 +64,7 @@ export default class VsCodeMessageController extends BaseMessageController<VsCod
           console.error('Failed to parse incoming message:', raw.toString())
           return
         }
-        await this.dispatch(request.channel, request.content as Record<string, unknown>, { ws, id: request.id })
+        await this.dispatch(request.channel, request.content, { ws, id: request.id })
       })
       ws.on('close', () => console.log('Chrome extension disconnected.'))
     })

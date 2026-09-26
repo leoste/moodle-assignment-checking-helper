@@ -1,24 +1,24 @@
 import ChromeMessageController from './ChromeMessageController'
-import type { AutoGradeId } from '../../shared/types/AutoGradeId'
 import { quizService } from '../service/QuizService'
 import {
   QUIZ_AUTO_GRADE_BEGIN,
   QUIZ_AUTO_GRADE_END,
   QUIZ_AUTO_GRADE_IS_ACTIVE,
 } from '../../shared/constants/messages'
+import type { AutoGradeIdPayload } from '../../shared/types/payload/AutoGradeIdPayload'
 
 class QuizController extends ChromeMessageController {
   protected override async onInit(): Promise<void> {
-    this.addMessageHandler(QUIZ_AUTO_GRADE_BEGIN, async (content) => {
-      await quizService.beginAutoGrade(content.autoGradeId as AutoGradeId)
+    this.addMessageHandler<AutoGradeIdPayload>(QUIZ_AUTO_GRADE_BEGIN, async ({ autoGradeId }) => {
+      await quizService.beginAutoGrade(autoGradeId)
     })
 
-    this.addMessageHandler(QUIZ_AUTO_GRADE_END, async (content) => {
-      await quizService.endAutoGrade(content.autoGradeId as AutoGradeId)
+    this.addMessageHandler<AutoGradeIdPayload>(QUIZ_AUTO_GRADE_END, async ({ autoGradeId }) => {
+      await quizService.endAutoGrade(autoGradeId)
     })
 
-    this.addMessageHandler(QUIZ_AUTO_GRADE_IS_ACTIVE, async (content) => {
-      return quizService.isAutoGradeActive(content.autoGradeId as AutoGradeId)
+    this.addMessageHandler<AutoGradeIdPayload>(QUIZ_AUTO_GRADE_IS_ACTIVE, async ({ autoGradeId }) => {
+      return quizService.isAutoGradeActive(autoGradeId)
     })
   }
 }

@@ -48,7 +48,7 @@ export default class ChromeMessageController extends BaseMessageController<Chrom
     _sender: chrome.runtime.MessageSender,
     sendResponse: SendResponse
   ): boolean => {
-    this.dispatch(message.type, message.content as Record<string, unknown>, sendResponse)
+    this.dispatch(message.type, message.content, sendResponse)
     return true
   }
 }

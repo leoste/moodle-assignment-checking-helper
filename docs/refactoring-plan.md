@@ -529,6 +529,14 @@ See on ainus koht, kus kaks eraldi buildi peavad kokku sobima, ja praegu kontrol
 4. **Avatud küsimus:** generaator katab saatmise poole. Vastuvõtja (kontroller) loeb praegu `content.assignmentId as string`. Et see ei lahkneks, peaksid kontrollerid kasutama samu payload-tüüpe (K8), mida generaator täidab. Täpne lahendus selgub K8 ja K10 käigus.
 
 ### K10. Sõnumite handleri baasklass `[1.1]`, `[1.10]`
+
+> **Põhiosa tehtud ✅:**
+> - Juure `shared/controller/BaseMessageController<THandler, TResponder>` sisaldab `addMessageHandler`-it ja `dispatch(key, content, responder)` meetodit: handleri otsing, „handlerit pole“ haru, try/catch ja ühtne `console.error` logimine.
+> - Transpordispetsiifiline osa on abstraktsete meetoditena: `getHandlerMap()`, `respondHandled`, `respondUnhandled` ja `respondError`. Need vastavad üks-ühele vanade kontrollerite kolme haru vastamise ridadele. `TResponder` on see, mille kaudu transport vastab (Chrome'is `sendResponse`, VS Code'is `{ ws, id }`).
+> - Staatiline map ja kuulaja on endiselt transpordi alamklassis (`ChromeMessageController`, `VsCodeMessageController`), mõlemal oma `onOneTimeInit`. Handleri aliased (1.10) jäid alles.
+> - **Autori otsus pärimise konflikti kohta** (VS Code'i kontroller pärinud `CloseableBaseController`-it): `close()` no-op liikus juure `BaseController`-isse ja `CloseableBaseController` kaotati. Autori põhjendus: *„sulgemine on kõigi controllerite lifecycle loomulik osa … säilib arusaam, et kontrollerid on kontrollerid ja neid pole otseselt erinevaid tüüpe“*.
+> - **Käitumise muutused (autor lubas):** Chrome vastab handleri vea korral `undefined`-iga (varem ei vastanud ja tekkis püüdmata rejection). VS Code logib „handlerit pole“ juhtu `console.error`-iga (varem `console.warn`).
+> - **Lisavõimalus arutlusel:** handleri tüüpide geneerilisus payloadi järgi (vt allpool K9 avatud küsimus).
 **Leid:** [ChromeExtensionMessageController](../google-chrome-extension/src/service-worker/controller/ChromeExtensionMessageController.ts) ja [VsCodeWebSocketController](../visual-studio-code-extension/src/controller/VsCodeWebSocketController.ts) on peaaegu identsed: staatiline handler-map, `onOneTimeInit` loob mapi ja kuulaja, `addMessageHandler`, handleri otsing ja „handlerit pole“ haru. Erinev on ainult transport. Lahknemine on juba alanud:
 - VS Code püüab handleri vea kinni (`try/catch` → `'error'`). Chrome seda ei tee, nii et vea korral `sendResponse` ei käivitu ja klient saab `undefined` või ootab.
 - Chrome'i logi prefiks oli vale (parandati V10-s).

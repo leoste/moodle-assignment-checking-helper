@@ -1,14 +1,14 @@
-import { FILES_GET_SOURCES, FILES_UPDATE_CACHE } from '../../shared/constants/messages'
-import ChromeExtensionMessageClient from '../../shared/client/ChromeExtensionMessageClient'
+import ChromeMessageClient from '../../shared/client/ChromeMessageClient'
+import { fileCacheChromeMessageGenerator } from '../../shared/generator/FileCacheChromeMessageGenerator'
 import type { FileSourceInfo } from '../../shared/types/FileSourceInfo'
 
-class FileCacheClient extends ChromeExtensionMessageClient {
+class FileCacheClient extends ChromeMessageClient {
   async getFileSources(): Promise<FileSourceInfo[]> {
-    return chrome.runtime.sendMessage(this.makeMessage(FILES_GET_SOURCES, {}))
+    return this.send<FileSourceInfo[]>(fileCacheChromeMessageGenerator.getFileSourcesMessage())
   }
 
   async updateCache(cacheKey: string, files: string[]): Promise<void> {
-    await chrome.runtime.sendMessage(this.makeMessage(FILES_UPDATE_CACHE, { cacheKey, files }))
+    await this.send(fileCacheChromeMessageGenerator.getUpdateCacheMessage(cacheKey, files))
   }
 }
 

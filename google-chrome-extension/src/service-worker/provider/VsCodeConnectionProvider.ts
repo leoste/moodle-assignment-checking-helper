@@ -1,11 +1,10 @@
 import WebSocketProvider from './WebSocketProvider'
-import type { WebSocketMessage, WebSocketResponse, WebSocketResponseStatus } from '@shared/types/WebSocketProtocol'
-import type { BasePayload } from '@shared/types/payload/BasePayload'
+import type { VsCodeMessage, VsCodeRequest, VsCodeResponse, VsCodeResponseStatus } from '@shared/types/VsCodeMessage'
 
 const REQUEST_TIMEOUT_MS = 5000
 
 interface PendingRequest {
-  resolve: (value: WebSocketResponseStatus) => void
+  resolve: (value: VsCodeResponseStatus) => void
   reject: (reason: unknown) => void
   timer: ReturnType<typeof setTimeout>
 }
@@ -19,7 +18,7 @@ class VsCodeConnectionProvider {
     this.#provider.onDisconnect = () => this.#cancelAll()
   }
 
-  post(channel: string, content: BasePayload): Promise<WebSocketResponseStatus> {
+  post(message: VsCodeMessage): Promise<VsCodeResponseStatus> {
     return new Promise((resolve, reject) => {
       const id = crypto.randomUUID()
       const timer = setTimeout(() => {
@@ -29,8 +28,8 @@ class VsCodeConnectionProvider {
 
       this.#requests.set(id, { resolve, reject, timer })
 
-      const message: WebSocketMessage = { id, channel, content }
-      this.#provider.send(JSON.stringify(message)).catch((err) => {
+      const request: VsCodeRequest = { ...message, id }
+      this.#provider.send(JSON.stringify(request)).catch((err) => {
         this.#cleanup(id)
         reject(err)
       })
@@ -38,9 +37,9 @@ class VsCodeConnectionProvider {
   }
 
   #handleMessage(raw: string): void {
-    let parsed: WebSocketResponse
+    let parsed: VsCodeResponse
     try {
-      parsed = JSON.parse(raw) as WebSocketResponse
+      parsed = JSON.parse(raw) as VsCodeResponse
     } catch {
       console.error('[VsCodeConnectionProvider] Failed to parse incoming message:', raw)
       return
@@ -48,7 +47,7 @@ class VsCodeConnectionProvider {
     this.#complete(parsed.id, parsed.content)
   }
 
-  #complete(id: string, content: WebSocketResponseStatus): void {
+  #complete(id: string, content: VsCodeResponseStatus): void {
     const req = this.#requests.get(id)
     if (!req) return
     clearTimeout(req.timer)

@@ -456,7 +456,21 @@ Mõlemad erandlikud kliendid on olekuta, seega **põhjust mitte-singleton olla e
 
 **Esialgne soovitus (üldise plaani põhjal):** liiguta `element-creation-helper.ts` → `google-chrome-extension/src/shared/util/`, uuenda kõik importid ja kasuta helperit PopupRendereris.
 
-### K8. Payload ja sõnumid: Chrome↔VS Code protokoll `[1.3]`, `[2.4]`, `[4.2]`
+### K8. Payload ja sõnumid: Chrome↔VS Code protokoll `[1.3]`, `[2.4]`, `[4.2]` ✅
+
+> **Tehtud:**
+> - **Uurimise tulemus:** Chrome↔VS Code lingil saavad mõlemad pooled kasutada sama tüüpi, sest mõlemas otsas on sama WebSocket ja JSON. `WebSocketMessage` ja `WebSocketResponse` olid juba olemas, aga kumbki pool kasutas neist ainult poolt. Õpilase nimi liikus Chrome'i sisemisel hüppel kujul `{ studentName }`, aga WebSocketi hüppel toore stringina. See kinnitas autori payload-mudelit.
+> - `shared/constants/websocket.ts`: `PAGE_INFO_CHANNEL` ja `RESPONSE_STATUS_OK/ERROR/UNHANDLED`.
+> - `shared/types/WebSocketProtocol.ts`:
+>   - uus `WebSocketResponseStatus`, mis on tuletatud konstantidest;
+>   - `WebSocketMessage<TPayload extends BasePayload = BasePayload>`;
+>   - `WebSocketResponse.content` on nüüd staatus.
+> - `shared/types/payload/`: tühi `BasePayload` (autori soovil; olemasolu ise kommunikeerib mustrit) ja `StudentNamePayload extends BasePayload`. `BasePayload` on ka tüübipiirang: Chrome'i `ChromeVsCodeClient.postMessage` ja `VsCodeConnectionProvider.post` võtavad `BasePayload`-i.
+> - Mõlemad pooled panevad sõnumid ja vastused kokku ühiste tüüpidega ja kasutavad konstante. VS Code'i `as unknown as string` hack kadus.
+> - **Protokolli muutus:** WebSocketi `content` on nüüd `{ studentName }`, mitte toores string. Mõlemad laiendused tuleb uuesti ehitada korraga.
+> - Chrome ei tõlgenda `'error'` vastust endiselt, sest see oleks käitumise muutus.
+> - Chrome'i sisemine hüpe (`PageInfoClient` → `{ studentName }`) võiks kasutada `StudentNamePayload`-i. See jäi K9 alla.
+> - Selle sammu käigus lisas autor tööreeglitesse kommentaaride reegli.
 **Leid:**
 - *(1.3)* Chrome↔VS Code WebSocket-leping on kahel pool eraldi. Kanal `'page-info'` on defineeritud nii [Chrome PageInfoService.ts:5](../google-chrome-extension/src/service-worker/service/PageInfoService.ts#L5) kui [VS Code PageInfoController.ts:6](../visual-studio-code-extension/src/controller/PageInfoController.ts#L6). Payload on Chrome'i poolel toores string, VS Code'is tüübiga `Record<string, unknown>` ja teisendatakse `as unknown as string` abil.
 - *(2.4)* Vastuse väärtused `'ok'`, `'error'` ja `'unhandled'` ([VsCodeWebSocketController.ts:54-62](../visual-studio-code-extension/src/controller/VsCodeWebSocketController.ts#L54-L62)) on olemas ainult VS Code'i poolel.

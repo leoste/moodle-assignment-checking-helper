@@ -1,11 +1,10 @@
 import type { Feedback } from '../../shared/types/Feedback'
-import ChromeExtensionMessageClient from '../../shared/client/ChromeExtensionMessageClient'
-import { FEEDBACK_GET } from '../../shared/constants/messages'
+import ChromeMessageClient from '../../shared/client/ChromeMessageClient'
+import { feedbackChromeMessageGenerator } from '../../shared/generator/FeedbackChromeMessageGenerator'
 
-class FeedbackClient extends ChromeExtensionMessageClient {
+class FeedbackClient extends ChromeMessageClient {
   async getData(assignmentId: string): Promise<Feedback[]> {
-    const msg = this.makeMessage(FEEDBACK_GET, { assignmentId })
-    return chrome.runtime.sendMessage(msg) as Promise<Feedback[]>
+    return this.send<Feedback[]>(feedbackChromeMessageGenerator.getFeedbackMessage(assignmentId))
   }
 }
 

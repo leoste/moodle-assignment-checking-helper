@@ -1,10 +1,10 @@
-import type ChromeExtensionMessageController from './ChromeExtensionMessageController'
+import type ChromeMessageController from './ChromeMessageController'
 import { assignmentController } from './AssignmentController'
 import { fileCacheController } from './FileCacheController'
 import { pageInfoController } from './PageInfoController'
 import { quizController } from './QuizController'
 
-export const controllers: readonly ChromeExtensionMessageController[] = [
+export const controllers: readonly ChromeMessageController[] = [
   fileCacheController,
   assignmentController,
   pageInfoController,

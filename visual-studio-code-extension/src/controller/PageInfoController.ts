@@ -1,8 +1,8 @@
-import { PAGE_INFO_CHANNEL } from '@shared/constants/websocket'
+import { PAGE_INFO_CHANNEL } from '@shared/constants/vscode-message'
 import { pageInfoService } from '../service/PageInfoService'
-import VsCodeWebSocketController from './VsCodeWebSocketController'
+import VsCodeMessageController from './VsCodeMessageController'
 
-class PageInfoController extends VsCodeWebSocketController {
+class PageInfoController extends VsCodeMessageController {
   protected override async onInit(): Promise<void> {
     this.addMessageHandler(PAGE_INFO_CHANNEL, async (content) => {
       await pageInfoService.handlePageInfo(content.studentName as string)

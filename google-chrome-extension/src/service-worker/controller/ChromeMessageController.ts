@@ -7,7 +7,7 @@ import type { ChromeMessageHandler } from '../../shared/types/ChromeMessageHandl
  * singleton dispatcher for them: the handler map and the listener are static and shared
  * by all subclasses (set up once via onOneTimeInit).
  */
-export default class ChromeExtensionMessageController extends BaseController {
+export default class ChromeMessageController extends BaseController {
 
   static #messageHandlerMap: ChromeMessageHandlerMap
 
@@ -17,11 +17,11 @@ export default class ChromeExtensionMessageController extends BaseController {
   }
 
   addMessageHandler(messageType: string, messageHandler: ChromeMessageHandler): void {
-    ChromeExtensionMessageController.#messageHandlerMap.add(messageType, messageHandler)
+    ChromeMessageController.#messageHandlerMap.add(messageType, messageHandler)
   }
 
   #initMessageHandlerMap(): void {
-    ChromeExtensionMessageController.#messageHandlerMap = new ChromeMessageHandlerMap()
+    ChromeMessageController.#messageHandlerMap = new ChromeMessageHandlerMap()
   }
 
   #initListener(): void {
@@ -41,9 +41,9 @@ export default class ChromeExtensionMessageController extends BaseController {
     message: { type: string; content: Record<string, unknown> },
     sendResponse: (response: unknown) => void
   ): Promise<void> {
-    const messageHandler = ChromeExtensionMessageController.#messageHandlerMap.get(message.type)
+    const messageHandler = ChromeMessageController.#messageHandlerMap.get(message.type)
     if (!messageHandler) {
-      console.error(`[ChromeExtensionMessageController] No handler registered for message type: "${message.type}"`)
+      console.error(`[ChromeMessageController] No handler registered for message type: "${message.type}"`)
       sendResponse(undefined)
       return
     }

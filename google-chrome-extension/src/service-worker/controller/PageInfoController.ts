@@ -1,8 +1,8 @@
 import { pageInfoService } from '../service/PageInfoService'
-import ChromeExtensionMessageController from './ChromeExtensionMessageController'
+import ChromeMessageController from './ChromeMessageController'
 import { PAGE_INFO_POST_STUDENT_NAME } from '../../shared/constants/messages'
 
-class PageInfoController extends ChromeExtensionMessageController {
+class PageInfoController extends ChromeMessageController {
   protected override async onInit(): Promise<void> {
     this.addMessageHandler(PAGE_INFO_POST_STUDENT_NAME, async (content) => {
       return pageInfoService.postStudentName(content.studentName as string)

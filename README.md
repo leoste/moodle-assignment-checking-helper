@@ -20,7 +20,7 @@ Known issues that are consciously left unsolved for now.
 
 ### WebSocket origin check
 
-The VS Code extension's WebSocket server (`VsCodeWebSocketController`, `ws://127.0.0.1:54321`) accepts connections from anywhere. Browsers allow any web page to open a WebSocket to localhost, so any page could connect and send a `page-info` message, which closes all editors and terminals in VS Code and opens files. The server should check that the connection's `Origin` header is `chrome-extension://<extension id>`.
+The VS Code extension's WebSocket server (`VsCodeMessageController`, `ws://127.0.0.1:54321`) accepts connections from anywhere. Browsers allow any web page to open a WebSocket to localhost, so any page could connect and send a `page-info` message, which closes all editors and terminals in VS Code and opens files. The server should check that the connection's `Origin` header is `chrome-extension://<extension id>`.
 
 ### Opening sub-directories is a compile-time setting
 

@@ -1,9 +1,9 @@
 import { fileHandleRepository } from '../../shared/repository/FileHandleRepository'
-import { FILES_GET_SOURCES } from '../../shared/constants/messages'
 import type { FileSourceInfo } from '../../shared/types/FileSourceInfo'
 import BaseRenderer from '../../shared/renderer/BaseRenderer'
 import { createAndAddChildElement } from '../../shared/util/element-creation-helper'
 import { folderAccessService } from '../service/FolderAccessService'
+import { fileCacheClient } from '../client/FileCacheClient'
 
 export default class PopupRenderer extends BaseRenderer {
   readonly #sourcesContainer: HTMLElement
@@ -18,7 +18,7 @@ export default class PopupRenderer extends BaseRenderer {
   }
 
   async render(): Promise<void> {
-    const sources = await this.#getSources()
+    const sources = await fileCacheClient.getFileSources()
     for (const source of sources) {
       this.#sourceElements.push(await this.#addSourceElement(source))
     }
@@ -32,7 +32,7 @@ export default class PopupRenderer extends BaseRenderer {
   }
 
   #onRefreshClick = async (): Promise<void> => {
-    const sources = await this.#getSources()
+    const sources = await fileCacheClient.getFileSources()
     this.#refreshBtn.disabled = true
     this.#refreshBtn.textContent = 'Uuendamine...'
     for (const source of sources) {
@@ -55,9 +55,5 @@ export default class PopupRenderer extends BaseRenderer {
     })
 
     return div
-  }
-
-  async #getSources(): Promise<FileSourceInfo[]> {
-    return chrome.runtime.sendMessage({ type: FILES_GET_SOURCES, content: {} }) as Promise<FileSourceInfo[]>
   }
 }

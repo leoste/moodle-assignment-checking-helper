@@ -1,13 +1,10 @@
 import BaseService from '@shared/service/BaseService'
-import { PAGE_INFO_CHANNEL } from '@shared/constants/websocket'
-import type { WebSocketResponseStatus } from '@shared/types/WebSocketProtocol'
-import type { StudentNamePayload } from '@shared/types/payload/StudentNamePayload'
-import { chromeVsCodeClient } from '../client/ChromeVsCodeClient'
+import type { VsCodeResponseStatus } from '@shared/types/VsCodeMessage'
+import { pageInfoClient } from '../client/PageInfoClient'
 
 class PageInfoService extends BaseService {
-  async postStudentName(studentName: string): Promise<WebSocketResponseStatus> {
-    const payload: StudentNamePayload = { studentName }
-    return chromeVsCodeClient.postMessage(PAGE_INFO_CHANNEL, payload)
+  async postStudentName(studentName: string): Promise<VsCodeResponseStatus> {
+    return pageInfoClient.postStudentName(studentName)
   }
 }
 

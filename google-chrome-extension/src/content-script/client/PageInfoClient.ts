@@ -1,12 +1,11 @@
-import ChromeExtensionMessageClient from '../../shared/client/ChromeExtensionMessageClient'
-import { PAGE_INFO_POST_STUDENT_NAME } from '../../shared/constants/messages'
+import ChromeMessageClient from '../../shared/client/ChromeMessageClient'
+import { pageInfoChromeMessageGenerator } from '../../shared/generator/PageInfoChromeMessageGenerator'
 
 // This is the Visual Studio Code communicating client
 
-class PageInfoClient extends ChromeExtensionMessageClient {
+class PageInfoClient extends ChromeMessageClient {
   async postStudentName(studentName: string): Promise<unknown> {
-    const msg = this.makeMessage(PAGE_INFO_POST_STUDENT_NAME, { studentName })
-    return chrome.runtime.sendMessage(msg)
+    return this.send(pageInfoChromeMessageGenerator.getStudentNameMessage(studentName))
   }
 }
 

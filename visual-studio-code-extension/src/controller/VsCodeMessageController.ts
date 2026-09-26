@@ -1,8 +1,8 @@
 import CloseableBaseController from './CloseableBaseController'
 import { WebSocketServer } from 'ws'
 import type { WebSocket } from 'ws'
-import type { WebSocketMessage, WebSocketResponse, WebSocketResponseStatus } from '@shared/types/WebSocketProtocol'
-import { RESPONSE_STATUS_ERROR, RESPONSE_STATUS_OK, RESPONSE_STATUS_UNHANDLED } from '@shared/constants/websocket'
+import type { VsCodeRequest, VsCodeResponse, VsCodeResponseStatus } from '@shared/types/VsCodeMessage'
+import { RESPONSE_STATUS_ERROR, RESPONSE_STATUS_OK, RESPONSE_STATUS_UNHANDLED } from '@shared/constants/vscode-message'
 import { WEBSOCKET_HOST, WEBSOCKET_PORT } from '@shared/config/connection'
 import VsCodeMessageHandlerMap from '../shared/object/VsCodeMessageHandlerMap'
 import type { VsCodeMessageHandler } from '../shared/types/VsCodeMessageHandler'
@@ -12,13 +12,13 @@ import type { VsCodeMessageHandler } from '../shared/types/VsCodeMessageHandler'
  * same time the singleton dispatcher for them: the handler map and the WebSocket server are
  * static and shared by all subclasses (set up once via onOneTimeInit).
  */
-export default class VsCodeWebSocketController extends CloseableBaseController {
+export default class VsCodeMessageController extends CloseableBaseController {
   static #messageHandlerMap: VsCodeMessageHandlerMap
   static #wss: WebSocketServer | null = null
 
   close(): void {
-    VsCodeWebSocketController.#wss?.close()
-    VsCodeWebSocketController.#wss = null
+    VsCodeMessageController.#wss?.close()
+    VsCodeMessageController.#wss = null
   }
 
   protected override async onOneTimeInit(): Promise<void> {
@@ -27,50 +27,50 @@ export default class VsCodeWebSocketController extends CloseableBaseController {
   }
 
   addMessageHandler(channel: string, handler: VsCodeMessageHandler): void {
-    VsCodeWebSocketController.#messageHandlerMap.add(channel, handler)
+    VsCodeMessageController.#messageHandlerMap.add(channel, handler)
   }
 
   #initMessageHandlerMap(): void {
-    VsCodeWebSocketController.#messageHandlerMap = new VsCodeMessageHandlerMap()
+    VsCodeMessageController.#messageHandlerMap = new VsCodeMessageHandlerMap()
   }
 
   #initWebSocketServer(): void {
     const wss = new WebSocketServer({ port: WEBSOCKET_PORT, host: WEBSOCKET_HOST })
-    VsCodeWebSocketController.#wss = wss
+    VsCodeMessageController.#wss = wss
     wss.on('connection', (ws) => {
       console.log('Chrome extension connected.')
       ws.on('message', async (raw) => {
-        let data: WebSocketMessage
+        let request: VsCodeRequest
         try {
-          data = JSON.parse(raw.toString()) as WebSocketMessage
+          request = JSON.parse(raw.toString()) as VsCodeRequest
         } catch {
           console.error('Failed to parse incoming message:', raw.toString())
           return
         }
-        await this.#handleMessage(data, ws)
+        await this.#handleRequest(request, ws)
       })
       ws.on('close', () => console.log('Chrome extension disconnected.'))
     })
   }
 
-  async #handleMessage(data: WebSocketMessage, ws: WebSocket): Promise<void> {
-    const handler = VsCodeWebSocketController.#messageHandlerMap.get(data.channel)
+  async #handleRequest(request: VsCodeRequest, ws: WebSocket): Promise<void> {
+    const handler = VsCodeMessageController.#messageHandlerMap.get(request.channel)
     if (!handler) {
-      console.warn(`[VsCodeWebSocketController] No handler for channel: "${data.channel}"`)
-      this.#sendResponse(ws, data.id, RESPONSE_STATUS_UNHANDLED)
+      console.warn(`[VsCodeMessageController] No handler for channel: "${request.channel}"`)
+      this.#sendResponse(ws, request.id, RESPONSE_STATUS_UNHANDLED)
       return
     }
     try {
-      await handler(data.content as Record<string, unknown>)
-      this.#sendResponse(ws, data.id, RESPONSE_STATUS_OK)
+      await handler(request.content as Record<string, unknown>)
+      this.#sendResponse(ws, request.id, RESPONSE_STATUS_OK)
     } catch (err) {
-      console.error(`Handler error for channel "${data.channel}":`, err)
-      this.#sendResponse(ws, data.id, RESPONSE_STATUS_ERROR)
+      console.error(`Handler error for channel "${request.channel}":`, err)
+      this.#sendResponse(ws, request.id, RESPONSE_STATUS_ERROR)
     }
   }
 
-  #sendResponse(ws: WebSocket, id: string, status: WebSocketResponseStatus): void {
-    const response: WebSocketResponse = { id, content: status }
+  #sendResponse(ws: WebSocket, id: string, status: VsCodeResponseStatus): void {
+    const response: VsCodeResponse = { id, content: status }
     ws.send(JSON.stringify(response))
   }
 }

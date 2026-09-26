@@ -2,7 +2,7 @@ import type { Feedback } from '../../shared/types/Feedback';
 import type { FeedbackPart } from '../../shared/types/FeedbackPart';
 import deepCopy from '../../shared/util/deepCopy';
 import { getGradeInput, getCommentTextarea, getCommentLink } from '../pagemanager/assignment-moodle-helper';
-import BaseRenderer from './BaseRenderer';
+import BaseRenderer from '../../shared/renderer/BaseRenderer';
 import { ClickableListRenderer } from './ClickableListRenderer';
 import { CommentPrefixRenderer } from './CommentPrefixRenderer';
 

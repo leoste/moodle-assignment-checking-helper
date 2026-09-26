@@ -1,5 +1,5 @@
 import { createAndAddChildElement } from '../pagemanager/element-creation-helper';
-import BaseRenderer from './BaseRenderer';
+import BaseRenderer from '../../shared/renderer/BaseRenderer';
 
 export class CommentPrefixRenderer extends BaseRenderer {
   readonly #parentElement: HTMLElement

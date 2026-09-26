@@ -1,6 +1,6 @@
 import type { FeedbackPart } from '../../shared/types/FeedbackPart';
 import { createElementWithClasses, createAndAddChildElement } from '../pagemanager/element-creation-helper';
-import BaseRenderer from './BaseRenderer';
+import BaseRenderer from '../../shared/renderer/BaseRenderer';
 import { ClickableListItemRenderer } from './ClickableListItemRenderer';
 
 interface ClickableListProperties {

@@ -2,7 +2,7 @@ import { feedbackClient } from '../client/FeedbackClient';
 import { FeedbackSectionRenderer } from './FeedbackSectionRenderer';
 import { getAssignmentId, getGradePanel, getMainDiv } from '../pagemanager/assignment-moodle-helper';
 import { createAndAddChildElement, createElementWithClasses } from '../pagemanager/element-creation-helper';
-import BaseRenderer from './BaseRenderer';
+import BaseRenderer from '../../shared/renderer/BaseRenderer';
 
 export default class CheckingHelperPanelRenderer extends BaseRenderer {
   #checkingHelperPanel: HTMLElement | undefined

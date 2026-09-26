@@ -1,26 +1,38 @@
 import { fileHandleRepository } from '../../shared/repository/FileHandleRepository'
 import { FILES_GET_SOURCES } from '../../shared/constants/messages'
 import type { FileSourceInfo } from '../../shared/types/FileSourceInfo'
+import BaseRenderer from '../../shared/renderer/BaseRenderer'
 import { folderAccessService } from '../service/FolderAccessService'
 
-export default class PopupRenderer {
+export default class PopupRenderer extends BaseRenderer {
   readonly #sourcesContainer: HTMLElement
   readonly #refreshBtn: HTMLButtonElement
 
+  #sourceElements: HTMLElement[] = []
+
   constructor() {
+    super()
     this.#sourcesContainer = document.getElementById('sources-container')!
     this.#refreshBtn = document.getElementById('refresh-btn') as HTMLButtonElement
   }
 
-  async init(): Promise<void> {
+  async render(): Promise<void> {
     const sources = await this.#getSources()
     for (const source of sources) {
-      this.#sourcesContainer.appendChild(await this.#createSourceElement(source))
+      const element = await this.#createSourceElement(source)
+      this.#sourcesContainer.appendChild(element)
+      this.#sourceElements.push(element)
     }
-    this.#refreshBtn.addEventListener('click', () => this.#onRefreshClick())
+    this.#refreshBtn.addEventListener('click', this.#onRefreshClick)
   }
 
-  async #onRefreshClick(): Promise<void> {
+  async clear(): Promise<void> {
+    this.#refreshBtn.removeEventListener('click', this.#onRefreshClick)
+    this.#sourceElements.forEach(element => element.remove())
+    this.#sourceElements = []
+  }
+
+  #onRefreshClick = async (): Promise<void> => {
     const sources = await this.#getSources()
     this.#refreshBtn.disabled = true
     this.#refreshBtn.textContent = 'Uuendamine...'

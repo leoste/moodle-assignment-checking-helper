@@ -1,3 +1,3 @@
 import PopupRenderer from './renderer/PopupRenderer'
 
-new PopupRenderer().init()
+new PopupRenderer().render()

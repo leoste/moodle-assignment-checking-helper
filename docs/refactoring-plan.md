@@ -20,7 +20,7 @@ Tegevused on kolmes grupis:
 
 1. **Väikesed muudatused (V)**: ühe- või kahefailised muudatused, mida on mõistlik teha **ühe korraga**.
 2. **Keskmised muudatused (K)**: mahukamad, aga mitte eraldiseisvaks teemaks kuulutatud. Need tehakse **ükshaaval** ja soovitatud järjekorras.
-3. **Eraldiseisvad teemad (E)**: autor on märkinud need täiesti eraldi käsitletavaks. Kui autor on mitu punkti omavahel sidunud, on need samas grupis. Neid **praeguse refaktoreerimise käigus ei tehta**.
+3. **Eraldiseisvad teemad (E)**: autor on märkinud need täiesti eraldi käsitletavaks. Neid **praeguse refaktoreerimise käigus ei tehta**. Pärast V- ja K-grupi lõpetamist koliti need juure README „Future concerns“ sektsiooni (vastavustabel on grupi 3 all).
 
 Iga punkti juures on algse analüüsi number (näiteks `[1.1]`), et seoseid oleks lihtne jälgida. Tabelis 2 kasutatakse autori numeratsiooni 2.1–2.16. Autori kommentaarides on read 2.15 ja 2.16 kirjutatud kui „1.15“ ja „1.16“. Autori kommentaarid on tsiteeritud **sõna-sõnalt**.
 
@@ -528,15 +528,19 @@ See on ainus koht, kus kaks eraldi buildi peavad kokku sobima, ja praegu kontrol
 3. PopupRenderer kasutab `fileCacheClient.getFileSources()`-i.
 4. **Avatud küsimus:** generaator katab saatmise poole. Vastuvõtja (kontroller) loeb praegu `content.assignmentId as string`. Et see ei lahkneks, peaksid kontrollerid kasutama samu payload-tüüpe (K8), mida generaator täidab. Täpne lahendus selgub K8 ja K10 käigus.
 
-### K10. Sõnumite handleri baasklass `[1.1]`, `[1.10]`
+### K10. Sõnumite handleri baasklass `[1.1]`, `[1.10]` ✅
 
-> **Põhiosa tehtud ✅:**
+> **Põhiosa tehtud:**
 > - Juure `shared/controller/BaseMessageController<THandler, TResponder>` sisaldab `addMessageHandler`-it ja `dispatch(key, content, responder)` meetodit: handleri otsing, „handlerit pole“ haru, try/catch ja ühtne `console.error` logimine.
 > - Transpordispetsiifiline osa on abstraktsete meetoditena: `getHandlerMap()`, `respondHandled`, `respondUnhandled` ja `respondError`. Need vastavad üks-ühele vanade kontrollerite kolme haru vastamise ridadele. `TResponder` on see, mille kaudu transport vastab (Chrome'is `sendResponse`, VS Code'is `{ ws, id }`).
 > - Staatiline map ja kuulaja on endiselt transpordi alamklassis (`ChromeMessageController`, `VsCodeMessageController`), mõlemal oma `onOneTimeInit`. Handleri aliased (1.10) jäid alles.
 > - **Autori otsus pärimise konflikti kohta** (VS Code'i kontroller pärinud `CloseableBaseController`-it): `close()` no-op liikus juure `BaseController`-isse ja `CloseableBaseController` kaotati. Autori põhjendus: *„sulgemine on kõigi controllerite lifecycle loomulik osa … säilib arusaam, et kontrollerid on kontrollerid ja neid pole otseselt erinevaid tüüpe“*.
 > - **Käitumise muutused (autor lubas):** Chrome vastab handleri vea korral `undefined`-iga (varem ei vastanud ja tekkis püüdmata rejection). VS Code logib „handlerit pole“ juhtu `console.error`-iga (varem `console.warn`).
-> - **Lisavõimalus arutlusel:** handleri tüüpide geneerilisus payloadi järgi (vt allpool K9 avatud küsimus).
+> - **Lisaosa tehtud (K9 avatud küsimus, autor kiitis heaks eraldi):**
+>   - `MessageHandler`, `ChromeMessageHandler` ja `VsCodeMessageHandler` on geneerilised payloadi järgi (`<TPayload extends BasePayload>`).
+>   - `addMessageHandler<TPayload>` võtab payload-tüübi registreerimisel ja kontrollerid destruktureerivad väljad (`async ({ assignmentId }) => ...`).
+>   - Kõik `content.x as T` castid kadusid. Alles jäi üks tsentraalne cast `addMessageHandler`-is, sest map hoiab eri payloadidega handlereid.
+>   - **Piirang:** kompilaator ei kontrolli, et payload-tüüp vastaks sõnumivõtmele. Seda jõustaks ainult tüübikaart „võti → payload“, millest autor algul loobus.
 **Leid:** [ChromeExtensionMessageController](../google-chrome-extension/src/service-worker/controller/ChromeExtensionMessageController.ts) ja [VsCodeWebSocketController](../visual-studio-code-extension/src/controller/VsCodeWebSocketController.ts) on peaaegu identsed: staatiline handler-map, `onOneTimeInit` loob mapi ja kuulaja, `addMessageHandler`, handleri otsing ja „handlerit pole“ haru. Erinev on ainult transport. Lahknemine on juba alanud:
 - VS Code püüab handleri vea kinni (`try/catch` → `'error'`). Chrome seda ei tee, nii et vea korral `sendResponse` ei käivitu ja klient saab `undefined` või ootab.
 - Chrome'i logi prefiks oli vale (parandati V10-s).
@@ -562,7 +566,11 @@ Kui seda ignoreerida, tuleb iga veakäsitluse või logimise parandus teha kaks k
 - **Tähelepanek 1: jagatud staatiline map.** Kui map on staatiline väli *baasklassis*, jagaksid kõik transpordid samas bundle'is ühte mapi. Praegu on igas bundle'is üks transport. Võimalik lahendus: map on transpordi alamklassis, nagu praegu.
 - **Tähelepanek 2: `onOneTimeInit` semantika.** Ühekordsus on seotud meetodi implementatsiooniga (V8). Kui ühekordne init oleks *ainult* baasklassis, käivituks see samas bundle'is kõigi transportide peale kokku üks kord.
 
-### K11. Püsiandmete ja vaate oleku eraldamine andmetüüpides `[3.6]`
+### K11. Püsiandmete ja vaate oleku eraldamine andmetüüpides `[3.6]` ✅
+
+> **Tehtud (koodimuudatusi ei tehtud, autor nõustus):**
+> - **`FileSourceInfo`: mittevajalik.** Põhjalikumal hindamisel selgus, et see on ühe failiallika kirjeldus ja kõik kolm välja kirjeldavad sama allikat. Popup vajab neid alati koos: nime kuvamiseks, `directoryConfigKey` kausta handle'i jaoks ja `cacheKey` uuendamiseks. Kaheks jagamine lisaks keerukust ilma kasuta. Algne hinnang oli üldvaates liiga range.
+> - **`Feedback`/`FeedbackPart`: liigub E2 juurde.** Probleem on päris (`_id` on runtime-väli definitsioonitüübis ja `enabled` on korraga vaikeväärtus ja UI olek, mistõttu on vaja `deepCopy`-t). Seda olekut haldab aga täielikult `FeedbackSectionRenderer`, mille ümbertegemine on E2/E3. Praegu tehtuna läheks see tõenäoliselt uuesti ümber.
 **Leid:**
 - [Feedback._id](../google-chrome-extension/src/shared/types/Feedback.ts#L8) on runtime-väli püsiandmete tüübis.
 - `FeedbackPart.enabled` on korraga definitsiooni vaikeväärtus ja muudetav UI olek, mistõttu on vaja [deepCopy](../google-chrome-extension/src/shared/util/deepCopy.ts)'d.
@@ -580,160 +588,24 @@ Kui seda ignoreerida, tuleb iga veakäsitluse või logimise parandus teha kaks k
 
 ---
 
-# 3. Eraldiseisvad teemad (E): praegu ei tehta
+# 3. Eraldiseisvad teemad (E): koliti README-sse
 
-Need tehakse eraldi ülesannetena pärast V- ja K-gruppi. Kui autor on punktid sidunud, on need koos.
+Pärast V- ja K-grupi lõpetamist koliti eraldiseisvad teemad juure [README.md](../README.md) sektsiooni „Future concerns“. Kolimisel jäeti kirjeldustest alles, mida ja miks teha ning millistest koodikohtadest see järeldub.
 
-Kõik E-punktides kirjeldatud lahendused („Algne ettepanek“, koodinäited, „Suund“, „Võimalik suund“) on **esialgsed soovitused üldise plaani põhjal**, v.a kui need on autori tsitaadid. Just nendes teemades tuleb lahendus autoriga põhjalikult läbi mõelda.
+Plaanis kasutatud E-numbrite vastavus README pealkirjadele:
 
-### E1. Brauseri- ja Moodle'i lehe haldus: page objectid ja workflow `[1.7]`, `[1.12 selektorid]`, `[4.1]`
-**Leid:**
-- *(1.7)* Moodle'i DOM-abifunktsioonid on dubleeritud ja nimed põrkuvad. `getMainDiv()` on identsena nii [assignment-moodle-helper.ts:3](../google-chrome-extension/src/content-script/pagemanager/assignment-moodle-helper.ts#L3) kui [quiz-moodle-helper.ts:40](../google-chrome-extension/src/content-script/pagemanager/quiz-moodle-helper.ts#L40). `getGradeInput()` on mõlemas failis sama nimega, aga **eri selektoriga**, nii et auto-import võib valida vale faili. URL-parameetri lugemine on mitmes kohas (`getAssignmentId`, `getAttemptId`, `getQuizId`). Selektor `'div.manualgraded.complete'` on kahes funktsioonis. Moodle'i uuenduse järel võidakse selektor parandada ühes kohas ja teine jääb vanaks.
-- *(1.12)* Moodle'i selektorid on nii CSS-is kui TS-is (`div[data-region="grade-panel"]`, `div.comment-area div.db textarea`, [assign-grader.css:29, 145](../google-chrome-extension/src/content-script/assign-grader.css#L29)).
-- *(4.1)* Util-megamoodulid [assignment-moodle-helper](../google-chrome-extension/src/content-script/pagemanager/assignment-moodle-helper.ts) ja [quiz-moodle-helper](../google-chrome-extension/src/content-script/pagemanager/quiz-moodle-helper.ts) on lamedad funktsioonikogud, mida kutsutakse igalt poolt, ka renderer'ite seest. Kuskilt ei näe, mida skript lehega tegelikult teeb. Algne ettepanek sisaldas kolme kihti:
-  - **a) Page objectid** (ainult nemad tunnevad Moodle'i DOM-i): `moodle/MoodlePage.ts` (baas: `getMainRegion()`, `getUrlParam()`, selektorid), `GradeForm.ts` (liides: `setGrade()`, `submit()`), `AssignmentGraderPage` ja `QuizCommentPage` (mõlemad `extends MoodlePage implements GradeForm`, oma selektoritega), `QuizReviewPage` ning `QuizQuestionBox` (element object `'div.manualgraded.complete'` jaoks). Polümorfism lahendab `getGradeInput` nimede kokkupõrke.
-  - **b) `PageScript` baasklass** (praeguse BaseMoodlePageListener'i asemel) omab elutsüklit: valmisolek, navigeerimisel `teardown` ja uuesti `run`. Alamklassi `run()` loeb nagu main-funktsioon:
-    ```ts
-    class AssignmentGraderScript extends PageScript<AssignmentGraderPage> {
-      protected async run(page: AssignmentGraderPage) {
-        const feedback = await feedbackClient.getFeedback(page.getAssignmentId())
-        const composer = new FeedbackComposer(feedback)
-        page.expandCommentSection()
-        this.panel = new CheckingHelperPanel(feedback, {
-          onChange: selection => {
-            const { points, comment } = composer.compose(selection)
-            page.setGrade(points)
-            page.setComment(comment)
-          },
-        })
-        this.panel.mount(page.getPanelAnchor())
-        await vsCodeClient.openStudentSubmission(page.getStudentName())
-      }
-    }
+| E | README „Future concerns“ pealkiri |
+|---|---|
+| E1 | Moodle page handling |
+| E2 | Business logic in repositories and renderers |
+| E3 | Meaning of feedback |
+| E4 | Grade fallback and submit prevention |
+| E5 | Message system roles |
+| E6 | Page ready detection |
+| E7 | Matching students and submissions |
+| E8 | WebSocket origin check |
+| E9 | UI texts |
+| E10 | UI and CSS |
+| E11 | Database |
+| E12 | Init order |
 
-    class QuizCommentScript extends PageScript<QuizCommentPage> {
-      protected async run(page: QuizCommentPage) {
-        const id = page.getQuestion().getAutoGradeId()
-        if (!(await quizClient.isAutoGradeActive(id))) return
-        page.setGrade(page.getMaxMark())
-        await quizClient.endAutoGrade(id)
-        page.submit()
-      }
-    }
-    ```
-  - **c) Renderer'id ei tea Moodle'ist midagi** (vaata E2).
-
-  Tulemusena on workflow (millised andmed tuuakse, mida kuvatakse, mida Moodle'isse kirjutatakse) ühes kohas nähtav ja selektorid on ühes kohas.
-
-**Autori otsused:**
-> moodlei dom abifunktsioonid mis on dubleeritud võiks praegu ignoreerida. ma kardan, et konkreetselt brauseri handlimine on täiesti eraldi teema mingil muul hetkel, mida saabki hakata tegema alles siis, kui praegu kõik muu eeltöö on tehtud. praegu seda refaktorida üritades võib kogemata hoopis asju keerulisemaks teha, seega jätaks hetkel kõrvale.
-
-> ma olen su üldise loogikaga nõus, aga me peame kindlasti seda täiesti eraldiseisvalt lahendama. seda seepärast, et see on nii ulatuslik ja võib paljut mõjutada.
-
-(1.12 selektorite kohta: *„moodlei sektorite osa ignoreerime seoses 1.7-ga.“*)
-**Seosed:** E2 (renderer'id ei tohi Moodle'i DOM-i puudutada), E3 (`FeedbackComposer`), ja E6 (`executeOnPageReady` on PageScripti elutsükli osa).
-
-### E2. Äriloogika ja renderdamise lahutamine `[3.3]`, `[3.5]`
-**Leid:**
-- *(3.3)* Service-kiht on tühi ja äriloogika on mujal. [AssignmentService](../google-chrome-extension/src/service-worker/service/AssignmentService.ts) ja [QuizService](../google-chrome-extension/src/service-worker/service/QuizService.ts) ainult edastavad kutse edasi. `beginAutoGrade` on neljas kohas samas kujus: klient, kontroller, teenus ja repository. Äriloogika on hoopis:
-  - repository's: [AssignmentRepository](../google-chrome-extension/src/service-worker/repository/AssignmentRepository.ts) parsib JSON-it, otsib `moodleId` järgi ja tagastab `getFeedback`-i;
-  - renderer'is: hinde arvutus ja kommentaari koostamine.
-
-  Chrome'i [PageInfoService](../google-chrome-extension/src/service-worker/service/PageInfoService.ts) on tegelikult VS Code'i gateway. Nimi „PageInfo“/„page-info“ peidab kavatsuse; tegelik tegevus on „ava õpilase esitus“. Algne ettepanek: repository teeb ainult salvestamist, service teeb parsimise, valideerimise ja päringud, hinnangu arvutus läheb domeenimoodulisse ning PageInfo nimetatakse sisu järgi ümber. See vastab ka [init-services.ts TODO](../google-chrome-extension/src/service-worker/service/init-services.ts#L13)-le.
-- *(3.5)* Renderer'id teevad kõike korraga:
-  - [FeedbackSectionRenderer](../google-chrome-extension/src/content-script/renderer/FeedbackSectionRenderer.ts) renderdab, loeb ja kirjutab Moodle'i DOM-i (`getGradeInput`, `getCommentTextarea`, `getCommentLink().click()`), arvutab hinde, koostab kommentaari ja hoiab olekut (`_id` counter, deepCopy).
-  - [CheckingHelperPanelRenderer](../google-chrome-extension/src/content-script/renderer/CheckingHelperPanelRenderer.ts) renderdab, **toob andmeid** (`new FeedbackClient().getData`) ja otsib Moodle'ist ankrut. Väli `#feedbackElement` on tegelikult `h2` pealkiri. Alam-renderer'i `render()` jääb ootamata ([rida 48](../google-chrome-extension/src/content-script/renderer/CheckingHelperPanelRenderer.ts#L48)).
-  - [ClickableListRenderer](../google-chrome-extension/src/content-script/renderer/ClickableListRenderer.ts) ja [ClickableListItemRenderer](../google-chrome-extension/src/content-script/renderer/ClickableListItemRenderer.ts) kannavad üldist nime, aga on seotud `FeedbackPart`-iga ja pöidlapildiga. `listItemClass` on tegelikult `ul`-i klass.
-  - [BaseRenderer](../google-chrome-extension/src/content-script/renderer/BaseRenderer.ts) on tühi ja mitte-abstraktne, lepingut sellel pole.
-  - [ClickableListItemRenderer.clear()](../google-chrome-extension/src/content-script/renderer/ClickableListItemRenderer.ts#L41) kasutab `this.#addButton!`, mis kukub, kui `render()` pole käinud.
-  - *(1.12, autor pole kommenteerinud)* Iga renderer'i `clear()` eemaldab kõik alamelemendid ükshaaval, kuigi juure eemaldamisest piisaks. See loogika on iga renderer'i sees eraldi kirjutatud.
-
-  Algne ettepanek: renderer saab andmed ja callback'id, haldab ainult oma DOM-i ja emiteerib olekut. BaseRenderer omab juurelementi ning meetodeid `mount(parent)` ja `unmount()`. Moodle'i DOM-i puudutab ainult page object (E1).
-
-**Autori otsused:**
-> on halb, et äriloogika asub repository-s ja rendereris, iseenesest oleks tore kui see elaks mingis eraldi definitsioonifailis. aga see tähendaks mingi eraldi süsteemi loomist, mida rendereris tõlgendatakse. see vajab eraldi mõtlemist ja käsitlemist.
-
-> selles suhtes nõus, et renderdaja teeb praegu liiga palju. aga rendereride ümbertegemine tundub nii suur ja mõjukas, et see on ka üks täiesti eraldi üksinda käsitletav teema. siis peaks tõesti tegema, et rendererimine on eristatud äriloogikast. vb tulebki punktiga 3.3 see liita, kuna need on ju hetkel läbipõimunud. ma oleks rahul lahendusega, kus äriloogika elab klassides, mis haldavad rendereri ja teisi alamklasse, kuna äriloogika ei eksisteeri ju vaakumis nii et ta võib olla eraldi klass mis teiste klassidega ikkagi interakteerub. eraldi klassid. aga need võiksid asuda nt mingis ühes arusaadavas kaustas koos ja mingi standardi järgi nimetatud vms.
-
-**Suund autori järgi:** äriloogika elab eraldi klassides, mis haldavad renderer'eid ja teisi alamklasse. Need on ühes arusaadavas kaustas ja nimetatud ühtse standardi järgi.
-**Seosed:** E1, E3, K11 (andmetüüpide eraldus).
-
-### E3. Feedbacki domeenimoodul ja feedbacki tähendus `[1.11]`
-**Leid:** see, mida `FeedbackPart`-i `enabled`, `enabledText`, `disabledText` ja `points` tähendavad, on laiali kolmes kohas: [ClickableListItemRenderer#getDisplayText](../google-chrome-extension/src/content-script/renderer/ClickableListItemRenderer.ts#L54), [FeedbackSectionRenderer#buildCommentText](../google-chrome-extension/src/content-script/renderer/FeedbackSectionRenderer.ts#L103) ja `#calculateAndSetTotalPoints`. Ettepanek oli puhas domeenimoodul `FeedbackComposer` (osad → punktid + kommentaar), mida saab testida. Kui see tegemata jätta, tuleb uue välja lisamisel (näiteks `hidden` või „osaline“) kolm kohta käsitsi üles leida.
-**Autori otsus:**
-> okei domeenimoodul pole otseselt halb mõte. küll aga tahaks ma seda kõigest muust eraldiseisvalt käsitleda, kuna see pole enam nii lihtne refaktor, vaid selle käigus kardan et ma pean ümber mõtlema ka seda, et mida feedback endast üldse tähendab. sama keiss nagu 1.7-ga, et enne kõige muu lahenemist tuleb ignoreerida.
-
-**Seosed:** E2, E4 (punktireeglid) ja K11 punkt 2.
-
-### E4. Punktide käitumine ja submit-keeld `[2.1]`, `[4.3.5]`
-**Leid:** [FeedbackSectionRenderer.ts:100](../google-chrome-extension/src/content-script/renderer/FeedbackSectionRenderer.ts#L100): `totalPoints > 0 ? totalPoints : 100`. Kui summa on 0 **või negatiivne**, pannakse hindeks 100. See on peidetud ärireegel. Ülesandes, kus kõik on miinuspunktid (vaata `definitions/python/python-cafe-assignment.json`), annavad piisavalt suured mahaarvamised täispunktid.
-**Autori otsused:**
-> peidetud ärireegel totalpointsiga: ma pean selle üle mõtlema, ära seda praegu ise käsitle. siin ma pean aru saama kuidas üldse tahan punktide osas käituda ja see pole praegu veel seega lahendatav probleem.
-
-> see on meelega fallback, sest kui professor teeb viga siis parem oleks tudengile anda 100 kui 0 punkti. tühi kast fallbackib ka 0 punkti. parem viis lahendada oleks teha mingisugune submit prevention, mis on hetkel täiesti puudu. analoogne formide submit keelu-lubamisega. vb olekski õige ehitada kogu lisafunktsionaalsuste paneel formina üles. AGA; see on future concern, mida peab täiesti eraldi haldama.
-
-**Suund:** fallback on tahtlik. Parem lahendus oleks submit-keeld (vormide submit'i keelamise ja lubamise analoog), võimalik, et kogu paneel vormina. Seda võib soovi korral mainida ka README „Future concerns“ sektsioonis (V14).
-
-### E5. Sõnumisüsteemi rollide eraldamine `[3.2]`
-**Leid:** ChromeExtensionMessageController ja VsCodeWebSocketController on korraga (a) baasklass, (b) globaalne kuulaja, (c) dispetšer ja (d) VS Code'i puhul ka serveri elutsükli ja vastuseprotokolli omanik. Instantsi `close()` sulgeb staatilise serveri. Teise WebSocket-kontrolleri lisamisel on segane, kes serveri omanik on, ja staatilise oleku tõttu on testimine keeruline.
-**Autori otsus:**
-> no põhimõtteliselt olen nõus, et võiks rollid eraldada, aga see tundub päris väga keeruline osa ja seda peaks eraldiseisvalt haldama kui sõnumite süsteemi korda tegemise asjana.
-
-**Seosed:** see jätkab K8–K10 tööd. Eraldi message router (mida K10-s ei tehtud) kuulub siia. Vaata ka V8 (singleton-dispetšer on praegu tahtlik).
-
-### E6. `executeOnPageReady` (endine `executeOnPageLoad`) robustsus `[4.3.2]`
-**Leid:** callback käivitub alles pärast *vähemalt üht* DOM-mutatsiooni ja sellele järgnevat 1,2 s vaikust.
-- Kui leht on content scripti süstimise ajaks juba vaikne, ei käivitu callback kunagi.
-- Kui lehel on pidevalt uuenev element (näiteks taimer), ei käivitu callback samuti kunagi.
-- `setInterval` käib igavesti ja iga navigeerimine loob uue MutationObserveri.
-
-**Autori otsus:**
-> executeonpageload ei pruugi käivituda vb, aga seni on ta koguaeg käivutunud. seda peab eraldi käsitlema mingi hetk kus saab põhjalikumalt mõelda et mida ja kuidas teha saab teistmoodi seal. ma olen meelega pageload funktsionaalsuse nii eraldi hoidnud kõigest muust, et see oleks võimalik eraldiseisvalt käsitleda nii.
-
-**Seosed:** E1 (PageScripti elutsükkel), V1 (konstandid) ja V15 (ümbernimetus `executeOnPageReady`-ks).
-
-### E7. Õpilaste ja tööde kokkuviimine `[4.3.3]`
-**Leid:** [PageInfoService.ts:65](../visual-studio-code-extension/src/service/PageInfoService.ts#L65) kasutab `name.startsWith(wantedName)`, mis sobitab „Mari Maa“ ka kaustaga „Mari Maasikas_…“. Siis avanevad teise õpilase failid.
-**Autori otsus:**
-> huvitav tähelepanek, aga ka pigem eraldiseisvalt lahendamist vajav. mingi hetk on plaanis teha robustsemaks see, kuidas toimib õpilaste ja tööde kokkuviimine, koos vb ka allalaadimise funktsionaalsustega, seega on need asjad vaja koos lahendada ja kõigest muust eraldi ülesandena.
-
-**Ulatus:** õpilase ja kausta sobitamine ning allalaadimise funktsionaalsus koos.
-
-### E8. WebSocketi päritolukontroll `[4.3.1]`
-Leid ja autori otsus on punktis V14. Seal tehakse ainult README märge ja lahendus ise on siin. Autori sõnul on see *„natuke keerulisem teema, mida ma hetkel prototüübi raames ei lahenda“*.
-
-### E9. UI tekstid ja tõlked `[2.10]`, `[1.12 nupu tekst]`
-**Leid:** UI tekstid on laiali ja eesti- ning ingliskeelsed segamini: `'Tagasiside'`, `'Kommentaari algus'`, `'Kaust valimata'`, `'Assign max points with no comment'`, `'Moodle Helper: No folder found…'` jne. Nupu tekst `'Uuenda definitsioonid'` on nii [popup.html:34](../google-chrome-extension/src/popup/popup.html#L34) kui [PopupRenderer.ts:31](../google-chrome-extension/src/popup/renderer/PopupRenderer.ts#L31).
-**Autori otsused:**
-> ui tekstide laiali olek ignoreerime praegu, ma ei taha praegu tõlkefaile teha, see peab eraldi asi olema.
-
-(Nupu teksti kohta: *„nupu teksti osa ignoreeriks praegu, kuna see on väga väikese impactiga kõigega muuga võrreldes.“*)
-
-### E10. UI ja CSS ühtlustamine `[2.15]`, `[2.9]`
-**Leid:**
-- *(2.15)* [assign-grader.css](../google-chrome-extension/src/content-script/assign-grader.css): värvid `#FF7E2E`, `#2BFFFF` ja `#FEEA9A` korduvad (ka [quiz-review.css](../google-chrome-extension/src/content-script/quiz-review.css)-is). `left: 40%` = `20% + 20%`, nii et paneelide laiused sõltuvad üksteisest, aga see pole kuskil kirjas. Ettepanek oli kasutada CSS custom properties'eid.
-- *(2.9)* CSS klassid (`'checking-helper-panel'`, `'common-answer-section'`, `'active'`, `'inactive'`, `'auto-max-button'` jne) on TS-is inline ja pole konstandina kirjas.
-
-**Autori otsused:**
-> assign grader värvide kordumise osas mtea, ma praegu ignoreeriks seda css probleemi ka. minu arust ui ühtlustamine on eraldi teema, kuna mingi aeg nkn tahan ui-d muuta.
-
-> rendereride selle "lepingu" osas on probleem see, et tegelt css ei määra ju käitumist, vaid välimust. seega otseselt pole siin lepingut, vaid css on otsa liituv asi. et mingit lepingut loota teha, peaksin ma minema juba scss peale ja kasutama mingeid ekstra faile, mtea tundub natuke nuss ja lõpuks ikka peab ju css käsitsi kirjutama iga case jaoks. nii et tundub nagu asi mida ignoreerime, v.a kui sa ei suuda mulle väga hästi ära põhjendada või arvad et see on ikka oluline, minu arust pole.
-
-**Lahendaja vastus (2.9):** tugevat vastuargumenti pole ja autoriga võib nõustuda. Klassinime kirjaviga TS-is kaotab ainult välimuse, mitte käitumise. Ainus pisiasi: `'active'` ja `'inactive'` on samas failis kahes kohas ([ClickableListItemRenderer.ts:48 ja 73-74](../google-chrome-extension/src/content-script/renderer/ClickableListItemRenderer.ts#L48)). Seda saab korrastada E2 käigus. Eraldi tegevust pole.
-
-### E11. Andmebaasi skeem ja migratsioonid `[2.6 edasilükatud osa]`
-Autori sõnul (vaata K3): *„andmebaasi ilusti tegemine on asi, mida ma tahaks praegu edasi lükata kuna praegu pole selge, kui head andmebaasi on vaja.“* K3 teeb ainult klassitaseme konstandid. Migratsioonid ja skeemi disain tulevad siia.
-
-### E12. Init-süsteemi korrastamine `[K4 käigus leitud]`
-**Taust:** tekkis K4 käigus. K4 viis AssignmentRepository ja FileCacheRepository projekti init-süsteemi järgi, aga init-süsteemi enda nõrkused jäid skoobist välja.
-**Autori otsus:**
-> initi parandamine on kompleksne ja põhjalikku läbimõtlemist vajav probleem, mis vajab täiesti eraldi käsitlust.
-
-**Esialgne hinnang.** See on K4 lahendaja **esialgne hinnang**. Tegelik põhjus ja vajalik tegevus tuleb kindlasti põhjalikumalt läbi uurida.
-- [service-worker.ts](../google-chrome-extension/src/service-worker/service-worker.ts) kutsub `initRepositories()`, `initServices()` ja `initControllers()` järjest, aga **ei oota** neid ära. Ka init-funktsioonid ise kutsuvad `.init()`-e ootamata. Kontrollerid võivad seega sõnumeid vastu võtta enne, kui repositoryde ja teenuste init on lõppenud.
-- Praegu see probleemi ei tekita, sest repositoryde `onInit` teeb ainult sünkroonset tööd (näiteks FileCacheRepository registreerimine) ja lõpeb mõne microtask'i jooksul. Kui mõni `onInit` teeks päris asünkroonset tööd (näiteks IndexedDB päringu), oleks näiteks failiallikate register esimese sõnumi ajal veel tühi.
-- **Piirang lahendusele:** Manifest V3 service worker peab `chrome.runtime.onMessage` kuulaja registreerima kohe skripti käivitumisel. Kui kuulaja registreerimist oodatakse asünkroonse init'i järel, võib sõnum, mis service workeri üles äratas, kaduma minna. Seega ei saa lahendus olla lihtsalt „oota kõik init'id ära ja siis registreeri kontrollerid“.
-- **Võimalik suund (vajab uurimist):** kuulaja registreeritakse kohe, nagu praegu, aga kontroller ootab enne sõnumi töötlemist, kuni repositoryde ja teenuste init on lõppenud.
-- Sama küsimus võib puudutada ka VS Code'i laiendust (`activate()` kutsub `initServices()` ja `initControllers()` ootamata) ning content-scripte.
-
-**Seosed:** K5 (elutsükli nimekirjad), V8 (`onOneTimeInit` parandus).

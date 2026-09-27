@@ -41,6 +41,7 @@ Each layer uses only the layers below it:
 ### Messages
 
 A message is transport-specific: `ChromeMessage` (`{ type, content }` over `chrome.runtime`) or `VsCodeMessage` (`{ channel, content }` over WebSocket). Its `content` is a payload (`BasePayload`), the part that is the same in both extensions.
+Every message key has exactly one payload type, listed in `ChromeMessagePayloads` and `VsCodeMessagePayloads`. Generators and controllers are type checked against these maps, so a new message is added there first.
 Everything around a message is named `<message type><role>`: `ChromeMessageClient`, `VsCodeMessageReceiver`, `QuizChromeMessageGenerator` etc.
 
 ### Lifecycle
@@ -60,10 +61,6 @@ A class is exported only if it is a base class, has multiple instances (renderer
 Known issues that are consciously left unsolved for now.
 
 ### Refactors
-
-#### Message payload types
-
-A handler's payload type is chosen at registration and not checked against the message key. Only a key → payload type map would enforce it.
 
 #### UI texts
 

@@ -1,7 +1,6 @@
 import { FILES_GET_SOURCES, FILES_UPDATE_CACHE } from '../../shared/constants/messages'
 import ChromeMessageController from './ChromeMessageController'
 import { fileCacheService } from '../service/FileCacheService'
-import type { FileCacheUpdatePayload } from '../../shared/types/payload/FileCacheUpdatePayload'
 
 class FileCacheController extends ChromeMessageController {
   protected override onInit(): undefined {
@@ -9,7 +8,7 @@ class FileCacheController extends ChromeMessageController {
       fileCacheService.getFileSources()
     )
 
-    this.addMessageHandler<FileCacheUpdatePayload>(FILES_UPDATE_CACHE, async ({ cacheKey, files }) => {
+    this.addMessageHandler(FILES_UPDATE_CACHE, async ({ cacheKey, files }) => {
       await fileCacheService.updateCache(cacheKey, files)
     })
   }

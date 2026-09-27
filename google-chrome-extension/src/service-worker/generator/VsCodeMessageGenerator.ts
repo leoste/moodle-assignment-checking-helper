@@ -1,9 +1,12 @@
 import BaseMessageGenerator from '@shared/generator/BaseMessageGenerator'
-import type { BasePayload } from '@shared/types/payload/BasePayload'
 import type { VsCodeMessage } from '@shared/types/VsCodeMessage'
+import type { VsCodeMessagePayloads } from '@shared/types/VsCodeMessagePayloads'
 
 export default abstract class VsCodeMessageGenerator extends BaseMessageGenerator {
-  protected makeMessage<TPayload extends BasePayload>(channel: string, payload: TPayload): VsCodeMessage<TPayload> {
+  protected makeMessage<TChannel extends keyof VsCodeMessagePayloads>(
+    channel: TChannel,
+    payload: VsCodeMessagePayloads[TChannel],
+  ): VsCodeMessage<VsCodeMessagePayloads[TChannel]> {
     return { channel, content: payload }
   }
 }

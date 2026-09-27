@@ -3,7 +3,7 @@ import BaseRenderer from '../../shared/renderer/BaseRenderer';
 
 export class CommentPrefixRenderer extends BaseRenderer {
   readonly #parentElement: HTMLElement
-  #onChangeCallback: (() => void) | undefined
+  #onChangeCallback: ((prefix: string) => void) | undefined
 
   #section: HTMLElement | undefined
   #textarea: HTMLTextAreaElement | undefined
@@ -13,11 +13,7 @@ export class CommentPrefixRenderer extends BaseRenderer {
     this.#parentElement = parentElement
   }
 
-  get value(): string {
-    return this.#textarea?.value ?? ''
-  }
-
-  setOnChangeCallback(callback: () => void): void {
+  setOnChangeCallback(callback: (prefix: string) => void): void {
     this.#onChangeCallback = callback
   }
 
@@ -37,6 +33,6 @@ export class CommentPrefixRenderer extends BaseRenderer {
   }
 
   #onInput = (): void => {
-    this.#onChangeCallback?.()
+    this.#onChangeCallback?.(this.#textarea!.value)
   }
 }

@@ -1,7 +1,13 @@
 import * as vscode from 'vscode'
-import * as path from 'path'
-import { OPEN_SUB_DIRECTORIES, SAFE_BINARY_EXTENSIONS, MAX_AUTO_OPENED_FILES, BLACKLISTED_FOLDER_NAMES, EDITOR_COLUMN_COUNT } from '../config'
 import BaseService from '@shared/service/BaseService'
+import {
+  canOpenMoreFiles,
+  getEditorColumnOffset,
+  isBinaryFile,
+  isStudentFolder,
+  shouldCollectSubFolders,
+  shouldEnterFolder,
+} from '../rules/student-files-rules'
 
 type FileEntry = [dirUri: vscode.Uri, fileName: string]
 
@@ -45,13 +51,13 @@ class PageInfoService extends BaseService {
   async #findDirectoryByName(rootUri: vscode.Uri, wantedName: string): Promise<string | undefined> {
     const entries = await vscode.workspace.fs.readDirectory(rootUri)
     const match = entries.find(
-      ([name, type]) => type === vscode.FileType.Directory && name.startsWith(wantedName)
+      ([name, type]) => type === vscode.FileType.Directory && isStudentFolder(name, wantedName)
     )
     return match?.[0]
   }
 
   async #collectSubmissionFiles(folderUri: vscode.Uri): Promise<FileEntry[]> {
-    if (OPEN_SUB_DIRECTORIES) {
+    if (shouldCollectSubFolders()) {
       return this.#collectFilesRecursively(folderUri)
     }
     const entries = await vscode.workspace.fs.readDirectory(folderUri)
@@ -66,7 +72,7 @@ class PageInfoService extends BaseService {
     for (const [name, type] of entries) {
       if (type === vscode.FileType.File) {
         result.push([dirUri, name])
-      } else if (type === vscode.FileType.Directory && !BLACKLISTED_FOLDER_NAMES.has(name)) {
+      } else if (type === vscode.FileType.Directory && shouldEnterFolder(name)) {
         result = result.concat(await this.#collectFilesRecursively(vscode.Uri.joinPath(dirUri, name)))
       }
     }
@@ -76,8 +82,8 @@ class PageInfoService extends BaseService {
   async #openFiles(files: FileEntry[]): Promise<void> {
     let fileCount = 0
     for (const [dirUri, fileName] of files) {
-      if (fileCount >= MAX_AUTO_OPENED_FILES) break
-      const column = vscode.ViewColumn.One + (fileCount % EDITOR_COLUMN_COUNT)
+      if (!canOpenMoreFiles(fileCount)) break
+      const column = vscode.ViewColumn.One + getEditorColumnOffset(fileCount)
       const opened = await this.#openFile(dirUri, fileName, column)
       if (opened) fileCount++
     }
@@ -85,11 +91,10 @@ class PageInfoService extends BaseService {
 
   async #openFile(dirUri: vscode.Uri, fileName: string, column: number): Promise<boolean> {
     const fileUri = vscode.Uri.joinPath(dirUri, fileName)
-    const ext = path.extname(fileName).toLowerCase()
     const options = { preview: false, viewColumn: column, preserveFocus: false }
 
     try {
-      if (SAFE_BINARY_EXTENSIONS.has(ext)) {
+      if (isBinaryFile(fileName)) {
         await vscode.commands.executeCommand('vscode.open', fileUri, options)
       } else {
         const doc = await vscode.workspace.openTextDocument(fileUri)

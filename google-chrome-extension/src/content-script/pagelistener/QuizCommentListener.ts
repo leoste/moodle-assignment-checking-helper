@@ -1,28 +1,14 @@
-import { quizClient } from '../client/QuizClient'
 import BaseMoodlePageListener from './BaseMoodlePageListener'
 import QuizCommentPage from '../pagemanager/QuizCommentPage'
+import QuizCommentPresenter from '../presenter/QuizCommentPresenter'
 
 class QuizCommentListener extends BaseMoodlePageListener<QuizCommentPage> {
-
     protected createPage(): QuizCommentPage {
         return new QuizCommentPage()
     }
 
-    protected async onPageLoad(page: QuizCommentPage) {
-        this.#autoGradeIfActive(page)
-    }
-
-    async #autoGradeIfActive(page: QuizCommentPage) {
-        const autoGradeId = page.getQuestion().getAutoGradeId()
-        const isActive = await quizClient.isAutoGradeActive(autoGradeId)
-
-        if (isActive) {
-            page.setGrade(page.getMaxMark())
-
-            await quizClient.endAutoGrade(autoGradeId)
-
-            page.submit()
-        }
+    protected createPresenter(page: QuizCommentPage): QuizCommentPresenter {
+        return new QuizCommentPresenter(page)
     }
 }
 

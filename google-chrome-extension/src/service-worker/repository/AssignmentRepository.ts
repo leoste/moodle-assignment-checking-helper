@@ -1,5 +1,4 @@
 import type { Assignment } from '../../shared/types/Assignment'
-import type { Feedback } from '../../shared/types/Feedback'
 import type { FileSourceInfo } from '../../shared/types/FileSourceInfo'
 import FileCacheRepository from './FileCacheRepository'
 
@@ -25,16 +24,6 @@ class AssignmentRepository extends FileCacheRepository {
       }
     }
     return definitions
-  }
-
-  async findByMoodleId(moodleId: string): Promise<Assignment | undefined> {
-    const definitions = await this.getAllDefinitions()
-    return definitions.find(d => d.moodleIds.some(id => String(id) === moodleId))
-  }
-
-  async getFeedback(assignmentId: string): Promise<Feedback[] | undefined> {
-    const definition = await this.findByMoodleId(assignmentId)
-    return definition?.feedback
   }
 }
 

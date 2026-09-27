@@ -7,24 +7,26 @@ const ADD_BUTTON_IMAGE_PATH = 'images/double-thumbs-up-emoji.png'
 export class ClickableListItemRenderer extends BaseRenderer {
   readonly #list: HTMLElement
   readonly #listItem: FeedbackPart
-  #itemUpdatedCallback: (() => void) | undefined
+  #enabled: boolean
+  #itemToggledCallback: ((enabled: boolean) => void) | undefined
 
   #addButton: HTMLImageElement | undefined
   #buttonsSection: HTMLElement | undefined
 
   #item: HTMLElement | undefined
   #container: HTMLElement | undefined
-  #otherContainer: HTMLElement | undefined  
+  #otherContainer: HTMLElement | undefined
 
   constructor(list: HTMLElement, item: FeedbackPart) {
     super()
 
     this.#list = list
     this.#listItem = item
+    this.#enabled = item.enabled
   }
 
-  setItemUpdatedCallback(callback: () => void): void {
-    this.#itemUpdatedCallback = callback
+  setItemToggledCallback(callback: (enabled: boolean) => void): void {
+    this.#itemToggledCallback = callback
   }
 
   async render() {
@@ -36,7 +38,7 @@ export class ClickableListItemRenderer extends BaseRenderer {
   }
 
   async clear() {
-    this.#itemUpdatedCallback = undefined
+    this.#itemToggledCallback = undefined
     this.#item?.remove()
     this.#container?.remove()
     this.#otherContainer?.remove()
@@ -47,7 +49,7 @@ export class ClickableListItemRenderer extends BaseRenderer {
 
   createAddButton(): void {
     const classList = ['add-button'];
-    const extraClass = this.#listItem.enabled ? 'active' : 'inactive';
+    const extraClass = this.#enabled ? 'active' : 'inactive';
     classList.push(extraClass);
     this.#addButton = createAndAddChildImage(this.#buttonsSection!, ADD_BUTTON_IMAGE_PATH, classList);
     this.#addButton.addEventListener('click', this.#addButtonOnClick);
@@ -70,10 +72,9 @@ export class ClickableListItemRenderer extends BaseRenderer {
   };
 
   #toggleItem(): void {
-    const newState = !this.#listItem.enabled;
-    this.#listItem.enabled = newState;
-    this.#addButton!.classList.toggle('active', newState);
-    this.#addButton!.classList.toggle('inactive', !newState);
-    this.#itemUpdatedCallback!();
+    this.#enabled = !this.#enabled;
+    this.#addButton!.classList.toggle('active', this.#enabled);
+    this.#addButton!.classList.toggle('inactive', !this.#enabled);
+    this.#itemToggledCallback?.(this.#enabled);
   }
 }

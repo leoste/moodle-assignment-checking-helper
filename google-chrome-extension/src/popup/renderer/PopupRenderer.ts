@@ -1,58 +1,65 @@
-import { fileHandleRepository } from '../../shared/repository/FileHandleRepository'
 import type { FileSourceInfo } from '../../shared/types/FileSourceInfo'
 import BaseRenderer from '../../shared/renderer/BaseRenderer'
 import { createAndAddChildElement } from '../../shared/util/element-creation-helper'
-import { folderAccessService } from '../service/FolderAccessService'
-import { fileCacheClient } from '../client/FileCacheClient'
+
+export interface PopupSource {
+  source: FileSourceInfo
+  folderName: string | null
+}
+
+export interface PopupCallbacks {
+  onSelectFolder: (source: FileSourceInfo) => void
+  onRefresh: () => void
+}
 
 export default class PopupRenderer extends BaseRenderer {
+  readonly #sources: PopupSource[]
+  readonly #callbacks: PopupCallbacks
   readonly #sourcesContainer: HTMLElement
   readonly #refreshBtn: HTMLButtonElement
 
   #sourceElements: HTMLElement[] = []
+  readonly #folderNameElements = new Map<FileSourceInfo, HTMLElement>()
 
-  constructor() {
+  constructor(sources: PopupSource[], callbacks: PopupCallbacks) {
     super()
+    this.#sources = sources
+    this.#callbacks = callbacks
     this.#sourcesContainer = document.getElementById('sources-container')!
     this.#refreshBtn = document.getElementById('refresh-btn') as HTMLButtonElement
   }
 
   async render(): Promise<void> {
-    const sources = await fileCacheClient.getFileSources()
-    for (const source of sources) {
-      this.#sourceElements.push(await this.#addSourceElement(source))
+    for (const source of this.#sources) {
+      this.#sourceElements.push(this.#addSourceElement(source))
     }
-    this.#refreshBtn.addEventListener('click', this.#onRefreshClick)
+    this.#refreshBtn.addEventListener('click', this.#callbacks.onRefresh)
   }
 
   async clear(): Promise<void> {
-    this.#refreshBtn.removeEventListener('click', this.#onRefreshClick)
+    this.#refreshBtn.removeEventListener('click', this.#callbacks.onRefresh)
     this.#sourceElements.forEach(element => element.remove())
     this.#sourceElements = []
+    this.#folderNameElements.clear()
   }
 
-  #onRefreshClick = async (): Promise<void> => {
-    const sources = await fileCacheClient.getFileSources()
-    this.#refreshBtn.disabled = true
-    this.#refreshBtn.textContent = 'Uuendamine...'
-    for (const source of sources) {
-      await folderAccessService.refreshSource(source)
-    }
-    this.#refreshBtn.disabled = false
-    this.#refreshBtn.textContent = 'Uuenda definitsioonid'
+  setFolderName(source: FileSourceInfo, folderName: string): void {
+    const element = this.#folderNameElements.get(source)
+    if (element) element.textContent = folderName
   }
 
-  async #addSourceElement(source: FileSourceInfo): Promise<HTMLElement> {
-    const handle = await fileHandleRepository.get<FileSystemDirectoryHandle>(source.directoryConfigKey)
+  setRefreshing(refreshing: boolean): void {
+    this.#refreshBtn.disabled = refreshing
+    this.#refreshBtn.textContent = refreshing ? 'Uuendamine...' : 'Uuenda definitsioonid'
+  }
 
+  #addSourceElement({ source, folderName }: PopupSource): HTMLElement {
     const div = createAndAddChildElement(this.#sourcesContainer, 'div', 'source')
-    const nameEl = createAndAddChildElement(div, 'div', 'source-folder-name', handle ? handle.name : 'Kaust valimata')
+    const nameEl = createAndAddChildElement(div, 'div', 'source-folder-name', folderName ?? 'Kaust valimata')
     const selectBtn = createAndAddChildElement(div, 'button', null, `Vali ${source.displayName.toLowerCase()}`)
 
-    selectBtn.addEventListener('click', async () => {
-      const newHandle = await folderAccessService.selectFolder(source)
-      if (newHandle) nameEl.textContent = newHandle.name
-    })
+    this.#folderNameElements.set(source, nameEl)
+    selectBtn.addEventListener('click', () => this.#callbacks.onSelectFolder(source))
 
     return div
   }

@@ -1,5 +1,5 @@
 import initServices from './service/init-services'
-import PopupRenderer from './renderer/PopupRenderer'
+import PopupPresenter from './presenter/PopupPresenter'
 
 initServices()
-new PopupRenderer().render()
+new PopupPresenter().start()

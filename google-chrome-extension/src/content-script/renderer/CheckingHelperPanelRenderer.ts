@@ -1,11 +1,10 @@
-import { feedbackClient } from '../client/FeedbackClient';
-import { FeedbackSectionRenderer } from './FeedbackSectionRenderer';
-import type AssignmentGraderPage from '../pagemanager/AssignmentGraderPage';
+import type { Feedback } from '../../shared/types/Feedback';
+import { FeedbackSectionRenderer, type FeedbackSectionCallbacks } from './FeedbackSectionRenderer';
 import { createAndAddChildElement, createElementWithClasses } from '../../shared/util/element-creation-helper';
 import BaseRenderer from '../../shared/renderer/BaseRenderer';
 
 export default class CheckingHelperPanelRenderer extends BaseRenderer {
-  readonly #page: AssignmentGraderPage
+  readonly #callbacks: FeedbackSectionCallbacks
 
   #checkingHelperPanel: HTMLElement | undefined
   #feedbackDiv: HTMLElement | undefined
@@ -13,9 +12,13 @@ export default class CheckingHelperPanelRenderer extends BaseRenderer {
 
   #feedbackRenderer: FeedbackSectionRenderer | undefined
 
-  constructor(page: AssignmentGraderPage) {
+  constructor(callbacks: FeedbackSectionCallbacks) {
     super()
-    this.#page = page
+    this.#callbacks = callbacks
+  }
+
+  get element(): HTMLElement {
+    return this.#checkingHelperPanel!
   }
 
   async clear() {
@@ -27,28 +30,13 @@ export default class CheckingHelperPanelRenderer extends BaseRenderer {
   }
 
   async render() {
-    await this.#setupCheckingHelperPanel()
-  }
-
-  async #setupCheckingHelperPanel() {
-    this.#insertCheckingHelperPanelElement()
-
-    this.#feedbackDiv = createAndAddChildElement(this.#checkingHelperPanel!, 'div', ['feedback-subpanel', 'checking-helper-subpanel'])
-
-    await this.#setupFeedbackSection(this.#feedbackDiv)
-  }
-
-  #insertCheckingHelperPanelElement(): void {
     this.#checkingHelperPanel = createElementWithClasses('div', ['checking-helper-panel'])
-    this.#page.insertPanel(this.#checkingHelperPanel)
+    this.#feedbackDiv = createAndAddChildElement(this.#checkingHelperPanel, 'div', ['feedback-subpanel', 'checking-helper-subpanel'])
+    this.#feedbackElement = createAndAddChildElement(this.#feedbackDiv, 'h2', null, 'Tagasiside')
   }
 
-  async #setupFeedbackSection(parentDiv: HTMLElement) {
-    this.#feedbackElement = createAndAddChildElement(parentDiv, 'h2', null, 'Tagasiside')
-
-    const data = await feedbackClient.getData(this.#page.getAssignmentId())
-
-    this.#feedbackRenderer = new FeedbackSectionRenderer(parentDiv, data, this.#page)
-    this.#feedbackRenderer.render()
+  async renderFeedback(feedback: Feedback[]) {
+    this.#feedbackRenderer = new FeedbackSectionRenderer(this.#feedbackDiv!, feedback, this.#callbacks)
+    await this.#feedbackRenderer.render()
   }
 }

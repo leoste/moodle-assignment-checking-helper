@@ -31,9 +31,11 @@ Each layer uses only the layers below it:
 
 - **Clients** (`client/`) send the messages of one feature, e.g. `FeedbackClient`.
 - **Generators** (`generator/`) put messages together, e.g. `QuizChromeMessageGenerator.getBeginAutoGradeMessage()`.
-- **Page listeners** (`content-script/pagelistener/`) start a content script. `onPageLoad(page)` is the workflow of one Moodle page.
+- **Page listeners** (`content-script/pagelistener/`) start a content script. On every page load they create a new page and presenter.
+- **Presenters** (`presenter/`) run the workflow of one page load: fetch data, create renderers, react to their events, apply rules and write the results to the page. A presenter holds the state of that page load.
+- **Rules** (`rules/`) are the project's own decisions as plain functions, e.g. `calculateGrade()`, `isStudentFolder()`. In the service worker the services play this role.
 - **Pages** (`content-script/pagemanager/`) are the only place that knows Moodle's DOM, e.g. `AssignmentGraderPage.setGrade()`.
-- **Renderers** (`renderer/`) build the extension's own UI.
+- **Renderers** (`renderer/`) only build the extension's own UI from the data they get and report user actions through callbacks.
 - **Objects** (`object/`) are building blocks owned by another class, e.g. `MessageHandlerMap`, `WebSocketConnection`.
 - **Utils** (`util/`) are stateless functions.
 
@@ -51,7 +53,7 @@ The entry file of a context (`service-worker.ts`, `extension.ts`, ...) initialis
 ### Singletons
 
 Infrastructure, repositories, services, controllers, clients, generators and page listeners are singletons. Only the instance is exported, not the class: `export const quizService = new QuizService()`.
-A class is exported only if it is a base class, has multiple instances (renderers, pages) or is an object owned by another class.
+A class is exported only if it is a base class, has multiple instances (renderers, pages, presenters) or is an object owned by another class.
 `static` fields are only for state shared by a whole class hierarchy.
 
 ## Future concerns
@@ -62,16 +64,12 @@ Known issues that are consciously left unsolved for now.
 
 #### Business logic in repositories and renderers
 
-Services mostly forward calls (`AssignmentService`, `QuizService`), the logic lives elsewhere:
-- `AssignmentRepository` parses definitions and looks them up by Moodle id.
-- `FeedbackSectionRenderer` renders, reads and writes Moodle's DOM, calculates the grade, builds the comment and keeps state.
-- `CheckingHelperPanelRenderer` renders, fetches data and finds its anchor in Moodle's DOM. It doesn't await its child renderer's `render()`.
+Business logic is separated from rendering (presenters, rules), but some points are left:
 - `ClickableListRenderer` and `ClickableListItemRenderer` have generic names but are tied to `FeedbackPart`. `ClickableListItemRenderer.clear()` crashes if `render()` never ran.
 - `BaseRenderer` defines no real contract. Every renderer's `clear()` removes its elements one by one instead of removing its root.
-- `Feedback._id` is runtime state in the definition type. `FeedbackPart.enabled` is both the definition's default and UI state, hence the `deepCopy`.
+- `FeedbackPart.enabled` is both the definition's default and the selection state, hence the presenter's `deepCopy`.
 - The Chrome `PageInfoService` / `page-info` name hides what it does: open the student's submission in VS Code.
-
-Business logic should live in separate classes that drive the renderers, in one folder and named by one standard. Renderers should only render. See also the TODO in `service-worker/service/init-services.ts`.
+- `AssignmentService` and `QuizService` still mostly forward calls. See also the TODO in `service-worker/service/init-services.ts`.
 
 #### Message payload types
 
@@ -80,10 +78,6 @@ A handler's payload type is chosen at registration and not checked against the m
 #### Page ready detection
 
 `executeOnPageReady` runs the callback only after at least one DOM mutation followed by 1.2 s of silence. If the page is already quiet when the content script starts, or never gets quiet (e.g. a timer), the callback never runs. The URL polling interval runs forever and every navigation creates a new `MutationObserver`. So far it has always worked.
-
-#### Opening sub-directories is a compile-time setting
-
-`OPEN_SUB_DIRECTORIES` in the VS Code `config.ts` is hard-coded to `true`, so files are always collected recursively and the `false` branch (top-level files only) never runs. Changing it requires rebuilding. It could become a VS Code setting, as could `MAX_AUTO_OPENED_FILES` and `BLACKLISTED_FOLDER_NAMES`.
 
 #### UI texts
 
@@ -114,3 +108,7 @@ Colors `#FF7E2E`, `#2BFFFF` and `#FEEA9A` repeat in `assign-grader.css` and `qui
 #### Database
 
 The IndexedDB schema (`IndexedDBRepository`: `DB_NAME`, `STORE_NAME`, `DB_VERSION`) has no migrations. Postponed until it is clear what kind of storage the project needs. This is likely very low priority as in a project with so simple complexity it doesn't matter.
+
+#### Opening sub-directories is a compile-time setting
+
+`OPEN_SUB_DIRECTORIES` in the VS Code `config.ts` is hard-coded to `true`, so files are always collected recursively and the `false` branch (top-level files only) never runs. Changing it requires rebuilding. It could become a VS Code setting, as could `MAX_AUTO_OPENED_FILES` and `BLACKLISTED_FOLDER_NAMES`.

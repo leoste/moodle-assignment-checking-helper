@@ -11,7 +11,7 @@ interface ClickableListProperties {
 
 export class ClickableListRenderer extends BaseRenderer {
   readonly #parentElement: HTMLElement
-  readonly #onClickCallback: (states: FeedbackPart[]) => void
+  readonly #onItemToggled: (itemIndex: number, enabled: boolean) => void
   readonly #parts: FeedbackPart[]
   readonly #properties: ClickableListProperties
 
@@ -24,14 +24,14 @@ export class ClickableListRenderer extends BaseRenderer {
 
   constructor(
     parentElement: HTMLElement,
-    onClickCallback: (states: FeedbackPart[]) => void,
+    onItemToggled: (itemIndex: number, enabled: boolean) => void,
     items: FeedbackPart[],
     properties: ClickableListProperties
   ) {
     super()
 
     this.#parentElement = parentElement
-    this.#onClickCallback = onClickCallback
+    this.#onItemToggled = onItemToggled
     this.#parts = items
     this.#properties = properties
   }
@@ -40,12 +40,11 @@ export class ClickableListRenderer extends BaseRenderer {
     this.#section = createElementWithClasses('div', [this.#properties.sectionDivClass]);
     this.#header = createAndAddChildElement(this.#section, 'h3', null, this.#properties.sectionTitle);
     this.#list = createAndAddChildElement(this.#section, 'ul', this.#properties.listItemClass);
-    
-    for (const part of this.#parts) {
-        await this.#createItem(part)
+
+    for (const [index, part] of this.#parts.entries()) {
+        await this.#createItem(part, index)
     }
-    
-    this.#itemUpdatedCallback();
+
     this.#parentElement.appendChild(this.#section);
   }
 
@@ -60,14 +59,10 @@ export class ClickableListRenderer extends BaseRenderer {
     this.#renderers = []
   }
 
-  #createItem = async (item: FeedbackPart) => {
+  #createItem = async (item: FeedbackPart, index: number) => {
     const renderer = new ClickableListItemRenderer(this.#list!, item);
     this.#renderers.push(renderer)
-    renderer.setItemUpdatedCallback(this.#itemUpdatedCallback);
+    renderer.setItemToggledCallback(enabled => this.#onItemToggled(index, enabled));
     await renderer.render();
-  };
-
-  #itemUpdatedCallback = (): void => {
-    this.#onClickCallback(this.#parts);
   };
 }

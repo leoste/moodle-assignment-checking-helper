@@ -3,36 +3,23 @@ import BaseRenderer from '../../shared/renderer/BaseRenderer';
 
 export class CommentPrefixRenderer extends BaseRenderer {
   readonly #parentElement: HTMLElement
-  #onChangeCallback: ((prefix: string) => void) | undefined
+  readonly #onChange: (prefix: string) => void
 
-  #section: HTMLElement | undefined
-  #textarea: HTMLTextAreaElement | undefined
-
-  constructor(parentElement: HTMLElement) {
+  constructor(parentElement: HTMLElement, onChange: (prefix: string) => void) {
     super()
     this.#parentElement = parentElement
+    this.#onChange = onChange
   }
 
-  setOnChangeCallback(callback: (prefix: string) => void): void {
-    this.#onChangeCallback = callback
+  protected createRoot(): HTMLElement {
+    return createAndAddChildElement(this.#parentElement, 'div', 'comment-prefix-section')
   }
 
-  async render() {
-    this.#section = createAndAddChildElement(this.#parentElement, 'div', 'comment-prefix-section')
-    createAndAddChildElement(this.#section, 'h3', null, 'Kommentaari algus')
-    const itemContainer = createAndAddChildElement(this.#section, 'div', 'item-container')
-    this.#textarea = createAndAddChildElement(itemContainer, 'textarea', 'comment-prefix-textarea') as HTMLTextAreaElement
+  protected async renderContent(root: HTMLElement) {
+    createAndAddChildElement(root, 'h3', null, 'Kommentaari algus')
+    const itemContainer = createAndAddChildElement(root, 'div', 'item-container')
+    const textarea = createAndAddChildElement(itemContainer, 'textarea', 'comment-prefix-textarea') as HTMLTextAreaElement
     createAndAddChildElement(itemContainer, 'div', 'buttons-section')
-    this.#textarea.addEventListener('input', this.#onInput)
-  }
-
-  async clear() {
-    this.#textarea?.removeEventListener('input', this.#onInput)
-    this.#section?.remove()
-    this.#onChangeCallback = undefined
-  }
-
-  #onInput = (): void => {
-    this.#onChangeCallback?.(this.#textarea!.value)
+    textarea.addEventListener('input', () => this.#onChange(textarea.value))
   }
 }

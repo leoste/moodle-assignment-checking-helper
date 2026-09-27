@@ -18,7 +18,6 @@ export default class PopupRenderer extends BaseRenderer {
   readonly #sourcesContainer: HTMLElement
   readonly #refreshBtn: HTMLButtonElement
 
-  #sourceElements: HTMLElement[] = []
   readonly #folderNameElements = new Map<FileSourceInfo, HTMLElement>()
 
   constructor(sources: PopupSource[], callbacks: PopupCallbacks) {
@@ -29,18 +28,21 @@ export default class PopupRenderer extends BaseRenderer {
     this.#refreshBtn = document.getElementById('refresh-btn') as HTMLButtonElement
   }
 
-  async render(): Promise<void> {
+  protected createRoot(): HTMLElement {
+    return createAndAddChildElement(this.#sourcesContainer, 'div')
+  }
+
+  protected async renderContent(root: HTMLElement): Promise<void> {
     for (const source of this.#sources) {
-      this.#sourceElements.push(this.#addSourceElement(source))
+      this.#addSourceElement(root, source)
     }
     this.#refreshBtn.addEventListener('click', this.#callbacks.onRefresh)
   }
 
   async clear(): Promise<void> {
     this.#refreshBtn.removeEventListener('click', this.#callbacks.onRefresh)
-    this.#sourceElements.forEach(element => element.remove())
-    this.#sourceElements = []
     this.#folderNameElements.clear()
+    await super.clear()
   }
 
   setFolderName(source: FileSourceInfo, folderName: string): void {
@@ -53,14 +55,12 @@ export default class PopupRenderer extends BaseRenderer {
     this.#refreshBtn.textContent = refreshing ? 'Uuendamine...' : 'Uuenda definitsioonid'
   }
 
-  #addSourceElement({ source, folderName }: PopupSource): HTMLElement {
-    const div = createAndAddChildElement(this.#sourcesContainer, 'div', 'source')
+  #addSourceElement(root: HTMLElement, { source, folderName }: PopupSource): void {
+    const div = createAndAddChildElement(root, 'div', 'source')
     const nameEl = createAndAddChildElement(div, 'div', 'source-folder-name', folderName ?? 'Kaust valimata')
     const selectBtn = createAndAddChildElement(div, 'button', null, `Vali ${source.displayName.toLowerCase()}`)
 
     this.#folderNameElements.set(source, nameEl)
     selectBtn.addEventListener('click', () => this.#callbacks.onSelectFolder(source))
-
-    return div
   }
 }

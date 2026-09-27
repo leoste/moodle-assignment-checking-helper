@@ -1,6 +1,7 @@
 import type { Feedback } from '../../shared/types/Feedback';
+import { createAndAddChildElement } from '../../shared/util/element-creation-helper';
 import BaseRenderer from '../../shared/renderer/BaseRenderer';
-import { ClickableListRenderer } from './ClickableListRenderer';
+import { FeedbackPartListRenderer } from './FeedbackPartListRenderer';
 import { CommentPrefixRenderer } from './CommentPrefixRenderer';
 
 export interface FeedbackSectionCallbacks {
@@ -10,52 +11,29 @@ export interface FeedbackSectionCallbacks {
 
 export class FeedbackSectionRenderer extends BaseRenderer {
   readonly #parentElement: HTMLElement
-  readonly #feedbackItems: Feedback[]
   readonly #callbacks: FeedbackSectionCallbacks
 
-  #commentPrefixRenderer: CommentPrefixRenderer | undefined
-  #clickableListRenderers: ClickableListRenderer[] = []
-
-  constructor(parentElement: HTMLElement, feedbackItems: Feedback[], callbacks: FeedbackSectionCallbacks) {
+  constructor(parentElement: HTMLElement, callbacks: FeedbackSectionCallbacks) {
     super()
 
     this.#parentElement = parentElement
-    this.#feedbackItems = feedbackItems
     this.#callbacks = callbacks
   }
 
-  async render() {
-    this.#commentPrefixRenderer = new CommentPrefixRenderer(this.#parentElement)
-    this.#commentPrefixRenderer.setOnChangeCallback(this.#callbacks.onCommentPrefixChanged)
-    await this.#commentPrefixRenderer.render()
-
-    for (const [index, item] of this.#feedbackItems.entries()) {
-        await this.#createFeedbackList(item, index)
-    }
+  protected createRoot(): HTMLElement {
+    return createAndAddChildElement(this.#parentElement, 'div', ['feedback-subpanel', 'checking-helper-subpanel'])
   }
 
-  async clear() {
-    await this.#commentPrefixRenderer?.clear()
-    this.#commentPrefixRenderer = undefined
-    for (const renderer of this.#clickableListRenderers) {
-        await renderer.clear()
-    }
-    this.#clickableListRenderers = []
+  protected async renderContent(root: HTMLElement) {
+    createAndAddChildElement(root, 'h2', null, 'Tagasiside')
   }
 
-  async #createFeedbackList(item: Feedback, feedbackIndex: number) {
-    const listRenderer = new ClickableListRenderer(
-      this.#parentElement,
-      (partIndex, enabled) => this.#callbacks.onPartToggled(feedbackIndex, partIndex, enabled),
-      item.parts,
-      {
-        sectionDivClass: 'common-answer-section',
-        sectionTitle: `${item.title} (${item.max_points}p)`,
-        listItemClass: 'common-answer-list',
-      }
-    )
-    this.#clickableListRenderers.push(listRenderer)
+  async renderFeedback(feedback: Feedback[]) {
+    await new CommentPrefixRenderer(this.element, this.#callbacks.onCommentPrefixChanged).render()
 
-    await listRenderer.render()
+    for (const [feedbackIndex, item] of feedback.entries()) {
+      const onPartToggled = (partIndex: number, enabled: boolean) => this.#callbacks.onPartToggled(feedbackIndex, partIndex, enabled)
+      await new FeedbackPartListRenderer(this.element, item, onPartToggled).render()
+    }
   }
 }

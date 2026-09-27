@@ -35,7 +35,7 @@ Each layer uses only the layers below it:
 - **Presenters** (`presenter/`) run the workflow of one page load: fetch data, create renderers, react to their events, apply rules and write the results to the page. A presenter holds the state of that page load.
 - **Rules** (`rules/`) are the project's own decisions as plain functions, e.g. `calculateGrade()`, `isStudentFolder()`. In the service worker the services play this role.
 - **Pages** (`content-script/pagemanager/`) are the only place that knows Moodle's DOM, e.g. `AssignmentGraderPage.setGrade()`.
-- **Renderers** (`renderer/`) only build the extension's own UI from the data they get and report user actions through callbacks.
+- **Renderers** (`renderer/`) only build the extension's own UI from the data they get and report user actions through callbacks. Each renderer owns one root element: `render()` creates it, `clear()` removes it.
 - **Objects** (`object/`) are building blocks owned by another class, e.g. `MessageHandlerMap`, `WebSocketConnection`.
 - **Utils** (`util/`) are stateless functions.
 
@@ -65,9 +65,6 @@ Known issues that are consciously left unsolved for now.
 #### Business logic in repositories and renderers
 
 Business logic is separated from rendering (presenters, rules), but some points are left:
-- `ClickableListRenderer` and `ClickableListItemRenderer` have generic names but are tied to `FeedbackPart`. `ClickableListItemRenderer.clear()` crashes if `render()` never ran.
-- `BaseRenderer` defines no real contract. Every renderer's `clear()` removes its elements one by one instead of removing its root.
-- `FeedbackPart.enabled` is both the definition's default and the selection state, hence the presenter's `deepCopy`.
 - The Chrome `PageInfoService` / `page-info` name hides what it does: open the student's submission in VS Code.
 - `AssignmentService` and `QuizService` still mostly forward calls. See also the TODO in `service-worker/service/init-services.ts`.
 
@@ -89,7 +86,8 @@ To do conceptual changes, proper debugging sessions with the browser are necessa
 
 #### Meaning of feedback
 
-What `enabled`, `enabledText`, `disabledText` and `points` of a `FeedbackPart` mean is spread over `ClickableListItemRenderer#getDisplayText`, `FeedbackSectionRenderer#buildCommentText` and `FeedbackSectionRenderer#calculateAndSetTotalPoints`. A new field has to be added in three places. Needs rethinking of what feedback is. A single module turning the selected parts into points and a comment would follow from that.
+What `enabled`, `enabledText`, `disabledText` and `points` of a `FeedbackPart` mean is known in two places: `grading-rules.ts` (grade and comment) and `FeedbackPartRenderer#getDisplayText` (how a part is shown). Needs rethinking of what feedback is.
+`FeedbackPart.enabled` is both the definition's default and the selection state while grading, hence the `deepCopy` in `AssignmentGraderPresenter`. Separating the definition from the selection depends on what feedback turns out to be.
 
 #### Grade fallback and submit prevention
 

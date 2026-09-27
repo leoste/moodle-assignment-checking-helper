@@ -14,7 +14,7 @@ export default class ChromeMessageController extends BaseMessageController<Chrom
 
   static #messageHandlerMap: ChromeMessageHandlerMap
 
-  protected override async onOneTimeInit(): Promise<void> {
+  protected override onOneTimeInit(): undefined {
     this.#initMessageHandlerMap()
     this.#initListener()
   }

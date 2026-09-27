@@ -4,7 +4,7 @@ import { fileCacheService } from '../service/FileCacheService'
 import type { FileCacheUpdatePayload } from '../../shared/types/payload/FileCacheUpdatePayload'
 
 class FileCacheController extends ChromeMessageController {
-  protected override async onInit(): Promise<void> {
+  protected override onInit(): undefined {
     this.addMessageHandler(FILES_GET_SOURCES, async () =>
       fileCacheService.getFileSources()
     )

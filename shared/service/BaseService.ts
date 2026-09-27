@@ -1,3 +1,3 @@
-import AsyncInitialisable from '../AsyncInitialisable'
+import Initialisable from '../Initialisable'
 
-export default class BaseService extends AsyncInitialisable {}
+export default class BaseService extends Initialisable {}

@@ -1,5 +1,5 @@
-import AsyncInitialisable from '../AsyncInitialisable'
+import Initialisable from '../Initialisable'
 
-export default abstract class BaseController extends AsyncInitialisable {
+export default abstract class BaseController extends Initialisable {
   close(): void {}
 }

@@ -8,7 +8,7 @@ import {
 import type { AutoGradeIdPayload } from '../../shared/types/payload/AutoGradeIdPayload'
 
 class QuizController extends ChromeMessageController {
-  protected override async onInit(): Promise<void> {
+  protected override onInit(): undefined {
     this.addMessageHandler<AutoGradeIdPayload>(QUIZ_AUTO_GRADE_BEGIN, async ({ autoGradeId }) => {
       await quizService.beginAutoGrade(autoGradeId)
     })

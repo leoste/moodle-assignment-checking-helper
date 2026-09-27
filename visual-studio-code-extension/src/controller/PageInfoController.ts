@@ -4,7 +4,7 @@ import { pageInfoService } from '../service/PageInfoService'
 import VsCodeMessageController from './VsCodeMessageController'
 
 class PageInfoController extends VsCodeMessageController {
-  protected override async onInit(): Promise<void> {
+  protected override onInit(): undefined {
     this.addMessageHandler<StudentNamePayload>(PAGE_INFO_CHANNEL, async ({ studentName }) => {
       await pageInfoService.handlePageInfo(studentName)
     })

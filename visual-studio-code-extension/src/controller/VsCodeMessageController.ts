@@ -26,7 +26,7 @@ export default class VsCodeMessageController extends BaseMessageController<VsCod
     VsCodeMessageController.#wss = null
   }
 
-  protected override async onOneTimeInit(): Promise<void> {
+  protected override onOneTimeInit(): undefined {
     this.#initMessageHandlerMap()
     this.#initWebSocketServer()
   }

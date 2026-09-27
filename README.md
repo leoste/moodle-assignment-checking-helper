@@ -14,6 +14,10 @@ Controllers, services, repositories, clients, providers and page listeners are s
 A class is exported only if it is a base class, has multiple instances (renderers) or is owned by another object (`WebSocketProvider`).
 `static` fields are only for state shared by a whole class hierarchy, e.g. the handler map of a controller base class.
 
+### Initialisation
+
+Every service, repository and controller is initialised through the `init-*` list of its context.
+
 ## Future concerns
 
 Known issues that are consciously left unsolved for now.
@@ -38,12 +42,9 @@ Business logic should live in separate classes that drive the renderers, in one 
 `ChromeMessageController` and `VsCodeMessageController` are at once base classes of the feature controllers, global listeners and dispatchers with a static handler map. The VS Code one also owns the WebSocket server, which any instance's `close()` closes. Splitting the roles (e.g. a separate router) would make ownership clear.
 A handler's payload type is chosen at registration and not checked against the message key. Only a key → payload type map would enforce it.
 
-#### Page ready detection and init order
+#### Page ready detection
 
 `executeOnPageReady` runs the callback only after at least one DOM mutation followed by 1.2 s of silence. If the page is already quiet when the content script starts, or never gets quiet (e.g. a timer), the callback never runs. The URL polling interval runs forever and every navigation creates a new `MutationObserver`. So far it has always worked.
-
-`service-worker.ts` calls `initRepositories()`, `initServices()` and `initControllers()` without awaiting, and the init functions don't await `init()` either. Controllers can handle messages before repositories and services are initialised. Harmless while all `onInit`s are synchronous, but an async one (e.g. IndexedDB) would leave e.g. the file source registry empty for the first message.
-The `chrome.runtime.onMessage` listener must still be registered immediately (Manifest V3), otherwise the message that woke the service worker is lost. So the fix can't be awaiting everything first; probably controllers should wait for init before handling a message. The same question applies to VS Code's `activate()` and to content scripts. Needs investigation.
 
 #### Opening sub-directories is a compile-time setting
 

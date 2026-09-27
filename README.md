@@ -18,15 +18,6 @@ A class is exported only if it is a base class, has multiple instances (renderer
 
 Known issues that are consciously left unsolved for now.
 
-### Moodle page handling
-
-Moodle's DOM is accessed through flat helper modules (`content-script/pagemanager/assignment-moodle-helper.ts`, `quiz-moodle-helper.ts`) that are called from everywhere, renderers included. The actual workflow of a page script is hidden.
-- `getMainDiv()` is in both helpers. `getGradeInput()` is in both with different selectors.
-- URL parameter reading is repeated (`getAssignmentId`, `getAttemptId`, `getQuizId`), the `div.manualgraded.complete` selector is used twice.
-- Moodle selectors are repeated in `assign-grader.css` (`div[data-region="grade-panel"]`, `div.comment-area div.db textarea`).
-
-Possible direction: page objects that alone know Moodle's DOM (a `MoodlePage` base, `AssignmentGraderPage` and `QuizCommentPage` sharing `setGrade()`/`submit()`), and a page script base class whose `run()` reads as the page's main workflow.
-
 ### Business logic in repositories and renderers
 
 Services mostly forward calls (`AssignmentService`, `QuizService`), the logic lives elsewhere:
@@ -80,7 +71,7 @@ UI texts are scattered and mixed Estonian and English (`'Tagasiside'`, `'Kaust v
 
 ### UI and CSS
 
-Colors `#FF7E2E`, `#2BFFFF` and `#FEEA9A` repeat in `assign-grader.css` and `quiz-review.css`. The panel's `left: 40%` depends on the two `20%` Moodle panel widths. To be handled together with a UI redesign.
+Colors `#FF7E2E`, `#2BFFFF` and `#FEEA9A` repeat in `assign-grader.css` and `quiz-review.css`. The panel's `left: 40%` depends on the two `20%` Moodle panel widths. Moodle selectors are repeated in `assign-grader.css` (`div[data-region="grade-panel"]`, `div.comment-area div.db textarea`), separately from the page objects. To be handled together with a UI redesign.
 
 ### Database
 

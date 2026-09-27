@@ -1,27 +1,27 @@
 import { quizClient } from '../client/QuizClient'
-import { getManualGradedBox, getGradeInput, getMaxMark, getSubmitButton, getAutoGradeId } from '../pagemanager/quiz-moodle-helper'
 import BaseMoodlePageListener from './BaseMoodlePageListener'
+import QuizCommentPage from '../pagemanager/QuizCommentPage'
 
-class QuizCommentListener extends BaseMoodlePageListener {
+class QuizCommentListener extends BaseMoodlePageListener<QuizCommentPage> {
 
-    async onPageLoad() {
-        this.#autoGradeIfActive()
+    protected createPage(): QuizCommentPage {
+        return new QuizCommentPage()
     }
 
-    async #autoGradeIfActive() {
-        const box = getManualGradedBox()
-        const autoGradeId = getAutoGradeId(box)
+    protected async onPageLoad(page: QuizCommentPage) {
+        this.#autoGradeIfActive(page)
+    }
+
+    async #autoGradeIfActive(page: QuizCommentPage) {
+        const autoGradeId = page.getQuestion().getAutoGradeId()
         const isActive = await quizClient.isAutoGradeActive(autoGradeId)
 
         if (isActive) {
-            const grade = getMaxMark()
-
-            const gradeInput = getGradeInput()
-            gradeInput.value = grade
+            page.setGrade(page.getMaxMark())
 
             await quizClient.endAutoGrade(autoGradeId)
 
-            getSubmitButton().click()
+            page.submit()
         }
     }
 }

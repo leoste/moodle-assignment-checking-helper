@@ -1,7 +1,7 @@
 import type { Feedback } from '../../shared/types/Feedback';
 import type { FeedbackPart } from '../../shared/types/FeedbackPart';
 import deepCopy from '../../shared/util/deepCopy';
-import { getGradeInput, getCommentTextarea, getCommentLink } from '../pagemanager/assignment-moodle-helper';
+import type AssignmentGraderPage from '../pagemanager/AssignmentGraderPage';
 import BaseRenderer from '../../shared/renderer/BaseRenderer';
 import { ClickableListRenderer } from './ClickableListRenderer';
 import { CommentPrefixRenderer } from './CommentPrefixRenderer';
@@ -9,16 +9,16 @@ import { CommentPrefixRenderer } from './CommentPrefixRenderer';
 export class FeedbackSectionRenderer extends BaseRenderer {
   readonly #parentElement: HTMLElement
   readonly #feedbackItems: Feedback[]
-  #gradeInput!: HTMLInputElement
-  #commentTextarea!: HTMLTextAreaElement
+  readonly #page: AssignmentGraderPage
 
   #commentPrefixRenderer: CommentPrefixRenderer | undefined
   #clickableListRenderers: ClickableListRenderer[] = []
 
-  constructor(parentElement: HTMLElement, feedbackItems: Feedback[] | undefined) {
+  constructor(parentElement: HTMLElement, feedbackItems: Feedback[] | undefined, page: AssignmentGraderPage) {
     super()
 
     this.#parentElement = parentElement
+    this.#page = page
     this.#feedbackItems = deepCopy(feedbackItems ?? [])
 
     let idCounter = 0
@@ -28,9 +28,7 @@ export class FeedbackSectionRenderer extends BaseRenderer {
   }
 
   async render() {
-    this.#gradeInput = getGradeInput()
-    this.#commentTextarea = getCommentTextarea()
-    this.#expandCommentSection()
+    this.#page.expandCommentSection()
 
     this.#commentPrefixRenderer = new CommentPrefixRenderer(this.#parentElement)
     this.#commentPrefixRenderer.setOnChangeCallback(() => this.#updateComment())
@@ -89,7 +87,7 @@ export class FeedbackSectionRenderer extends BaseRenderer {
         return ps + (p.enabled ? (p.points ?? 0) : 0)
       }, 0)
     }, 0)
-    this.#gradeInput.value = String(totalPoints > 0 ? totalPoints : 100)
+    this.#page.setGrade(String(totalPoints > 0 ? totalPoints : 100))
   }
 
   #buildCommentText(): string {
@@ -106,10 +104,6 @@ export class FeedbackSectionRenderer extends BaseRenderer {
   }
 
   #setCommentText(text: string): void {
-    this.#commentTextarea.value = text
-  }
-
-  #expandCommentSection(): void {
-    getCommentLink().click()
+    this.#page.setComment(text)
   }
 }

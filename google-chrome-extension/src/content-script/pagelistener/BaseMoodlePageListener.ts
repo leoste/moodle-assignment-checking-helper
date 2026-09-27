@@ -1,10 +1,13 @@
 import AsyncInitialisable from '../../../../shared/AsyncInitialisable'
 import executeOnPageReady from '../pagemanager/executeOnPageReady'
+import type MoodlePage from '../pagemanager/MoodlePage'
 
-export default class BaseMoodlePageListener extends AsyncInitialisable {
+export default abstract class BaseMoodlePageListener<TPage extends MoodlePage> extends AsyncInitialisable {
   protected override async onInit(): Promise<void> {
-    executeOnPageReady(this.onPageLoad.bind(this))
+    executeOnPageReady(() => this.onPageLoad(this.createPage()))
   }
 
-  async onPageLoad() {}
+  protected abstract createPage(): TPage
+
+  protected abstract onPageLoad(page: TPage): Promise<void>
 }

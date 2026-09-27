@@ -39,12 +39,3 @@ export function createElementWithClasses(
 
   return element
 }
-
-export function getDirectTextContent(element: HTMLElement): string {
-  const cleanLines = element.textContent
-    ?.split('\n')
-    .map(line => line.trim())
-    .filter(line => line !== '') ?? []
-
-  return cleanLines.length > 0 ? cleanLines[0] : ''
-}

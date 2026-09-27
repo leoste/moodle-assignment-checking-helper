@@ -1,22 +1,26 @@
-import { getStudentName } from '../pagemanager/assignment-moodle-helper'
 import BaseMoodlePageListener from './BaseMoodlePageListener'
 import { pageInfoClient } from '../client/PageInfoClient'
 import CheckingHelperPanelRenderer from '../renderer/CheckingHelperPanelRenderer'
+import AssignmentGraderPage from '../pagemanager/AssignmentGraderPage'
 
-class AssignmentGraderListener extends BaseMoodlePageListener {
+class AssignmentGraderListener extends BaseMoodlePageListener<AssignmentGraderPage> {
 
-    readonly #renderer = new CheckingHelperPanelRenderer()
+    #renderer: CheckingHelperPanelRenderer | undefined
 
-    async onPageLoad() {
-        await this.#renderer.clear()
-        await this.#renderer.render()
-        
-        await this.#sendStudentName()
+    protected createPage(): AssignmentGraderPage {
+        return new AssignmentGraderPage()
     }
 
-    async #sendStudentName() {
-        const studentName = getStudentName()
-        const response = await pageInfoClient.postStudentName(studentName)
+    protected async onPageLoad(page: AssignmentGraderPage) {
+        await this.#renderer?.clear()
+        this.#renderer = new CheckingHelperPanelRenderer(page)
+        await this.#renderer.render()
+
+        await this.#sendStudentName(page)
+    }
+
+    async #sendStudentName(page: AssignmentGraderPage) {
+        const response = await pageInfoClient.postStudentName(page.getStudentName())
         console.log(response)
     }
 }

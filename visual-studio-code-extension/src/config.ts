@@ -15,4 +15,3 @@ export const EDITOR_COLUMN_COUNT = 2
 export const RUN_PYTHON_IN_TERMINAL_COMMAND = 'moodle-helper.runPythonInTerminal'
 
 export const PYTHON_COMMAND = 'python'
-export const PYTHON_TERMINAL_NAME = 'Python Runner'

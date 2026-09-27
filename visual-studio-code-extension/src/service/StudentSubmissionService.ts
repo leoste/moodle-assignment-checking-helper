@@ -1,5 +1,6 @@
 import * as vscode from 'vscode'
 import BaseService from '@shared/service/BaseService'
+import { translations } from '@shared/translations/translations'
 import {
   canOpenMoreFiles,
   getEditorColumnOffset,
@@ -33,7 +34,7 @@ class StudentSubmissionService extends BaseService {
   async #findStudentFolder(studentName: string): Promise<vscode.Uri | undefined> {
     const folders = vscode.workspace.workspaceFolders
     if (!folders || folders.length === 0) {
-      vscode.window.showWarningMessage('Moodle Helper: No workspace folder open.')
+      vscode.window.showWarningMessage(translations.studentSubmission.noWorkspaceFolder)
       return undefined
     }
 
@@ -41,7 +42,7 @@ class StudentSubmissionService extends BaseService {
     const folderName = await this.#findDirectoryByName(rootUri, studentName)
 
     if (!folderName) {
-      vscode.window.showWarningMessage(`Moodle Helper: No folder found for "${studentName}".`)
+      vscode.window.showWarningMessage(translations.studentSubmission.noStudentFolder(studentName))
       return undefined
     }
 

@@ -1,5 +1,6 @@
 import { createAndAddChildElement } from '../../shared/util/element-creation-helper';
 import BaseRenderer from '../../shared/renderer/BaseRenderer';
+import { translations } from '@shared/translations/translations';
 
 export class AutoGradeButtonRenderer extends BaseRenderer {
   readonly #parentElement: HTMLElement
@@ -12,7 +13,7 @@ export class AutoGradeButtonRenderer extends BaseRenderer {
   }
 
   protected createRoot(): HTMLElement {
-    const button = createAndAddChildElement(this.#parentElement, 'button', 'auto-max-button', 'Assign max points with no comment')
+    const button = createAndAddChildElement(this.#parentElement, 'button', 'auto-max-button', translations.quizAutoGrade.assignMaxPoints)
     button.addEventListener('click', this.#onClick)
     return button
   }

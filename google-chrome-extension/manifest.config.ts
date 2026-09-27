@@ -1,11 +1,12 @@
 import { defineManifest } from '@crxjs/vite-plugin'
 import { MOODLE_ORIGIN } from './src/config'
 import { WEBSOCKET_HOST } from '../shared/config/connection'
+import { translations } from '../shared/translations/translations'
 
 export default defineManifest({
   manifest_version: 3,
-  name: 'Moodle Assignment Checking Helper',
-  description: 'Speeds up checking assignments on Moodle by reducing clicks and typing.',
+  name: translations.extension.name,
+  description: translations.extension.description,
   version: '0.1',
   icons: {
     16: 'images/128.png',
@@ -13,7 +14,7 @@ export default defineManifest({
   },
   action: {
     default_popup: 'src/popup/popup.html',
-    default_title: 'Moodle Assignment Checking Helper',
+    default_title: translations.extension.name,
   },
   background: {
     service_worker: 'src/service-worker/service-worker.ts',

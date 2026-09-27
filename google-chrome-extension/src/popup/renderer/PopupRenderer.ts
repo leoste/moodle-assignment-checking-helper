@@ -1,6 +1,7 @@
 import type { FileSourceInfo } from '../../shared/types/FileSourceInfo'
 import BaseRenderer from '../../shared/renderer/BaseRenderer'
 import { createAndAddChildElement } from '../../shared/util/element-creation-helper'
+import { translations } from '@shared/translations/translations'
 
 export interface PopupSource {
   source: FileSourceInfo
@@ -36,6 +37,7 @@ export default class PopupRenderer extends BaseRenderer {
     for (const source of this.#sources) {
       this.#addSourceElement(root, source)
     }
+    this.setRefreshing(false)
     this.#refreshBtn.addEventListener('click', this.#callbacks.onRefresh)
   }
 
@@ -52,13 +54,13 @@ export default class PopupRenderer extends BaseRenderer {
 
   setRefreshing(refreshing: boolean): void {
     this.#refreshBtn.disabled = refreshing
-    this.#refreshBtn.textContent = refreshing ? 'Uuendamine...' : 'Uuenda definitsioonid'
+    this.#refreshBtn.textContent = refreshing ? translations.definitions.refreshing : translations.definitions.refresh
   }
 
   #addSourceElement(root: HTMLElement, { source, folderName }: PopupSource): void {
     const div = createAndAddChildElement(root, 'div', 'source')
-    const nameEl = createAndAddChildElement(div, 'div', 'source-folder-name', folderName ?? 'Kaust valimata')
-    const selectBtn = createAndAddChildElement(div, 'button', null, `Vali ${source.displayName.toLowerCase()}`)
+    const nameEl = createAndAddChildElement(div, 'div', 'source-folder-name', folderName ?? translations.fileSource.folderNotSelected)
+    const selectBtn = createAndAddChildElement(div, 'button', null, translations.fileSource.selectFolder(source.displayName))
 
     this.#folderNameElements.set(source, nameEl)
     selectBtn.addEventListener('click', () => this.#callbacks.onSelectFolder(source))

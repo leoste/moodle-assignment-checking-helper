@@ -37,6 +37,7 @@ Each layer uses only the layers below it:
 - **Renderers** (`renderer/`) only build the extension's own UI from the data they get and report user actions through callbacks. Each renderer owns one root element: `render()` creates it, `clear()` removes it.
 - **Objects** (`object/`) are building blocks owned by another class, e.g. `MessageHandlerMap`, `WebSocketConnection`.
 - **Utils** (`util/`) are stateless functions.
+- **Translations** (`shared/translations/translations.ts`) hold every user-facing text of both extensions, grouped by concept. Texts with values are functions, e.g. `translations.studentSubmission.noStudentFolder(studentName)`. The VS Code command title is the only exception, it stays in `package.json`.
 
 ### Messages
 
@@ -61,10 +62,6 @@ A class is exported only if it is a base class, has multiple instances (renderer
 Known issues that are consciously left unsolved for now.
 
 ### Refactors
-
-#### UI texts
-
-UI texts are scattered and mixed Estonian and English (`'Tagasiside'`, `'Kaust valimata'`, `'Assign max points with no comment'`, the VS Code warnings). `'Uuenda definitsioonid'` is both in `popup.html` and `PopupRenderer.ts`. Needs a translations setup. However, this is incredibly low priority.
 
 #### Systematic debugging functionality
 

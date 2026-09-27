@@ -2,6 +2,7 @@ import type { Feedback } from '../../shared/types/Feedback';
 import { createAndAddChildElement } from '../../shared/util/element-creation-helper';
 import BaseRenderer from '../../shared/renderer/BaseRenderer';
 import { FeedbackPartRenderer } from './FeedbackPartRenderer';
+import { translations } from '@shared/translations/translations';
 
 export class FeedbackPartListRenderer extends BaseRenderer {
   readonly #parentElement: HTMLElement
@@ -25,7 +26,7 @@ export class FeedbackPartListRenderer extends BaseRenderer {
   }
 
   protected async renderContent(root: HTMLElement) {
-    createAndAddChildElement(root, 'h3', null, `${this.#feedback.title} (${this.#feedback.max_points}p)`)
+    createAndAddChildElement(root, 'h3', null, `${this.#feedback.title} (${translations.feedback.points(this.#feedback.max_points)})`)
     const list = createAndAddChildElement(root, 'ul', 'common-answer-list')
 
     for (const [index, part] of this.#feedback.parts.entries()) {

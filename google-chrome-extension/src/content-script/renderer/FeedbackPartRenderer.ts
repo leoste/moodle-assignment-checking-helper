@@ -1,6 +1,7 @@
 import type { FeedbackPart } from '../../shared/types/FeedbackPart';
 import { createAndAddChildElement, createAndAddChildImage } from '../../shared/util/element-creation-helper';
 import BaseRenderer from '../../shared/renderer/BaseRenderer';
+import { translations } from '@shared/translations/translations';
 
 const ADD_BUTTON_IMAGE_PATH = 'images/double-thumbs-up-emoji.png'
 
@@ -40,8 +41,9 @@ export class FeedbackPartRenderer extends BaseRenderer {
     if (this.#part.enabledText) lines.push(`enabled: ${this.#part.enabledText}`)
     if (this.#part.disabledText) lines.push(`disabled: ${this.#part.disabledText}`)
     if (this.#part.points) {
-      if (lines.length > 0) lines[0] += ` (${this.#part.points}p)`
-      else lines.push(`(${this.#part.points}p)`)
+      const points = translations.feedback.points(this.#part.points)
+      if (lines.length > 0) lines[0] += ` (${points})`
+      else lines.push(`(${points})`)
     }
     return lines.length > 0 ? lines.join('\n') : null
   }

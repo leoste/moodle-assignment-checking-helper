@@ -1,13 +1,14 @@
 import type { Assignment } from '../../shared/types/Assignment'
 import type { FileSourceInfo } from '../../shared/types/FileSourceInfo'
 import FileCacheRepository from './FileCacheRepository'
+import { translations } from '@shared/translations/translations'
 
 const ASSIGNMENT_DIRECTORY_CONFIG_KEY = 'config.assignmentDirectory'
 const ASSIGNMENT_FILE_CACHE_KEY = 'file-cache.assignments'
 
 class AssignmentRepository extends FileCacheRepository {
   readonly fileSourceInfo: FileSourceInfo = {
-    displayName: 'Definitsioonide kaust',
+    displayName: translations.definitions.folderName,
     directoryConfigKey: ASSIGNMENT_DIRECTORY_CONFIG_KEY,
     cacheKey: ASSIGNMENT_FILE_CACHE_KEY,
   }

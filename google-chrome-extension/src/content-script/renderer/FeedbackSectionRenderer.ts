@@ -1,6 +1,7 @@
 import type { Feedback } from '../../shared/types/Feedback';
 import { createAndAddChildElement } from '../../shared/util/element-creation-helper';
 import BaseRenderer from '../../shared/renderer/BaseRenderer';
+import { translations } from '@shared/translations/translations';
 import { FeedbackPartListRenderer } from './FeedbackPartListRenderer';
 import { CommentPrefixRenderer } from './CommentPrefixRenderer';
 
@@ -25,7 +26,7 @@ export class FeedbackSectionRenderer extends BaseRenderer {
   }
 
   protected async renderContent(root: HTMLElement) {
-    createAndAddChildElement(root, 'h2', null, 'Tagasiside')
+    createAndAddChildElement(root, 'h2', null, translations.feedback.title)
   }
 
   async renderFeedback(feedback: Feedback[]) {

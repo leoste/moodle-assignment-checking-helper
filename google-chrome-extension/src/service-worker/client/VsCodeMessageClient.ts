@@ -1,6 +1,6 @@
 import BaseClient from '@shared/client/BaseClient'
 import type { VsCodeMessage, VsCodeResponseStatus } from '@shared/types/VsCodeMessage'
-import { vsCodeConnectionProvider } from '../provider/VsCodeConnectionProvider'
+import { vsCodeConnectionProvider } from '../infrastructure/VsCodeConnectionProvider'
 
 export default class VsCodeMessageClient extends BaseClient {
 

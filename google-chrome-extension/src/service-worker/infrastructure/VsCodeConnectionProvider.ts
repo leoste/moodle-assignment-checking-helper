@@ -1,4 +1,5 @@
-import WebSocketProvider from './WebSocketProvider'
+import BaseInfrastructure from '@shared/infrastructure/BaseInfrastructure'
+import WebSocketConnection from '../object/WebSocketConnection'
 import type { VsCodeMessage, VsCodeRequest, VsCodeResponse, VsCodeResponseStatus } from '@shared/types/VsCodeMessage'
 
 const REQUEST_TIMEOUT_MS = 5000
@@ -9,13 +10,14 @@ interface PendingRequest {
   timer: ReturnType<typeof setTimeout>
 }
 
-class VsCodeConnectionProvider {
-  readonly #provider = new WebSocketProvider()
+class VsCodeConnectionProvider extends BaseInfrastructure {
+  readonly #connection = new WebSocketConnection()
   readonly #requests = new Map<string, PendingRequest>()
 
   constructor() {
-    this.#provider.onMessage = (raw) => this.#handleMessage(raw)
-    this.#provider.onDisconnect = () => this.#cancelAll()
+    super()
+    this.#connection.onMessage = (raw) => this.#handleMessage(raw)
+    this.#connection.onDisconnect = () => this.#cancelAll()
   }
 
   post(message: VsCodeMessage): Promise<VsCodeResponseStatus> {
@@ -29,7 +31,7 @@ class VsCodeConnectionProvider {
       this.#requests.set(id, { resolve, reject, timer })
 
       const request: VsCodeRequest = { ...message, id }
-      this.#provider.send(JSON.stringify(request)).catch((err) => {
+      this.#connection.send(JSON.stringify(request)).catch((err) => {
         this.#cleanup(id)
         reject(err)
       })

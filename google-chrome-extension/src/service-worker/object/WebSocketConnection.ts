@@ -1,6 +1,6 @@
 import { WEBSOCKET_URL } from '@shared/config/connection'
 
-export default class WebSocketProvider {
+export default class WebSocketConnection {
   readonly #address = WEBSOCKET_URL
   #socket: WebSocket | null = null
 

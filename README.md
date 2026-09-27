@@ -6,17 +6,53 @@ what is the structure and talking between different services. maybe even add doc
 The Moodle ASsignment Checking Helper consists of two extensions that interact to significantly speed up assignment checking in Moodle.
 Automatically open necessary files in VSCode, run custom scripts, easily compose typical grades and responses.
 
+## Project structure
+
+### Extensions and contexts
+
+- `google-chrome-extension/` is the main extension. It runs in three contexts:
+  - `content-script/` runs on Moodle pages and adds the helper panel and buttons.
+  - `service-worker/` runs in the background, holds the data and talks to VS Code.
+  - `popup/` selects and refreshes the definitions folder.
+- `visual-studio-code-extension/` gets the student being graded from Chrome and opens their files.
+- `shared/` is code that has to be the same in both extensions. An extension's own `src/shared/` is code shared between its contexts.
+
+Contexts talk only through messages: content script and popup send Chrome messages to the service worker, the service worker sends VS Code messages over a WebSocket.
+
+### Layers
+
+Each layer uses only the layers below it:
+- **Infrastructure** (`infrastructure/`) owns a platform resource and knows nothing about features. Message receivers (`ChromeMessageReceiver`, `VsCodeMessageReceiver`) listen for messages and pass them to handlers, `VsCodeConnectionProvider` sends requests to VS Code.
+- **Repositories** (`repository/`) store and load data.
+- **Services** (`service/`) do what the application does.
+- **Controllers** (`controller/`) register message handlers and pass the messages on to services.
+
+### Other building blocks
+
+- **Clients** (`client/`) send the messages of one feature, e.g. `FeedbackClient`.
+- **Generators** (`generator/`) put messages together, e.g. `QuizChromeMessageGenerator.getBeginAutoGradeMessage()`.
+- **Page listeners** (`content-script/pagelistener/`) start a content script. `onPageLoad(page)` is the workflow of one Moodle page.
+- **Pages** (`content-script/pagemanager/`) are the only place that knows Moodle's DOM, e.g. `AssignmentGraderPage.setGrade()`.
+- **Renderers** (`renderer/`) build the extension's own UI.
+- **Objects** (`object/`) are building blocks owned by another class, e.g. `MessageHandlerMap`, `WebSocketConnection`.
+- **Utils** (`util/`) are stateless functions.
+
+### Messages
+
+A message is transport-specific: `ChromeMessage` (`{ type, content }` over `chrome.runtime`) or `VsCodeMessage` (`{ channel, content }` over WebSocket). Its `content` is a payload (`BasePayload`), the part that is the same in both extensions.
+Everything around a message is named `<message type><role>`: `ChromeMessageClient`, `VsCodeMessageReceiver`, `QuizChromeMessageGenerator` etc.
+
+### Lifecycle
+
+The entry file of a context (`service-worker.ts`, `extension.ts`, ...) initialises the layers through their `init-*` lists: infrastructure, repositories, services, controllers. VS Code closes controllers and infrastructure through `close-*` lists. Initialisation is synchronous.
+
 ## Code conventions
 
 ### Singletons
 
-Controllers, services, repositories, clients, providers and page listeners are singletons. Only the instance is exported, not the class: `export const quizService = new QuizService()`.
-A class is exported only if it is a base class, has multiple instances (renderers) or is owned by another object (`WebSocketProvider`).
-`static` fields are only for state shared by a whole class hierarchy, e.g. the handler map of a controller base class.
-
-### Initialisation
-
-Every service, repository and controller is initialised through the `init-*` list of its context.
+Infrastructure, repositories, services, controllers, clients, generators and page listeners are singletons. Only the instance is exported, not the class: `export const quizService = new QuizService()`.
+A class is exported only if it is a base class, has multiple instances (renderers, pages) or is an object owned by another class.
+`static` fields are only for state shared by a whole class hierarchy.
 
 ## Future concerns
 
@@ -37,9 +73,8 @@ Services mostly forward calls (`AssignmentService`, `QuizService`), the logic li
 
 Business logic should live in separate classes that drive the renderers, in one folder and named by one standard. Renderers should only render. See also the TODO in `service-worker/service/init-services.ts`.
 
-#### Message system roles
+#### Message payload types
 
-`ChromeMessageController` and `VsCodeMessageController` are at once base classes of the feature controllers, global listeners and dispatchers with a static handler map. The VS Code one also owns the WebSocket server, which any instance's `close()` closes. Splitting the roles (e.g. a separate router) would make ownership clear.
 A handler's payload type is chosen at registration and not checked against the message key. Only a key → payload type map would enforce it.
 
 #### Page ready detection

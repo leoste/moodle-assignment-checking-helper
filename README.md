@@ -75,10 +75,6 @@ Business logic is separated from rendering (presenters, rules), but some points 
 
 A handler's payload type is chosen at registration and not checked against the message key. Only a key → payload type map would enforce it.
 
-#### Page ready detection
-
-`executeOnPageReady` runs the callback only after at least one DOM mutation followed by 1.2 s of silence. If the page is already quiet when the content script starts, or never gets quiet (e.g. a timer), the callback never runs. The URL polling interval runs forever and every navigation creates a new `MutationObserver`. So far it has always worked.
-
 #### UI texts
 
 UI texts are scattered and mixed Estonian and English (`'Tagasiside'`, `'Kaust valimata'`, `'Assign max points with no comment'`, the VS Code warnings). `'Uuenda definitsioonid'` is both in `popup.html` and `PopupRenderer.ts`. Needs a translations setup. However, this is incredibly low priority.
@@ -88,6 +84,8 @@ UI texts are scattered and mixed Estonian and English (`'Tagasiside'`, `'Kaust v
 Introduce debugging functionality which allows to determine precise places where features break and track the proper functioning of features. console.log is enough. it should allow to track the lifecycle of every concept and underestand if at any point something went wrong.
 
 ### Conceptual changes
+
+To do conceptual changes, proper debugging sessions with the browser are necessary to validate proper functionality, as these changes can't be implemented with simple rewrites.
 
 #### Meaning of feedback
 
@@ -116,3 +114,7 @@ The IndexedDB schema (`IndexedDBRepository`: `DB_NAME`, `STORE_NAME`, `DB_VERSIO
 #### Opening sub-directories is a compile-time setting
 
 `OPEN_SUB_DIRECTORIES` in the VS Code `config.ts` is hard-coded to `true`, so files are always collected recursively and the `false` branch (top-level files only) never runs. Changing it requires rebuilding. It could become a VS Code setting, as could `MAX_AUTO_OPENED_FILES` and `BLACKLISTED_FOLDER_NAMES`.
+
+#### Page ready detection
+
+`executeOnPageReady` runs the callback only after at least one DOM mutation followed by 1.2 s of silence. If the page is already quiet when the content script starts, or never gets quiet (e.g. a timer), the callback never runs. The URL polling interval runs forever and every navigation creates a new `MutationObserver`. So far it has always worked.

@@ -1,9 +1,9 @@
 import type BaseService from '@shared/service/BaseService'
-import { pageInfoService } from './PageInfoService'
+import { studentSubmissionService } from './StudentSubmissionService'
 import { pythonRunnerService } from './PythonRunnerService'
 
 export const services: readonly BaseService[] = [
-  pageInfoService,
+  studentSubmissionService,
   pythonRunnerService,
 ]
 

@@ -1,13 +1,13 @@
 import type BaseService from '@shared/service/BaseService'
 import { assignmentService } from './AssignmentService'
 import { fileCacheService } from './FileCacheService'
-import { pageInfoService } from './PageInfoService'
+import { studentSubmissionService } from './StudentSubmissionService'
 import { quizService } from './QuizService'
 
 export const services: readonly BaseService[] = [
   assignmentService,
   fileCacheService,
-  pageInfoService,
+  studentSubmissionService,
   quizService,
 ]
 

@@ -2,7 +2,7 @@ import BasePresenter from '../../shared/presenter/BasePresenter'
 import type AssignmentGraderPage from '../pagemanager/AssignmentGraderPage'
 import CheckingHelperPanelRenderer from '../renderer/CheckingHelperPanelRenderer'
 import { feedbackClient } from '../client/FeedbackClient'
-import { pageInfoClient } from '../client/PageInfoClient'
+import { studentSubmissionClient } from '../client/StudentSubmissionClient'
 import { buildComment, calculateGrade } from '../rules/grading-rules'
 import deepCopy from '../../shared/util/deepCopy'
 import type { Feedback } from '../../shared/types/Feedback'
@@ -20,7 +20,7 @@ export default class AssignmentGraderPresenter extends BasePresenter {
   }
 
   async start(): Promise<void> {
-    const studentNameSent = this.#sendStudentName()
+    const studentSubmissionOpened = this.#openStudentSubmission()
 
     this.#renderer = new CheckingHelperPanelRenderer({
       onPartToggled: this.#onPartToggled,
@@ -38,15 +38,15 @@ export default class AssignmentGraderPresenter extends BasePresenter {
       this.#updateComment()
     }
 
-    await studentNameSent
+    await studentSubmissionOpened
   }
 
   async stop(): Promise<void> {
     await this.#renderer?.clear()
   }
 
-  async #sendStudentName(): Promise<void> {
-    const response = await pageInfoClient.postStudentName(this.#page.getStudentName())
+  async #openStudentSubmission(): Promise<void> {
+    const response = await studentSubmissionClient.openStudentSubmission(this.#page.getStudentName())
     console.log(response)
   }
 

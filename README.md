@@ -61,10 +61,6 @@ Known issues that are consciously left unsolved for now.
 
 ### Refactors
 
-#### PageInfo naming
-
-The `PageInfo` name (Chrome and VS Code controllers, services, clients, generators, the `page-info` channel) hides what it does: open the student's submission in VS Code.
-
 #### Message payload types
 
 A handler's payload type is chosen at registration and not checked against the message key. Only a key → payload type map would enforce it.
@@ -96,7 +92,7 @@ What `enabled`, `enabledText`, `disabledText` and `points` of a `FeedbackPart` m
 
 #### WebSocket origin check
 
-The VS Code WebSocket server (`VsCodeMessageReceiver`, `ws://127.0.0.1:54321`) accepts connections from anywhere. Any web page can open a WebSocket to localhost and send a `page-info` message, which closes all editors and terminals in VS Code and opens files. The server should check that the `Origin` header is `chrome-extension://<extension id>`.
+The VS Code WebSocket server (`VsCodeMessageReceiver`, `ws://127.0.0.1:54321`) accepts connections from anywhere. Any web page can open a WebSocket to localhost and send a `student-submission` message, which closes all editors and terminals in VS Code and opens files. The server should check that the `Origin` header is `chrome-extension://<extension id>`.
 
 #### UI and CSS
 

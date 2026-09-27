@@ -11,8 +11,8 @@ import {
 
 type FileEntry = [dirUri: vscode.Uri, fileName: string]
 
-class PageInfoService extends BaseService {
-  async handlePageInfo(studentName: string): Promise<void> {
+class StudentSubmissionService extends BaseService {
+  async openStudentSubmission(studentName: string): Promise<void> {
     if (!studentName) return
 
     await this.#resetWorkspace()
@@ -107,4 +107,4 @@ class PageInfoService extends BaseService {
   }
 }
 
-export const pageInfoService = new PageInfoService()
+export const studentSubmissionService = new StudentSubmissionService()

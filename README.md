@@ -83,6 +83,10 @@ A handler's payload type is chosen at registration and not checked against the m
 
 UI texts are scattered and mixed Estonian and English (`'Tagasiside'`, `'Kaust valimata'`, `'Assign max points with no comment'`, the VS Code warnings). `'Uuenda definitsioonid'` is both in `popup.html` and `PopupRenderer.ts`. Needs a translations setup. However, this is incredibly low priority.
 
+#### Systematic debugging functionality
+
+Introduce debugging functionality which allows to determine precise places where features break and track the proper functioning of features. console.log is enough. it should allow to track the lifecycle of every concept and underestand if at any point something went wrong.
+
 ### Conceptual changes
 
 #### Meaning of feedback

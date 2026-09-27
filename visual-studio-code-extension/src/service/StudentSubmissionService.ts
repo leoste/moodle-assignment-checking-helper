@@ -1,6 +1,7 @@
 import * as vscode from 'vscode'
 import BaseService from '@shared/service/BaseService'
 import { translations } from '@shared/translations/translations'
+import { logger } from '@shared/logging/logger'
 import {
   canOpenMoreFiles,
   getEditorColumnOffset,
@@ -14,15 +15,20 @@ type FileEntry = [dirUri: vscode.Uri, fileName: string]
 
 class StudentSubmissionService extends BaseService {
   async openStudentSubmission(studentName: string): Promise<void> {
-    if (!studentName) return
+    if (!studentName) {
+      logger.error(this, 'no student name given')
+      return
+    }
 
     await this.#resetWorkspace()
 
     const studentFolderUri = await this.#findStudentFolder(studentName)
     if (!studentFolderUri) return
+    logger.info(this, `student folder of "${studentName}": ${studentFolderUri.fsPath}`)
 
     const files = await this.#collectSubmissionFiles(studentFolderUri)
-    await this.#openFiles(files)
+    const openedCount = await this.#openFiles(files)
+    logger.info(this, `opened ${openedCount} of ${files.length} file(s)`)
   }
 
   async #resetWorkspace(): Promise<void> {
@@ -34,6 +40,7 @@ class StudentSubmissionService extends BaseService {
   async #findStudentFolder(studentName: string): Promise<vscode.Uri | undefined> {
     const folders = vscode.workspace.workspaceFolders
     if (!folders || folders.length === 0) {
+      logger.error(this, 'no workspace folder open')
       vscode.window.showWarningMessage(translations.studentSubmission.noWorkspaceFolder)
       return undefined
     }
@@ -42,6 +49,7 @@ class StudentSubmissionService extends BaseService {
     const folderName = await this.#findDirectoryByName(rootUri, studentName)
 
     if (!folderName) {
+      logger.error(this, `no folder found for "${studentName}"`)
       vscode.window.showWarningMessage(translations.studentSubmission.noStudentFolder(studentName))
       return undefined
     }
@@ -80,7 +88,7 @@ class StudentSubmissionService extends BaseService {
     return result
   }
 
-  async #openFiles(files: FileEntry[]): Promise<void> {
+  async #openFiles(files: FileEntry[]): Promise<number> {
     let fileCount = 0
     for (const [dirUri, fileName] of files) {
       if (!canOpenMoreFiles(fileCount)) break
@@ -88,6 +96,7 @@ class StudentSubmissionService extends BaseService {
       const opened = await this.#openFile(dirUri, fileName, column)
       if (opened) fileCount++
     }
+    return fileCount
   }
 
   async #openFile(dirUri: vscode.Uri, fileName: string, column: number): Promise<boolean> {
@@ -102,7 +111,8 @@ class StudentSubmissionService extends BaseService {
         await vscode.window.showTextDocument(doc, options)
       }
       return true
-    } catch {
+    } catch (err) {
+      logger.error(this, `could not open ${fileUri.fsPath}`, err)
       return false
     }
   }

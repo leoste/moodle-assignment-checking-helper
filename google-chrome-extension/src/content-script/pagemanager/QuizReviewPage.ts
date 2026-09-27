@@ -10,7 +10,7 @@ export default class QuizReviewPage extends QuizPage {
   }
 
   getQuizId(): string {
-    const element = document.querySelector<HTMLAnchorElement>(NEXT_NAV_LINK_SELECTOR)!
+    const element = this.query<HTMLAnchorElement>(NEXT_NAV_LINK_SELECTOR)
     return new URL(element.href).searchParams.get(QUIZ_ID_PARAM) ?? ''
   }
 }

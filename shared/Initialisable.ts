@@ -1,3 +1,5 @@
+import { logger } from './logging/logger'
+
 export default class Initialisable {
   #initialised = false
 
@@ -5,6 +7,7 @@ export default class Initialisable {
     if (this.#initialised) return
     this.#initialised = true
     this.onInit()
+    logger.info(this, 'initialised')
   }
 
   // Returns `undefined` instead of `void` on purpose: an async override (returning a Promise)

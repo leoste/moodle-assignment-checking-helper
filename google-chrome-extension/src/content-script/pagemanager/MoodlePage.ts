@@ -1,8 +1,14 @@
+import queryElement from './queryElement'
+
 const MAIN_REGION_SELECTOR = 'div[role="main"]'
 
 export default abstract class MoodlePage {
   getMainRegion(): HTMLElement {
-    return document.querySelector<HTMLElement>(MAIN_REGION_SELECTOR)!
+    return this.query<HTMLElement>(MAIN_REGION_SELECTOR)
+  }
+
+  protected query<T extends Element>(selector: string): T {
+    return queryElement<T>(this, selector)
   }
 
   protected getUrlParam(name: string): string {

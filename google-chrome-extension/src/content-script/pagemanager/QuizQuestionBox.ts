@@ -1,4 +1,5 @@
 import type { AutoGradeId } from '../../shared/types/AutoGradeId'
+import queryElement from './queryElement'
 
 // Moodle's manual graded box id format: "question-<quiz id>-<question number>"
 const ID_SEPARATOR = '-'
@@ -27,10 +28,10 @@ export default class QuizQuestionBox {
   }
 
   getCommentElement(): HTMLElement {
-    return this.#element.querySelector<HTMLElement>(COMMENT_SELECTOR)!
+    return queryElement<HTMLElement>(this, COMMENT_SELECTOR, this.#element)
   }
 
   openCommentPage(): void {
-    this.getCommentElement().querySelector<HTMLAnchorElement>(COMMENT_ACTION_LINK_SELECTOR)!.click()
+    queryElement<HTMLAnchorElement>(this, COMMENT_ACTION_LINK_SELECTOR, this.getCommentElement()).click()
   }
 }

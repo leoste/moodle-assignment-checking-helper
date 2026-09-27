@@ -4,6 +4,7 @@ import { fileCacheClient } from '../client/FileCacheClient'
 import { fileHandleRepository } from '../../shared/repository/FileHandleRepository'
 import { folderAccessService } from '../service/FolderAccessService'
 import type { FileSourceInfo } from '../../shared/types/FileSourceInfo'
+import { logger } from '@shared/logging/logger'
 
 export default class PopupPresenter extends BasePresenter {
   #renderer: PopupRenderer | undefined
@@ -14,6 +15,7 @@ export default class PopupPresenter extends BasePresenter {
       const handle = await fileHandleRepository.get<FileSystemDirectoryHandle>(source.directoryConfigKey)
       sources.push({ source, folderName: handle ? handle.name : null })
     }
+    logger.info(this, `${sources.length} file source(s)`, sources)
 
     this.#renderer = new PopupRenderer(sources, {
       onSelectFolder: this.#onSelectFolder,
@@ -28,6 +30,7 @@ export default class PopupPresenter extends BasePresenter {
 
   #onSelectFolder = async (source: FileSourceInfo): Promise<void> => {
     const handle = await folderAccessService.selectFolder(source)
+    logger.info(this, handle ? `folder selected for ${source.cacheKey}: ${handle.name}` : `folder selection cancelled for ${source.cacheKey}`)
     if (handle) this.#renderer?.setFolderName(source, handle.name)
   }
 
@@ -35,7 +38,8 @@ export default class PopupPresenter extends BasePresenter {
     const sources = await fileCacheClient.getFileSources()
     this.#renderer?.setRefreshing(true)
     for (const source of sources) {
-      await folderAccessService.refreshSource(source)
+      const refreshed = await folderAccessService.refreshSource(source)
+      logger.info(this, `${source.cacheKey} ${refreshed ? 'refreshed' : 'not refreshed (no folder or no permission)'}`)
     }
     this.#renderer?.setRefreshing(false)
   }

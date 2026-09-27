@@ -13,23 +13,23 @@ export default class AssignmentGraderPage extends MoodlePage {
   }
 
   getStudentName(): string {
-    return this.getDirectTextContent(document.querySelector<HTMLElement>(STUDENT_NAME_SELECTOR)!)
+    return this.getDirectTextContent(this.query<HTMLElement>(STUDENT_NAME_SELECTOR))
   }
 
   insertPanel(panel: HTMLElement): void {
-    const gradePanel = document.querySelector<HTMLElement>(GRADE_PANEL_SELECTOR)!
+    const gradePanel = this.query<HTMLElement>(GRADE_PANEL_SELECTOR)
     this.getMainRegion().insertBefore(panel, gradePanel.nextSibling)
   }
 
   expandCommentSection(): void {
-    document.querySelector<HTMLElement>(COMMENT_LINK_SELECTOR)!.click()
+    this.query<HTMLElement>(COMMENT_LINK_SELECTOR).click()
   }
 
   setGrade(grade: string): void {
-    document.querySelector<HTMLInputElement>(GRADE_INPUT_SELECTOR)!.value = grade
+    this.query<HTMLInputElement>(GRADE_INPUT_SELECTOR).value = grade
   }
 
   setComment(comment: string): void {
-    document.querySelector<HTMLTextAreaElement>(COMMENT_TEXTAREA_SELECTOR)!.value = comment
+    this.query<HTMLTextAreaElement>(COMMENT_TEXTAREA_SELECTOR).value = comment
   }
 }

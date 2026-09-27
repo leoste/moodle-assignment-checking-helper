@@ -6,6 +6,7 @@ import { studentSubmissionClient } from '../client/StudentSubmissionClient'
 import { buildComment, calculateGrade } from '../rules/grading-rules'
 import deepCopy from '../../shared/util/deepCopy'
 import type { Feedback } from '../../shared/types/Feedback'
+import { logger } from '@shared/logging/logger'
 
 export default class AssignmentGraderPresenter extends BasePresenter {
   readonly #page: AssignmentGraderPage
@@ -29,7 +30,9 @@ export default class AssignmentGraderPresenter extends BasePresenter {
     await this.#renderer.render()
     this.#page.insertPanel(this.#renderer.element)
 
-    this.#feedback = deepCopy(await feedbackClient.getData(this.#page.getAssignmentId()) ?? [])
+    const assignmentId = this.#page.getAssignmentId()
+    this.#feedback = deepCopy(await feedbackClient.getData(assignmentId) ?? [])
+    logger.info(this, `assignment ${assignmentId}: ${this.#feedback.length} feedback group(s)`)
     await this.#renderer.renderFeedback(this.#feedback)
 
     this.#page.expandCommentSection()
@@ -46,11 +49,12 @@ export default class AssignmentGraderPresenter extends BasePresenter {
   }
 
   async #openStudentSubmission(): Promise<void> {
-    const response = await studentSubmissionClient.openStudentSubmission(this.#page.getStudentName())
-    console.log(response)
+    const studentName = this.#page.getStudentName()
+    const response = await studentSubmissionClient.openStudentSubmission(studentName)
+    logger.info(this, `student submission of "${studentName}" opened in VS Code: ${response}`)
   }
 
-  #onPartToggled =(feedbackIndex: number, partIndex: number, enabled: boolean): void => {
+  #onPartToggled = (feedbackIndex: number, partIndex: number, enabled: boolean): void => {
     this.#feedback[feedbackIndex].parts[partIndex].enabled = enabled
     this.#updateGrade()
     this.#updateComment()
@@ -62,7 +66,9 @@ export default class AssignmentGraderPresenter extends BasePresenter {
   }
 
   #updateGrade(): void {
-    this.#page.setGrade(String(calculateGrade(this.#feedback)))
+    const grade = calculateGrade(this.#feedback)
+    logger.info(this, `grade: ${grade}`)
+    this.#page.setGrade(String(grade))
   }
 
   #updateComment(): void {

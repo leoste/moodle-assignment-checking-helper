@@ -9,4 +9,11 @@ export default defineConfig({
       '@shared': new URL('../shared', import.meta.url).pathname,
     },
   },
+  // Readable builds: class names are used in logs and the code stays debuggable in the browser.
+  build: {
+    minify: false,
+  },
+  esbuild: {
+    keepNames: true,
+  },
 })

@@ -1,3 +1,4 @@
+import { logger } from '@shared/logging/logger'
 import QuizPage from './QuizPage'
 import type QuizQuestionBox from './QuizQuestionBox'
 
@@ -7,18 +8,20 @@ const SUBMIT_BUTTON_SELECTOR = 'input#id_submitbutton'
 
 export default class QuizCommentPage extends QuizPage {
   getQuestion(): QuizQuestionBox {
-    return this.getManualGradedBoxes()[0]
+    const question = this.getManualGradedBoxes()[0]
+    if (!question) logger.error(this, 'no manual graded question on the page')
+    return question
   }
 
   getMaxMark(): string {
-    return document.querySelector<HTMLInputElement>(MAX_MARK_INPUT_SELECTOR)!.value
+    return this.query<HTMLInputElement>(MAX_MARK_INPUT_SELECTOR).value
   }
 
   setGrade(grade: string): void {
-    document.querySelector<HTMLInputElement>(GRADE_INPUT_SELECTOR)!.value = grade
+    this.query<HTMLInputElement>(GRADE_INPUT_SELECTOR).value = grade
   }
 
   submit(): void {
-    document.querySelector<HTMLInputElement>(SUBMIT_BUTTON_SELECTOR)!.click()
+    this.query<HTMLInputElement>(SUBMIT_BUTTON_SELECTOR).click()
   }
 }

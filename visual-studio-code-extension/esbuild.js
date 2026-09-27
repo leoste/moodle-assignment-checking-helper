@@ -27,7 +27,9 @@ async function main() {
     platform: 'node',
     outfile: 'dist/extension.js',
     external: ['vscode'],   // provided by the VS Code runtime — never bundle it
-    minify: production,
+    // Readable builds: class names are used in logs and the code stays debuggable.
+    minify: false,
+    keepNames: true,
     sourcemap: !production,
     sourcesContent: false,
     logLevel: 'warning',

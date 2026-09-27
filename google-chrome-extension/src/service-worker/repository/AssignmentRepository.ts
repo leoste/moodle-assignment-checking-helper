@@ -2,6 +2,7 @@ import type { Assignment } from '../../shared/types/Assignment'
 import type { FileSourceInfo } from '../../shared/types/FileSourceInfo'
 import FileCacheRepository from './FileCacheRepository'
 import { translations } from '@shared/translations/translations'
+import { logger } from '@shared/logging/logger'
 
 const ASSIGNMENT_DIRECTORY_CONFIG_KEY = 'config.assignmentDirectory'
 const ASSIGNMENT_FILE_CACHE_KEY = 'file-cache.assignments'
@@ -20,8 +21,7 @@ class AssignmentRepository extends FileCacheRepository {
       try {
         definitions.push(JSON.parse(content) as Assignment)
       } catch (err) {
-        // skip files that are not valid JSON, but make the reason visible
-        console.error('[AssignmentRepository] Skipping definition file that is not valid JSON:', err, content.slice(0, 200))
+        logger.error(this, `skipping definition file that is not valid JSON: ${content.slice(0, 200)}`, err)
       }
     }
     return definitions

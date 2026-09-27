@@ -49,6 +49,15 @@ Everything around a message is named `<message type><role>`: `ChromeMessageClien
 
 The entry file of a context (`service-worker.ts`, `extension.ts`, ...) initialises the layers through their `init-*` lists: infrastructure, repositories, services, controllers. VS Code closes controllers and infrastructure through `close-*` lists. Initialisation is synchronous.
 
+### Logging
+
+All logging goes through `logger` (`shared/logging/`), never directly through `console`. Every line starts with `[Moodle Helper][<class name>]`, so the console can be filtered by `Moodle Helper` or by a class.
+- Chrome: content scripts log to the Moodle page's console, the service worker and the popup to their own DevTools.
+- VS Code: the Output panel, channel "Moodle Assignment Checking Helper".
+
+The entry file of a context calls `logger.init()` first. Base classes already log the lifecycle: initialisation, closing, page ready, presenters starting and stopping, renderers, sent and received messages, and Moodle elements that were not found. Features only add what the base classes can't see, e.g. the calculated grade.
+Builds are not minified, so class names in logs and the code in the debugger stay readable.
+
 ## Code conventions
 
 ### Singletons
@@ -63,9 +72,7 @@ Known issues that are consciously left unsolved for now.
 
 ### Refactors
 
-#### Systematic debugging functionality
-
-Introduce debugging functionality which allows to determine precise places where features break and track the proper functioning of features. console.log is enough. it should allow to track the lifecycle of every concept and underestand if at any point something went wrong.
+None at the moment.
 
 ### Conceptual changes
 

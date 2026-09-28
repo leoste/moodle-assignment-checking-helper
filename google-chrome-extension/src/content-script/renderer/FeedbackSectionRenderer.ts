@@ -30,6 +30,11 @@ export class FeedbackSectionRenderer extends BaseRenderer {
   }
 
   async renderFeedback(feedback: Feedback[]) {
+    if (feedback.length === 0) {
+      createAndAddChildElement(this.element, 'div', null, translations.feedback.notFound)
+      return
+    }
+
     await new CommentPrefixRenderer(this.element, this.#callbacks.onCommentPrefixChanged).render()
 
     for (const [feedbackIndex, item] of feedback.entries()) {

@@ -7,6 +7,7 @@ export const translations = {
   feedback: {
     title: 'Tagasiside',
     commentPrefix: 'Kommentaari algus',
+    notFound: 'Hindamismaatriksit ei leitud',
     points: (points: number) => `${points}p`,
   },
 

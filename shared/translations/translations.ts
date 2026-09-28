@@ -7,7 +7,7 @@ export const translations = {
   feedback: {
     title: 'Tagasiside',
     commentPrefix: 'Kommentaari algus',
-    notFound: 'Hindamismaatriksit ei leitud',
+    notFound: 'Hindamismaatriksit ei leitud või on selles 0 hindamisjuhist',
     points: (points: number) => `${points}p`,
   },
 

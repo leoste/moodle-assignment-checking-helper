@@ -3,6 +3,12 @@
   "moodleIds": ["1035022"],
   "course_code": "ICS0012",
   "feedback": [
-    
+    {
+      "title": "default",
+      "max_points": 100,
+      "parts": [
+        { "enabledText": null, "enabled": true, "points": 100 }
+      ]      
+    }
   ]
 }

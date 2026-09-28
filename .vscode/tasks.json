@@ -4,13 +4,11 @@
     {
       "type": "npm",
       "script": "watch",
+      "path": "visual-studio-code-extension",
       "problemMatcher": "$esbuild-watch",
       "isBackground": true,
-      "group": {
-        "kind": "build",
-        "isDefault": true
-      },
-      "label": "npm: watch"
+      "group": "build",
+      "label": "vscode-extension: watch"
     }
   ]
 }

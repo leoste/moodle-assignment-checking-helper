@@ -26,6 +26,7 @@ export default class AssignmentGraderPresenter extends BasePresenter {
     this.#renderer = new CheckingHelperPanelRenderer({
       onPartToggled: this.#onPartToggled,
       onCommentPrefixChanged: this.#onCommentPrefixChanged,
+      onResized: this.#onPanelResized,
     })
     await this.#renderer.render()
     this.#page.insertPanel(this.#renderer.element)
@@ -63,6 +64,10 @@ export default class AssignmentGraderPresenter extends BasePresenter {
   #onCommentPrefixChanged = (prefix: string): void => {
     this.#commentPrefix = prefix
     this.#updateComment()
+  }
+
+  #onPanelResized = (left: number): void => {
+    this.#page.resizeGradePanel(left)
   }
 
   #updateGrade(): void {

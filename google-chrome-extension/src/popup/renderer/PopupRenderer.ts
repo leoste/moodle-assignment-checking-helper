@@ -1,6 +1,9 @@
+import type { Assignment } from '../../shared/types/Assignment'
 import type { FileSourceInfo } from '../../shared/types/FileSourceInfo'
 import BaseRenderer from '../../shared/renderer/BaseRenderer'
+import DefinitionListRenderer from './DefinitionListRenderer'
 import { createAndAddChildElement } from '../../shared/util/element-creation-helper'
+import formatDateTime from '../../shared/util/formatDateTime'
 import { translations } from '@shared/translations/translations'
 
 export interface PopupSource {
@@ -18,8 +21,11 @@ export default class PopupRenderer extends BaseRenderer {
   readonly #callbacks: PopupCallbacks
   readonly #sourcesContainer: HTMLElement
   readonly #refreshBtn: HTMLButtonElement
+  readonly #refreshTime: HTMLElement
+  readonly #definitionsContainer: HTMLElement
 
   readonly #folderNameElements = new Map<FileSourceInfo, HTMLElement>()
+  #definitionListRenderer: DefinitionListRenderer | undefined
 
   constructor(sources: PopupSource[], callbacks: PopupCallbacks) {
     super()
@@ -27,6 +33,8 @@ export default class PopupRenderer extends BaseRenderer {
     this.#callbacks = callbacks
     this.#sourcesContainer = document.getElementById('sources-container')!
     this.#refreshBtn = document.getElementById('refresh-btn') as HTMLButtonElement
+    this.#refreshTime = document.getElementById('refresh-time')!
+    this.#definitionsContainer = document.getElementById('definitions-container')!
   }
 
   protected createRoot(): HTMLElement {
@@ -44,6 +52,7 @@ export default class PopupRenderer extends BaseRenderer {
   async clear(): Promise<void> {
     this.#refreshBtn.removeEventListener('click', this.#callbacks.onRefresh)
     this.#folderNameElements.clear()
+    await this.#definitionListRenderer?.clear()
     await super.clear()
   }
 
@@ -54,13 +63,23 @@ export default class PopupRenderer extends BaseRenderer {
 
   setRefreshing(refreshing: boolean): void {
     this.#refreshBtn.disabled = refreshing
-    this.#refreshBtn.textContent = refreshing ? translations.definitions.refreshing : translations.definitions.refresh
+    this.#refreshBtn.textContent = refreshing ? translations.fileSource.refreshing : translations.fileSource.refresh
+  }
+
+  setRefreshTime(refreshedAt: Date | null): void {
+    this.#refreshTime.textContent = refreshedAt ? formatDateTime(refreshedAt) : translations.fileSource.notRefreshed
+  }
+
+  async renderDefinitions(assignments: Assignment[]): Promise<void> {
+    await this.#definitionListRenderer?.clear()
+    this.#definitionListRenderer = new DefinitionListRenderer(this.#definitionsContainer, assignments)
+    await this.#definitionListRenderer.render()
   }
 
   #addSourceElement(root: HTMLElement, { source, folderName }: PopupSource): void {
-    const div = createAndAddChildElement(root, 'div', 'source')
-    const nameEl = createAndAddChildElement(div, 'div', 'source-folder-name', folderName ?? translations.fileSource.folderNotSelected)
+    const div = createAndAddChildElement(root, 'div', 'row')
     const selectBtn = createAndAddChildElement(div, 'button', null, translations.fileSource.selectFolder(source.displayName))
+    const nameEl = createAndAddChildElement(div, 'div', 'text', folderName ?? translations.fileSource.folderNotSelected)
 
     this.#folderNameElements.set(source, nameEl)
     selectBtn.addEventListener('click', () => this.#callbacks.onSelectFolder(source))

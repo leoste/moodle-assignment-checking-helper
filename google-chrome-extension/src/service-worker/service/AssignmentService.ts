@@ -4,6 +4,10 @@ import { assignmentRepository } from '../repository/AssignmentRepository'
 import BaseService from '@shared/service/BaseService'
 
 class AssignmentService extends BaseService {
+  async getAllAssignments(): Promise<Assignment[]> {
+    return assignmentRepository.getAllDefinitions()
+  }
+
   async getFeedback(assignmentId: string): Promise<Feedback[] | undefined> {
     const definition = await this.#findByMoodleId(assignmentId)
     return definition?.feedback

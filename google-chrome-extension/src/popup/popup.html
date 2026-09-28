@@ -3,35 +3,56 @@
   <head>
     <meta charset="utf-8" />
     <style>
+      html, body {
+        margin: 0;
+      }
       body {
         font-family: sans-serif;
+        font-size: 14px;
+        color: #000;
         padding: 12px;
-        min-width: 220px;
+        width: 800px;
+        height: 600px;
+        box-sizing: border-box;
+        overflow-y: auto;
       }
-      .source {
-        margin-bottom: 12px;
-      }
-      .source-folder-name {
-        font-size: 12px;
-        color: #555;
+      .row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
         margin-bottom: 4px;
+      }
+      .text {
         word-break: break-all;
       }
       button {
-        width: 100%;
+        width: 240px;
+        flex-shrink: 0;
         padding: 8px;
         cursor: pointer;
-        margin-bottom: 4px;
         box-sizing: border-box;
       }
-      #refresh-btn {
-        margin-top: 4px;
+      hr {
+        margin: 12px 0;
+      }
+      .definition-list {
+        margin: 0;
+        padding-left: 20px;
+      }
+      .definition-list li {
+        margin-bottom: 4px;
       }
     </style>
   </head>
   <body>
     <div id="sources-container"></div>
-    <button id="refresh-btn"></button>
+    <hr />
+    <div class="row">
+      <button id="refresh-btn"></button>
+      <div id="refresh-time" class="text"></div>
+    </div>
+    <hr />
+    <div id="definitions-container"></div>
     <script type="module" src="popup.ts"></script>
   </body>
 </html>

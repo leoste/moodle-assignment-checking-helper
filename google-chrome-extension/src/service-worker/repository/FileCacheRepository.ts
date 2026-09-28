@@ -22,5 +22,14 @@ export default abstract class FileCacheRepository extends IndexedDBRepository {
 
   async setFileContents(contents: string[]): Promise<void> {
     await this.setValue(this.fileSourceInfo.cacheKey, contents)
+    await this.setValue(this.#updatedAtKey(), Date.now())
+  }
+
+  async getUpdatedAt(): Promise<number | null> {
+    return (await this.getValue<number>(this.#updatedAtKey())) ?? null
+  }
+
+  #updatedAtKey(): string {
+    return `${this.fileSourceInfo.cacheKey}.updatedAt`
   }
 }

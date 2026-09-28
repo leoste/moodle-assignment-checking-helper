@@ -1,6 +1,7 @@
 export const FILES_GET_SOURCES = 'files/get-sources'
 export const FILES_UPDATE_CACHE = 'files/update-cache'
 
+export const ASSIGNMENTS_GET_ALL = 'assignments/get-all'
 export const FEEDBACK_GET = 'feedback/get'
 export const STUDENT_SUBMISSION_OPEN = 'student-submission/open'
 export const QUIZ_AUTO_GRADE_BEGIN = 'quiz/auto-grade/begin'

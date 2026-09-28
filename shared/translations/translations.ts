@@ -16,13 +16,16 @@ export const translations = {
 
   definitions: {
     folderName: 'Definitsioonide kaust',
-    refresh: 'Uuenda definitsioonid',
-    refreshing: 'Uuendamine...',
+    noneFound: 'Definitsioone ei leitud',
+    noCourseCode: '?',
   },
 
   fileSource: {
     selectFolder: (sourceName: string) => `Vali ${sourceName.toLowerCase()}`,
     folderNotSelected: 'Kaust valimata',
+    refresh: 'Lae failidest uuesti',
+    refreshing: 'Laadimine...',
+    notRefreshed: 'Pole laetud',
   },
 
   studentSubmission: {

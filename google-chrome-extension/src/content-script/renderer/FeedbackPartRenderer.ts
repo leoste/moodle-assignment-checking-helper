@@ -1,4 +1,4 @@
-import type { FeedbackPart } from '../../shared/types/FeedbackPart';
+import type { FeedbackPartView } from '../../shared/types/FeedbackPartView';
 import { createAndAddChildElement, createAndAddChildImage } from '../../shared/util/element-creation-helper';
 import BaseRenderer from '../../shared/renderer/BaseRenderer';
 import { translations } from '@shared/translations/translations';
@@ -7,19 +7,19 @@ const ADD_BUTTON_IMAGE_PATH = 'images/double-thumbs-up-emoji.png'
 
 export class FeedbackPartRenderer extends BaseRenderer {
   readonly #list: HTMLElement
-  readonly #part: FeedbackPart
-  readonly #onToggled: (enabled: boolean) => void
-  #enabled: boolean
+  readonly #part: FeedbackPartView
+  readonly #onToggled: (selected: boolean) => void
+  #selected: boolean
 
   #addButton: HTMLImageElement | undefined
 
-  constructor(list: HTMLElement, part: FeedbackPart, onToggled: (enabled: boolean) => void) {
+  constructor(list: HTMLElement, part: FeedbackPartView, onToggled: (selected: boolean) => void) {
     super()
 
     this.#list = list
     this.#part = part
     this.#onToggled = onToggled
-    this.#enabled = part.enabled
+    this.#selected = part.selected
   }
 
   protected createRoot(): HTMLElement {
@@ -31,15 +31,15 @@ export class FeedbackPartRenderer extends BaseRenderer {
     createAndAddChildElement(container, 'div', 'text-section', this.#getDisplayText())
     const buttonsSection = createAndAddChildElement(container, 'div', 'buttons-section')
 
-    this.#addButton = createAndAddChildImage(buttonsSection, ADD_BUTTON_IMAGE_PATH, ['add-button', this.#enabled ? 'active' : 'inactive'])
+    this.#addButton = createAndAddChildImage(buttonsSection, ADD_BUTTON_IMAGE_PATH, ['add-button', this.#selected ? 'active' : 'inactive'])
     this.#addButton.addEventListener('click', this.#toggle)
   }
 
   #getDisplayText(): string | null {
     const lines: string[] = []
-    if (this.#part.labelText) lines.push(`label: ${this.#part.labelText}`)
-    if (this.#part.enabledText) lines.push(`enabled: ${this.#part.enabledText}`)
-    if (this.#part.disabledText) lines.push(`disabled: ${this.#part.disabledText}`)
+    if (this.#part.labelText) lines.push(translations.feedback.partLabelText(this.#part.labelText))
+    if (this.#part.selectedText) lines.push(translations.feedback.partSelectedText(this.#part.selectedText))
+    if (this.#part.unselectedText) lines.push(translations.feedback.partUnselectedText(this.#part.unselectedText))
     if (this.#part.points) {
       const points = translations.feedback.points(this.#part.points)
       if (lines.length > 0) lines[0] += ` (${points})`
@@ -49,9 +49,9 @@ export class FeedbackPartRenderer extends BaseRenderer {
   }
 
   #toggle = (): void => {
-    this.#enabled = !this.#enabled
-    this.#addButton!.classList.toggle('active', this.#enabled)
-    this.#addButton!.classList.toggle('inactive', !this.#enabled)
-    this.#onToggled(this.#enabled)
+    this.#selected = !this.#selected
+    this.#addButton!.classList.toggle('active', this.#selected)
+    this.#addButton!.classList.toggle('inactive', !this.#selected)
+    this.#onToggled(this.#selected)
   }
 }

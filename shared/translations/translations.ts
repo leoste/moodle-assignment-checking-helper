@@ -9,6 +9,9 @@ export const translations = {
     commentPrefix: 'Kommentaari algus',
     notFound: 'Hindamismaatriksit ei leitud või on selles 0 hindamisjuhist',
     points: (points: number) => `${points}p`,
+    partLabelText: (text: string) => `label: ${text}`,
+    partSelectedText: (text: string) => `enabled: ${text}`,
+    partUnselectedText: (text: string) => `disabled: ${text}`,
   },
 
   quizAutoGrade: {

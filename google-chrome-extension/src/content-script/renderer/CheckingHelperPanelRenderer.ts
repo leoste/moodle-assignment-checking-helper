@@ -1,4 +1,4 @@
-import type { Feedback } from '../../shared/types/Feedback';
+import type { FeedbackView } from '../../shared/types/FeedbackView';
 import { FeedbackSectionRenderer, type FeedbackSectionCallbacks } from './FeedbackSectionRenderer';
 import { createElementWithClasses } from '../../shared/util/element-creation-helper';
 import BaseRenderer from '../../shared/renderer/BaseRenderer';
@@ -58,7 +58,7 @@ export default class CheckingHelperPanelRenderer extends BaseRenderer {
     })
   }
 
-  async renderFeedback(feedback: Feedback[]) {
+  async renderFeedback(feedback: FeedbackView[]) {
     await this.#feedbackSectionRenderer!.renderFeedback(feedback)
   }
 }

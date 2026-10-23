@@ -1,4 +1,4 @@
-import type { Feedback } from '../../shared/types/Feedback';
+import type { FeedbackView } from '../../shared/types/FeedbackView';
 import { createAndAddChildElement } from '../../shared/util/element-creation-helper';
 import BaseRenderer from '../../shared/renderer/BaseRenderer';
 import { FeedbackPartRenderer } from './FeedbackPartRenderer';
@@ -6,13 +6,13 @@ import { translations } from '@shared/translations/translations';
 
 export class FeedbackPartListRenderer extends BaseRenderer {
   readonly #parentElement: HTMLElement
-  readonly #feedback: Feedback
-  readonly #onPartToggled: (partIndex: number, enabled: boolean) => void
+  readonly #feedback: FeedbackView
+  readonly #onPartToggled: (partIndex: number, selected: boolean) => void
 
   constructor(
     parentElement: HTMLElement,
-    feedback: Feedback,
-    onPartToggled: (partIndex: number, enabled: boolean) => void
+    feedback: FeedbackView,
+    onPartToggled: (partIndex: number, selected: boolean) => void
   ) {
     super()
 
@@ -30,7 +30,7 @@ export class FeedbackPartListRenderer extends BaseRenderer {
     const list = createAndAddChildElement(root, 'ul', 'common-answer-list')
 
     for (const [index, part] of this.#feedback.parts.entries()) {
-      await new FeedbackPartRenderer(list, part, enabled => this.#onPartToggled(index, enabled)).render()
+      await new FeedbackPartRenderer(list, part, selected => this.#onPartToggled(index, selected)).render()
     }
   }
 }

@@ -2,7 +2,7 @@ import BasePresenter from '../../shared/presenter/BasePresenter'
 import PopupRenderer, { type PopupSource } from '../renderer/PopupRenderer'
 import { fileCacheClient } from '../client/FileCacheClient'
 import { assignmentClient } from '../client/AssignmentClient'
-import { fileHandleRepository } from '../../shared/repository/FileHandleRepository'
+import { directoryHandleRepository } from '../../shared/repository/DirectoryHandleRepository'
 import { folderAccessService } from '../service/FolderAccessService'
 import type { FileSourceInfo } from '../../shared/types/FileSourceInfo'
 import type { FileSourceStatus } from '../../shared/types/FileSourceStatus'
@@ -15,7 +15,7 @@ export default class PopupPresenter extends BasePresenter {
     const fileSources = await fileCacheClient.getFileSources()
     const sources: PopupSource[] = []
     for (const source of fileSources) {
-      const handle = await fileHandleRepository.get<FileSystemDirectoryHandle>(source.directoryConfigKey)
+      const handle = await directoryHandleRepository.getDirectoryHandle(source)
       sources.push({ source, folderName: handle ? handle.name : null })
     }
     logger.info(this, `${sources.length} file source(s)`, sources)

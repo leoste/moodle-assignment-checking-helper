@@ -1,4 +1,5 @@
 import type { FileSourceInfo } from '../../shared/types/FileSourceInfo'
+import type { FileCache } from '../../shared/types/FileCache'
 import IndexedDBRepository from '../../shared/repository/IndexedDBRepository'
 
 export default abstract class FileCacheRepository extends IndexedDBRepository {
@@ -17,19 +18,18 @@ export default abstract class FileCacheRepository extends IndexedDBRepository {
   }
 
   async getFileContents(): Promise<string[]> {
-    return (await this.getValue<string[]>(this.fileSourceInfo.cacheKey)) ?? []
+    return (await this.#getFileCache())?.contents ?? []
   }
 
   async setFileContents(contents: string[]): Promise<void> {
-    await this.setValue(this.fileSourceInfo.cacheKey, contents)
-    await this.setValue(this.#updatedAtKey(), Date.now())
+    await this.setValue(this.fileSourceInfo.cacheKey, { contents, updatedAt: Date.now() })
   }
 
   async getUpdatedAt(): Promise<number | null> {
-    return (await this.getValue<number>(this.#updatedAtKey())) ?? null
+    return (await this.#getFileCache())?.updatedAt ?? null
   }
 
-  #updatedAtKey(): string {
-    return `${this.fileSourceInfo.cacheKey}.updatedAt`
+  #getFileCache(): Promise<FileCache | undefined> {
+    return this.getValue(this.fileSourceInfo.cacheKey)
   }
 }

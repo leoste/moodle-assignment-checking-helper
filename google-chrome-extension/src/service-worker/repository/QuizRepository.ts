@@ -1,10 +1,10 @@
 import LocalStorageRepository from '../../shared/repository/LocalStorageRepository'
 import type { AutoGradeId } from '../../shared/types/AutoGradeId'
-
-const AUTO_GRADE_KEY_PREFIX = 'autograde'
+import type { AutoGradeKey } from '../../shared/types/StorageSchema'
+import { AUTO_GRADE_KEY_PREFIX } from '../../shared/constants/storage'
 
 class QuizRepository extends LocalStorageRepository {
-  #key(id: AutoGradeId): string {
+  #key(id: AutoGradeId): AutoGradeKey {
     return `${AUTO_GRADE_KEY_PREFIX}:${id.quizId}:${id.questionNumber}:${id.attemptId}`
   }
 
@@ -17,7 +17,7 @@ class QuizRepository extends LocalStorageRepository {
   }
 
   async isAutoGradeActive(id: AutoGradeId): Promise<boolean> {
-    const value = await this.getValue<boolean>(this.#key(id))
+    const value = await this.getValue(this.#key(id))
     return !!value
   }
 }

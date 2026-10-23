@@ -1,5 +1,7 @@
+import type { DirectoryHandleKey, FileCacheKey } from './StorageSchema'
+
 export interface FileSourceInfo {
   displayName: string
-  directoryConfigKey: string
-  cacheKey: string
+  directoryHandleKey: DirectoryHandleKey
+  cacheKey: FileCacheKey
 }

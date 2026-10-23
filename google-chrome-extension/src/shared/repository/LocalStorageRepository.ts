@@ -1,16 +1,17 @@
 import BaseRepository from './BaseRepository'
+import type { ChromeStorageSchema } from '../types/StorageSchema'
 
-export default abstract class LocalStorageRepository extends BaseRepository {
-  protected async getValue<T>(key: string): Promise<T | undefined> {
+export default abstract class LocalStorageRepository extends BaseRepository<ChromeStorageSchema> {
+  protected async getValue<K extends keyof ChromeStorageSchema>(key: K): Promise<ChromeStorageSchema[K] | undefined> {
     const result = await chrome.storage.local.get(key)
-    return result[key] as T | undefined
+    return result[key] as ChromeStorageSchema[K] | undefined
   }
 
-  protected async setValue<T>(key: string, value: T): Promise<void> {
+  protected async setValue<K extends keyof ChromeStorageSchema>(key: K, value: ChromeStorageSchema[K]): Promise<void> {
     await chrome.storage.local.set({ [key]: value })
   }
 
-  protected async removeValue(key: string): Promise<void> {
+  protected async removeValue(key: keyof ChromeStorageSchema): Promise<void> {
     await chrome.storage.local.remove(key)
   }
 }

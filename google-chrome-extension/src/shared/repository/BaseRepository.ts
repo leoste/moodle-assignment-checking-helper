@@ -1,7 +1,7 @@
 import Initialisable from '@shared/Initialisable'
 
-export default abstract class BaseRepository extends Initialisable {
-  protected abstract getValue<T>(key: string): Promise<T | undefined>
-  protected abstract setValue<T>(key: string, value: T): Promise<void>
-  protected abstract removeValue(key: string): Promise<void>
+export default abstract class BaseRepository<TSchema> extends Initialisable {
+  protected abstract getValue<K extends keyof TSchema>(key: K): Promise<TSchema[K] | undefined>
+  protected abstract setValue<K extends keyof TSchema>(key: K, value: TSchema[K]): Promise<void>
+  protected abstract removeValue(key: keyof TSchema): Promise<void>
 }

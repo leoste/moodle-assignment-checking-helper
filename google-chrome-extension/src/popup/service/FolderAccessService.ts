@@ -1,4 +1,4 @@
-import { fileHandleRepository } from '../../shared/repository/FileHandleRepository'
+import { directoryHandleRepository } from '../../shared/repository/DirectoryHandleRepository'
 import type { FileSourceInfo } from '../../shared/types/FileSourceInfo'
 import { fileCacheClient } from '../client/FileCacheClient'
 import BaseService from '@shared/service/BaseService'
@@ -12,7 +12,7 @@ class FolderAccessService extends BaseService {
   async selectFolder(source: FileSourceInfo): Promise<FileSystemDirectoryHandle | null> {
     try {
       const handle = await window.showDirectoryPicker({ mode: 'read' })
-      await fileHandleRepository.set(source.directoryConfigKey, handle)
+      await directoryHandleRepository.setDirectoryHandle(source, handle)
       return handle
     } catch (e) {
       if (e instanceof DOMException && e.name === 'AbortError') return null
@@ -21,7 +21,7 @@ class FolderAccessService extends BaseService {
   }
 
   async refreshSource(source: FileSourceInfo): Promise<boolean> {
-    const handle = await fileHandleRepository.get<FileSystemDirectoryHandle>(source.directoryConfigKey)
+    const handle = await directoryHandleRepository.getDirectoryHandle(source)
     if (!handle) return false
     const permission = await handle.requestPermission({ mode: 'read' })
     if (permission !== 'granted') return false

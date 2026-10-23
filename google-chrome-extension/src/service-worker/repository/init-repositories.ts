@@ -2,7 +2,7 @@ import type BaseRepository from '../../shared/repository/BaseRepository'
 import { assignmentRepository } from './AssignmentRepository'
 import { quizRepository } from './QuizRepository'
 
-export const repositories: readonly BaseRepository[] = [
+export const repositories: readonly BaseRepository<unknown>[] = [
   assignmentRepository,
   quizRepository,
 ]

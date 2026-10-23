@@ -3,14 +3,12 @@ import type { FileSourceInfo } from '../../shared/types/FileSourceInfo'
 import FileCacheRepository from './FileCacheRepository'
 import { translations } from '@shared/translations/translations'
 import { logger } from '@shared/logging/logger'
-
-const ASSIGNMENT_DIRECTORY_CONFIG_KEY = 'config.assignmentDirectory'
-const ASSIGNMENT_FILE_CACHE_KEY = 'file-cache.assignments'
+import { ASSIGNMENT_DIRECTORY_HANDLE_KEY, ASSIGNMENT_FILE_CACHE_KEY } from '../../shared/constants/storage'
 
 class AssignmentRepository extends FileCacheRepository {
   readonly fileSourceInfo: FileSourceInfo = {
     displayName: translations.definitions.folderName,
-    directoryConfigKey: ASSIGNMENT_DIRECTORY_CONFIG_KEY,
+    directoryHandleKey: ASSIGNMENT_DIRECTORY_HANDLE_KEY,
     cacheKey: ASSIGNMENT_FILE_CACHE_KEY,
   }
 

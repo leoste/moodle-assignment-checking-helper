@@ -21,7 +21,7 @@ Contexts talk only through messages: content script and popup send Chrome messag
 ### Layers
 
 Each layer uses only the layers below it:
-- **Infrastructure** (`infrastructure/`) owns a platform resource and knows nothing about features. Message receivers (`ChromeMessageReceiver`, `VsCodeMessageReceiver`) listen for messages and pass them to handlers, `VsCodeConnectionProvider` sends requests to VS Code.
+- **Infrastructure** (`infrastructure/`) owns a platform resource and knows nothing about features. Message receivers (`ChromeMessageReceiver`, `VsCodeMessageReceiver`) listen for messages and pass them to handlers, `VsCodeConnectionProvider` sends requests to VS Code, `IndexedDBProvider` owns the IndexedDB connection.
 - **Repositories** (`repository/`) store and load data.
 - **Services** (`service/`) do what the application does.
 - **Controllers** (`controller/`) register message handlers and pass the messages on to services.
@@ -44,6 +44,14 @@ Each layer uses only the layers below it:
 A message is transport-specific: `ChromeMessage` (`{ type, content }` over `chrome.runtime`) or `VsCodeMessage` (`{ channel, content }` over WebSocket). Its `content` is a payload (`BasePayload`), the part that is the same in both extensions.
 Every message key has exactly one payload type, listed in `ChromeMessagePayloads` and `VsCodeMessagePayloads`. Generators and controllers are type checked against these maps, so a new message is added there first.
 Everything around a message is named `<message type><role>`: `ChromeMessageClient`, `VsCodeMessageReceiver`, `QuizChromeMessageGenerator` etc.
+
+### Storage
+
+The Chrome extension stores data in two backends:
+- **IndexedDB** for what `chrome.storage` can't hold, e.g. the definitions folder's `FileSystemDirectoryHandle`. Each context that uses it (service worker, popup) has its own `IndexedDBProvider` and connection to the same database, and each key is written by one context only.
+- **`chrome.storage.local`** for simple values.
+
+Every stored key is in `shared/constants/storage.ts` and its value type in `StorageSchema`. Repositories are type checked against the schema, so new storage is added there first. Outside the repositories, code only uses their domain methods, e.g. `DirectoryHandleRepository.getDirectoryHandle()`, never keys.
 
 ### Lifecycle
 
@@ -78,11 +86,6 @@ None at the moment.
 
 To do conceptual changes, proper debugging sessions with the browser are necessary to validate proper functionality, as these changes can't be implemented with simple rewrites.
 
-#### Meaning of feedback
-
-What `enabled`, `enabledText`, `disabledText` and `points` of a `FeedbackPart` mean is known in two places: `grading-rules.ts` (grade and comment) and `FeedbackPartRenderer#getDisplayText` (how a part is shown). Needs rethinking of what feedback is.
-`FeedbackPart.enabled` is both the definition's default and the selection state while grading, hence the `deepCopy` in `AssignmentGraderPresenter`. Separating the definition from the selection depends on what feedback turns out to be.
-
 #### Grade fallback and submit prevention
 
 `calculateGrade()` in `grading-rules.ts` gives 100 when the sum of points is 0 or negative. This is deliberate: a mistake in the definition should rather give the student 100 than 0. But with negative points only (e.g. `python-cafe-assignment.json`) big deductions also end up as 100. The proper fix is submit prevention like in form validation, maybe building the whole panel as a form. Additionally, the whole grading system of how grades are calculated needs to be reviewed and made more robust.
@@ -105,7 +108,7 @@ Colors `#FF7E2E`, `#2BFFFF` and `#FEEA9A` repeat in `assign-grader.css` and `qui
 
 #### Database
 
-The IndexedDB schema (`IndexedDBRepository`: `DB_NAME`, `STORE_NAME`, `DB_VERSION`) has no migrations. Postponed until it is clear what kind of storage the project needs. This is likely very low priority as in a project with so simple complexity it doesn't matter.
+The IndexedDB database (`IndexedDBProvider`: `DB_NAME`, `STORE_NAME`, `DB_VERSION`) has no migrations. When the type of a stored value changes, its repository has to treat an old value as missing until it is stored again, e.g. by refreshing the definitions folder. This is likely very low priority as in a project with so simple complexity it doesn't matter.
 
 #### Opening sub-directories is a compile-time setting
 

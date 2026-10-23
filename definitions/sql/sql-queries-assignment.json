@@ -5,7 +5,7 @@
   "feedback": [
     {
       "title": "default",
-      "max_points": 0,
+      "intended_max_points": 0,
       "parts": [
         {
           "enabledText": "Everything is correct, the queries are well written and run successfully.",

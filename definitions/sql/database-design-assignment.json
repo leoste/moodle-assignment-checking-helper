@@ -5,7 +5,7 @@
   "feedback": [
     {
       "title": "default",
-      "max_points": 0,
+      "intended_max_points": 0,
       "parts": [
         { "enabledText": "Hello!", "enabled": true },
         { "enabledText": null, "enabled": true },
@@ -14,7 +14,7 @@
     },
     {
       "title": "Probleemituvastus",
-      "max_points": 30,
+      "intended_max_points": 30,
       "parts": [
         { "points": 10, "enabledText": "välja toodud vähemalt 5 probleemi", "enabled": false },
         { "points": 10, "enabledText": "ära märgitud probleemide tüüp ja olemus", "enabled": false },
@@ -23,7 +23,7 @@
     },
     {
       "title": "Schema design",
-      "max_points": 35,
+      "intended_max_points": 35,
       "parts": [
         { "points": 10, "enabledText": "ER diagramm olemas", "enabled": false },
         { "points": 10, "enabledText": "andmebaas normaliseeritud", "enabled": false },
@@ -32,7 +32,7 @@
     },
     {
       "title": "Implementation",
-      "max_points": 20,
+      "intended_max_points": 20,
       "parts": [
         { "points": 8, "enabledText": "SCHEMA queryd olemas ja korrektsed", "enabled": false },
         { "points": 8, "enabledText": "MIGRATION queryd olemas ja toimivad", "enabled": false },
@@ -41,7 +41,7 @@
     },
     {
       "title": "Documentation",
-      "max_points": 15,
+      "intended_max_points": 15,
       "parts": [
         { "points": 5, "enabledText": "töösse on kirjutatud selgitusi", "enabled": false },
         { "points": 5, "enabledText": "otsused on põhjendatud", "enabled": false },

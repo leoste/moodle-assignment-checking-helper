@@ -26,7 +26,7 @@ export class FeedbackPartListRenderer extends BaseRenderer {
   }
 
   protected async renderContent(root: HTMLElement) {
-    createAndAddChildElement(root, 'h3', null, `${this.#feedback.title} (${translations.feedback.points(this.#feedback.max_points)})`)
+    createAndAddChildElement(root, 'h3', null, `${this.#feedback.title} (${translations.feedback.points(this.#feedback.intended_max_points)})`)
     const list = createAndAddChildElement(root, 'ul', 'common-answer-list')
 
     for (const [index, part] of this.#feedback.parts.entries()) {

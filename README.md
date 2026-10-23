@@ -87,6 +87,10 @@ What `enabled`, `enabledText`, `disabledText` and `points` of a `FeedbackPart` m
 
 `calculateGrade()` in `grading-rules.ts` gives 100 when the sum of points is 0 or negative. This is deliberate: a mistake in the definition should rather give the student 100 than 0. But with negative points only (e.g. `python-cafe-assignment.json`) big deductions also end up as 100. The proper fix is submit prevention like in form validation, maybe building the whole panel as a form. Additionally, the whole grading system of how grades are calculated needs to be reviewed and made more robust.
 
+#### Grade scale
+
+The grade has no scale. `calculateGrade()` sums the points of the enabled parts, the `intended_max_points` of a `Feedback` group is only displayed, and the fallback is a hard-coded 100, even for assignments graded out of 15 (`python-cafe-assignment.json`). The maximum points should be the scale of the grade and replace the hard-coded fallback. Ideally the maximum isn't written in the definition at all but read from Moodle's grading page, so the definition can't disagree with Moodle.
+
 #### Matching students and submissions
 
 `isStudentFolder()` in the VS Code `student-files-rules.ts` matches the student's folder with `folderName.startsWith(studentName)`, so "Mari Maa" also matches "Mari Maasikas_…" and opens the wrong student's files. To be solved together with downloading submissions.

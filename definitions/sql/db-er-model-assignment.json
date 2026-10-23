@@ -5,7 +5,7 @@
   "feedback": [
     {
       "title": "default",
-      "max_points": 100,
+      "intended_max_points": 100,
       "parts": [
         { "enabledText": null, "enabled": true, "points": 100 }
       ]      

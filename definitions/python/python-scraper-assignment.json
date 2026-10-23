@@ -5,7 +5,7 @@
     "feedback": [
         {
             "title": "Kaabitsa funktsionaalsus",
-            "max_points": 9,
+            "intended_max_points": 9,
             "parts": [
                 { "enabled": true, "points": 5, "labelText": "Eksisteerib veebikaabits." },
                 { "enabled": true, "points": 1, "labelText": "Valitud veebilehel on vähemalt 150 objekti ja 5 alamlehte." },
@@ -16,7 +16,7 @@
         },
         {
             "title": "Veebilehe funktsionaalsus",
-            "max_points": 6,
+            "intended_max_points": 6,
             "parts": [
                 { "enabled": true, "points": 4, "labelText": "Eksisteerib veebileht või API koos veebilehega." },
                 { "enabled": true, "points": 1, "labelText": "Veebilehel saab teha päringu kõigi kallim kui XX eurot kaupade nägemiseks." },
@@ -25,14 +25,14 @@
         },
         {
             "title": "Tähelepanekud",
-            "max_points": 0,
+            "intended_max_points": 0,
             "parts": [
                 { "enabledText": "Veebi disaini juures soovitaksin kirjutada ikkagi html ja css eraldi, kuna siis te ei peaks duubeldama sama css iga kord, kui sama elementi uuesti kasutate.", "enabled": false }
             ]
         },
         {
             "title": "Hilinemine",
-            "max_points": -6,
+            "intended_max_points": -6,
             "parts": [
                 { "points": -1, "labelText": "12h", "enabled": false },
                 { "points": -2, "labelText": "1p", "enabled": false },

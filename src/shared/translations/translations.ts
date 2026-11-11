@@ -10,6 +10,7 @@ export const translations = {
     commentPrefix: 'Kommentaari algus',
     commentPrefixPlaceholder: 'Siia kirjutatud tekst läheb kommentaari algusesse',
     notFound: 'Selle ülesande hindamismaatriksit ei leitud. Vali laienduse aknas (laienduse ikoon brauseri tööriistaribal) definitsioonide kaust ja lae failid. Kui kaust on valitud, lisa selle ülesande ID definitsiooni välja „moodleIds“ alla – ID on näha all olekureal.',
+    gradingElsewhere: "Hindamine käib juba teises Moodle'i vahekaardis. Jätka seal või sulge teine vahekaart ja lae sisupaneel siin uuesti.",
     points: (points: number) => `${points}p`,
     partSelectedText: (text: string) => `Kommentaar valituna: ${text}`,
     partUnselectedText: (text: string) => `Kommentaar valimata: ${text}`,

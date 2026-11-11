@@ -749,7 +749,12 @@ So, like the content script, a singleton page listener (`webview/pagelistener/Si
 
 ---
 
-## Step 12: Manual panel reload
+## Step 12: Manual panel reload ✅
+
+> **Done:** solved as decided.
+> - The popup's "Lae sisupaneel uuesti" sends `panel/reload` to the active tab. The content script's `PanelController` runs the page listener's `loadPage()`, the same method the page-ready detection runs.
+> - When the active tab has no panel script, the popup's status line shows `translations.popup.panelNotActivated`.
+> - The README describes the message and `loadPage()`.
 
 **Goal:** if the panel never appears, the lecturer can load it manually from the popup. The page-ready detection itself stays as it is.
 
@@ -813,11 +818,14 @@ To confirm when implementing: the expectation is that content scripts get the pa
 - **The message proposed in step 12:** "Hindamine käib juba teises Moodle'i vahekaardis. Jätka seal või sulge see vahekaart ja lae sisupaneel uuesti." The solver noted that "sulge see vahekaart" can read as "close this tab". A clearer form would be "…või sulge teine vahekaart ja lae sisupaneel siin uuesti." This is still open.
 - **No takeover button in this step:** taking over is one feature across both extensions, so it moved to step 14.
 
-**Still to decide:** the mechanism (browser lock or owner record) and the message text.
+**Decided: the browser lock.**
+> regarding owner tab. lets use the weblocks concept, seems like a good one. the gap seems like a nonissue cause a user has to really try to cause it to happen, and the fallout is minimal too, they can just refresh so whatever.
+
+**Message text:** the solver used the clearer form ("sulge teine vahekaart … siin"), in `translations.feedback.gradingElsewhere`. It awaits the author's review.
 
 **How:**
-1. The author decides what is still open.
-2. The solver implements it.
+1. The solver implements it.
+2. The author reviews it.
 
 ---
 

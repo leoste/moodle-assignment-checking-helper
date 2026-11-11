@@ -16,6 +16,10 @@ import { getStudentSubmissionOpeningStatus, getStudentSubmissionStatus } from '@
 import { getBrokenDefinitionsStatus, getDefinitionSearchingStatus, getDefinitionStatus } from '../../shared/rules/status-rules'
 import { RESPONSE_STATUS_ERROR } from '@shared/constants/vscode-message'
 import { STATUS_TOPIC_BROKEN_DEFINITIONS, STATUS_TOPIC_MOODLE_PAGE } from '@shared/constants/status'
+import { webLockProvider } from '../infrastructure/WebLockProvider'
+
+// Held by the one tab that grades, see "One grading tab" in the README.
+const GRADING_TAB_LOCK_NAME = 'moodle-helper/grading-tab'
 
 export default class AssignmentGraderPresenter extends BasePresenter {
   readonly #page: AssignmentGraderPage
@@ -36,18 +40,18 @@ export default class AssignmentGraderPresenter extends BasePresenter {
   async start(): Promise<void> {
     statusReporter.clear(STATUS_TOPIC_MOODLE_PAGE)
     statusReporter.clear(STATUS_TOPIC_BROKEN_DEFINITIONS)
+    const isGradingTab = await webLockProvider.acquire(GRADING_TAB_LOCK_NAME)
+    logger.info(this, isGradingTab ? 'grading in this tab' : 'another tab is grading')
+    if (this.#stopped) return
+    if (!isGradingTab) {
+      const renderer = await this.#insertPanel()
+      await renderer.renderGradingElsewhere()
+      return
+    }
+
     portStatusReceiver.connect()
     const studentSubmissionOpened = this.#openStudentSubmission()
-
-    this.#renderer = new CheckingHelperPanelRenderer({
-      onPartToggled: this.#onPartToggled,
-      onCommentPrefixChanged: this.#onCommentPrefixChanged,
-      onResized: this.#onPanelResized,
-      onApply: this.#onApply,
-    })
-    await this.#renderer.render()
-    this.#page.insertPanel(this.#renderer.element)
-    statusReporter.setSink(this.#renderer.statusLine)
+    const renderer = await this.#insertPanel()
 
     const assignmentId = this.#page.getAssignmentId()
     statusReporter.report(getDefinitionSearchingStatus())
@@ -56,7 +60,7 @@ export default class AssignmentGraderPresenter extends BasePresenter {
     this.#feedback = deepCopy(lookup?.definition?.feedback ?? [])
     this.#selection = getDefaultSelection(this.#feedback)
     logger.info(this, `assignment ${assignmentId}: ${this.#feedback.length} feedback group(s)`)
-    await this.#renderer.renderFeedback(getFeedbackView(this.#feedback, this.#selection), this.#commentPrefix)
+    await renderer.renderFeedback(getFeedbackView(this.#feedback, this.#selection), this.#commentPrefix)
     this.#feedbackShown = true
 
     this.#page.expandCommentSection()
@@ -86,6 +90,20 @@ export default class AssignmentGraderPresenter extends BasePresenter {
     logger.info(this, `assignment ${assignmentId} reloaded: ${this.#feedback.length} feedback group(s)`)
     await this.#renderer!.renderFeedback(getFeedbackView(this.#feedback, this.#selection), this.#commentPrefix)
     await this.#renderApplySection()
+  }
+
+  async #insertPanel(): Promise<CheckingHelperPanelRenderer> {
+    const renderer = new CheckingHelperPanelRenderer({
+      onPartToggled: this.#onPartToggled,
+      onCommentPrefixChanged: this.#onCommentPrefixChanged,
+      onResized: this.#onPanelResized,
+      onApply: this.#onApply,
+    })
+    this.#renderer = renderer
+    await renderer.render()
+    this.#page.insertPanel(renderer.element)
+    statusReporter.setSink(renderer.statusLine)
+    return renderer
   }
 
   async #renderApplySection(): Promise<void> {

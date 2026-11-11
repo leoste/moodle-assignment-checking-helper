@@ -42,7 +42,7 @@ Contexts talk only through messages: content script and popup send Chrome messag
 ### Layers
 
 Each layer uses only the layers below it:
-- **Infrastructure** (`infrastructure/`) owns a platform resource and knows nothing about features. Message receivers (`ChromeMessageReceiver` in the service worker and the content script, `VsCodeMessageReceiver`) listen for messages and pass them to handlers, `VsCodeConnectionProvider` sends requests to VS Code, `IndexedDBProvider` owns the IndexedDB connection.
+- **Infrastructure** (`infrastructure/`) owns a platform resource and knows nothing about features. Message receivers (`ChromeMessageReceiver` in the service worker and the content script, `VsCodeMessageReceiver`) listen for messages and pass them to handlers, `VsCodeConnectionProvider` sends requests to VS Code, `IndexedDBProvider` owns the IndexedDB connection, `WebLockProvider` holds the content script's Web Locks.
 - **Repositories** (`repository/`) store and load data.
 - **Services** (`service/`) do what the application does.
 - **Controllers** (`controller/`) register message handlers and pass the messages on to services. The content script and the sidebar's page have no services, so their controllers pass them on to the page listener.
@@ -74,6 +74,13 @@ The Chrome extension stores data in two backends:
 - **`chrome.storage.local`** for simple values.
 
 Every stored key is in `shared/constants/storage.ts` and its value type in `StorageSchema`. Repositories are type checked against the schema, so new storage is added there first. Outside the repositories, code only uses their domain methods, e.g. `DirectoryHandleRepository.getDirectoryHandle()`, never keys.
+
+### One grading tab
+
+Only one Moodle tab grades at a time, much like only one VS Code window receives the students. The grading panel holds a Web Lock (`WebLockProvider`), which all tabs of the Moodle site share. It keeps the lock for as long as its page lives, so moving to the next student keeps it too.
+- A panel that starts while another tab holds the lock shows only a message (`translations.feedback.gradingElsewhere`). It doesn't open the student's files in VS Code, look the definition up or connect to the service worker's statuses.
+- The browser frees the lock when the grading tab closes or leaves the grading page. The other tab then takes it over on its next page load or "Lae sisupaneel uuesti".
+- A full refresh frees the lock for a moment. A tab that loads its panel in that moment takes it over.
 
 ### Lifecycle
 

@@ -15,7 +15,7 @@ export class FeedbackSectionRenderer extends BaseRenderer {
   readonly #callbacks: FeedbackSectionCallbacks
 
   #feedbackRenderers: BaseRenderer[] = []
-  #notFoundElement: HTMLElement | undefined
+  #messageElement: HTMLElement | undefined
 
   constructor(parentElement: HTMLElement, callbacks: FeedbackSectionCallbacks) {
     super()
@@ -38,7 +38,7 @@ export class FeedbackSectionRenderer extends BaseRenderer {
     await this.#clearFeedback()
 
     if (feedback.length === 0) {
-      this.#notFoundElement = createAndAddChildElement(this.element, 'div', null, translations.feedback.notFound)
+      this.#messageElement = createAndAddChildElement(this.element, 'div', null, translations.feedback.notFound)
       return
     }
 
@@ -52,9 +52,14 @@ export class FeedbackSectionRenderer extends BaseRenderer {
     }
   }
 
+  async renderGradingElsewhere() {
+    await this.#clearFeedback()
+    this.#messageElement = createAndAddChildElement(this.element, 'div', null, translations.feedback.gradingElsewhere)
+  }
+
   async #clearFeedback(): Promise<void> {
-    this.#notFoundElement?.remove()
-    this.#notFoundElement = undefined
+    this.#messageElement?.remove()
+    this.#messageElement = undefined
     for (const renderer of this.#feedbackRenderers) {
       await renderer.clear()
     }

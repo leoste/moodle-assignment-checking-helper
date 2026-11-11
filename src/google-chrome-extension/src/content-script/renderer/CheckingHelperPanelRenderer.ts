@@ -85,6 +85,10 @@ export default class CheckingHelperPanelRenderer extends BaseRenderer {
     await this.#feedbackSectionRenderer!.renderFeedback(feedback, commentPrefix)
   }
 
+  async renderGradingElsewhere() {
+    await this.#feedbackSectionRenderer!.renderGradingElsewhere()
+  }
+
   async renderApplySection() {
     await this.clearApplySection()
     this.#applySectionRenderer = new ApplySectionRenderer(this.#applyArea!, this.#callbacks)

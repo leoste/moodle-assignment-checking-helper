@@ -529,7 +529,17 @@ The author then removed the README's "Future concerns" section altogether, so th
 
 ---
 
-## Step 8: Moodle form events, preparing submissions, WebSocket origin check
+## Step 8: Moodle form events, preparing submissions, WebSocket origin check ✅
+
+> **Done:** solved as planned, with the answers below. Details:
+> - **Form events:** `MoodlePage.notifyValueChanged()` dispatches bubbling `input` and `change` events. `setGrade()` and `setComment()` call it after setting the value; otherwise they're unchanged.
+> - **Name matching:** `isStudentFolder()` requires the whole name. The character after it must not continue a name; letters, digits, `-` and `'` count as name characters.
+> - **`docs/user using.md`:** a "Before grading an assignment" section. Its link to the definition files section of `docs/user setup.md` works once step 9 writes that section.
+> - **Origin check:**
+>   - `CHROME_EXTENSION_ID` and `CHROME_EXTENSION_ORIGIN` are in `shared/config/connection.ts`.
+>   - `VsCodeMessageReceiver` closes a connection from any other origin with code 1008, before any message handling is attached, and logs it.
+>   - The README's "Releasing" section explains the dependency on the key.
+>   - Step 13's VS Code-to-VS Code connection will have to take this check into account.
 
 **Goal:**
 - Moodle's form notices the applied grade and comment.
@@ -618,8 +628,20 @@ The author then removed the README's "Future concerns" section altogether, so th
 - **`moodleIds` as numbers:** they work today, because ids are compared as strings. The sample says strings.
 - **Two declarations:** the TypeScript types (`Assignment`, `Feedback`, `FeedbackPart`) remain a second declaration of the same structure.
 
+**Answers:**
+> numbers: agree
+> null: the ones which currently use null could have those removed altogether. they explicitly wrote null cause the files needed to carry the info on what is possible, but now this sample file will contain the info whats possible so you can update those definitions and remove null. regarding moodleids as numbers: we could convert into numbers instead of text tbh, cause to my knowledge moodleids cant be text ever. this adds some conversion into where its compared but this makes it better.
+> and saying whats wrong: yeah thats good enough how you mentioned it
+
+- Numbers: 1 for a required number, 0 for an optional one.
+- `null` isn't allowed; the repo's definitions no longer use it.
+- `moodleIds` are numbers. The ID from the page's URL is converted where it's compared.
+- The status line names the first problem of each broken file, and the log lists all of them.
+- Missing fields weren't asked about separately; they follow the sample's rule: a required field must be present, an optional one may be missing.
+
 **Functionality changes:**
 - **9a. Approved.** Wrongly built definitions are reported as broken and skipped (author's request).
+- **9b. Approved.** `moodleIds` are numbers; text IDs are reported as broken (quote above).
 
 ---
 
@@ -739,7 +761,8 @@ This is what the project declares after step 5, collected for the author's guide
 
 **Definition file format** ([Assignment.ts](../src/google-chrome-extension/src/shared/types/Assignment.ts), [Feedback.ts](../src/google-chrome-extension/src/shared/types/Feedback.ts), [FeedbackPart.ts](../src/google-chrome-extension/src/shared/types/FeedbackPart.ts)):
 - `name` is shown in the popup.
-- `moodleIds` is a list of IDs, each compared with the `id` in the grader page's URL. One definition can serve several assignments. If two definitions share an ID, the first one found is used.
+- The structure is shown by `src/definitions/sample-definition.json`, and every file is checked against it when loaded. `docs/user setup.md` explains how to read it.
+- `moodleIds` is a list of numbers, each compared with the `id` in the grader page's URL. One definition can serve several assignments. If two definitions share an ID, the first one found is used.
 - `course_code` is optional and only used for grouping in the popup.
 - `feedback` is a list of groups. Each group has `title`, `intended_max_points` (shown as "(Xp)" next to the title, not used in the grade) and `parts`.
 - Each part has:
@@ -749,7 +772,7 @@ This is what the project declares after step 5, collected for the author's guide
   - `disabledText`: the comment line when it's off;
   - `labelText`: shown only in the panel, never in the comment.
 
-  Empty or null texts add no line.
+  Empty or missing texts add no line. `null` isn't allowed.
 - The grade is the sum of the points of the parts that are on, and never below 0 ([grading-rules.ts](../src/google-chrome-extension/src/content-script/rules/grading-rules.ts)).
 - The comment is the "Kommentaari algus" text first, then each part's line in file order, one per line.
 

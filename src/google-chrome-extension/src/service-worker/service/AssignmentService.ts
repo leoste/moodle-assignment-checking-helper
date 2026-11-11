@@ -11,10 +11,11 @@ class AssignmentService extends BaseService {
 
   async lookUpDefinition(assignmentId: string): Promise<DefinitionLookup> {
     const { assignments, brokenFiles } = await assignmentRepository.getAllDefinitions()
+    const moodleId = Number(assignmentId)
     return {
       folderChosen: await directoryHandleRepository.getDirectoryHandle(assignmentRepository.fileSourceInfo) !== undefined,
       loaded: await assignmentRepository.getUpdatedAt() !== null,
-      definition: assignments.find(d => d.moodleIds.some(id => String(id) === assignmentId)) ?? null,
+      definition: assignments.find(d => d.moodleIds.includes(moodleId)) ?? null,
       brokenFiles,
     }
   }

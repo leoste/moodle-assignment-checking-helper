@@ -44,7 +44,24 @@ export const translations = {
     lookupFailed: 'Definitsiooni otsimine ebaõnnestus',
     loaded: (count: number) => `Laetud definitsioone: ${count}`,
     noPermission: 'Kausta lugemiseks puudub luba. Luba küsitakse uuesti järgmisel laadimisel.',
-    brokenFiles: (fileNames: string) => `Vigased definitsioonifailid: ${fileNames}`,
+    brokenFiles: (files: string) => `Vigased definitsioonifailid: ${files}`,
+    brokenFile: (fileName: string, problem: string) => `${fileName} (${problem})`,
+  },
+
+  definitionProblems: {
+    invalidJson: 'pole korrektne JSON',
+    wholeFile: 'fail',
+    missing: (path: string) => `${path} puudub`,
+    notAllowed: (path: string) => `${path} pole lubatud`,
+    wrongType: (path: string, valueType: string) => `${path} peab olema ${valueType}`,
+    valueTypes: {
+      text: 'tekst',
+      number: 'arv',
+      boolean: 'true või false',
+      list: 'loend',
+      object: 'objekt',
+      null: 'null',
+    },
   },
 
   fileSource: {

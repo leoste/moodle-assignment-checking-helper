@@ -1,5 +1,8 @@
 import type { Status } from '@shared/types/Status'
 import type { DefinitionLookup } from '../types/DefinitionLookup'
+import type { BrokenFile } from '../types/BrokenFile'
+import type { SampleMismatch } from '../types/SampleMismatch'
+import { MISMATCH_MISSING, MISMATCH_NOT_ALLOWED, MISMATCH_WRONG_TYPE } from '../constants/sample-check'
 import {
   STATUS_LEVEL_INFO,
   STATUS_LEVEL_PROBLEM,
@@ -11,7 +14,7 @@ import {
 } from '@shared/constants/status'
 import { translations } from '@shared/translations/translations'
 
-const BROKEN_FILE_NAME_SEPARATOR = ', '
+const BROKEN_FILE_SEPARATOR = ', '
 const SENTENCE_SEPARATOR = '. '
 
 export function getDefinitionSearchingStatus(): Status {
@@ -53,12 +56,27 @@ export function getNoFolderPermissionStatus(): Status {
 }
 
 // Null when there are no broken files.
-export function getBrokenDefinitionsStatus(brokenFiles: string[]): Status | null {
+export function getBrokenDefinitionsStatus(brokenFiles: BrokenFile[]): Status | null {
   if (brokenFiles.length === 0) return null
+  const fileTexts = brokenFiles.map(file => translations.definitions.brokenFile(file.name, getMismatchText(file.mismatch)))
   return {
     topic: STATUS_TOPIC_BROKEN_DEFINITIONS,
     level: STATUS_LEVEL_PROBLEM,
-    text: translations.definitions.brokenFiles(brokenFiles.join(BROKEN_FILE_NAME_SEPARATOR)),
+    text: translations.definitions.brokenFiles(fileTexts.join(BROKEN_FILE_SEPARATOR)),
+  }
+}
+
+function getMismatchText(mismatch: SampleMismatch | null): string {
+  const texts = translations.definitionProblems
+  if (!mismatch) return texts.invalidJson
+  const path = mismatch.path || texts.wholeFile
+  switch (mismatch.reason) {
+    case MISMATCH_MISSING:
+      return texts.missing(path)
+    case MISMATCH_NOT_ALLOWED:
+      return texts.notAllowed(path)
+    case MISMATCH_WRONG_TYPE:
+      return texts.wrongType(path, texts.valueTypes[mismatch.expectedType])
   }
 }
 

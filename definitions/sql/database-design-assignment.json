@@ -1,6 +1,6 @@
 {
   "name": "Database Design Assignment",
-  "moodleIds": ["757712"],
+  "moodleIds": [757712],
   "course_code": "ICS0012",
   "feedback": [
     {
@@ -8,7 +8,7 @@
       "intended_max_points": 0,
       "parts": [
         { "enabledText": "Hello!", "enabled": true },
-        { "enabledText": null, "enabled": true },
+        { "enabled": true },
         { "enabledText": "Best regards, Karl Aleksander Leoste", "enabled": true }
       ]
     },

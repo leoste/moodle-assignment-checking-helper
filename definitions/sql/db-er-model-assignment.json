@@ -1,13 +1,13 @@
 {
   "name": "Database Basics Entity Relation Model Assignment",
-  "moodleIds": ["1035022"],
+  "moodleIds": [1035022],
   "course_code": "ICS0012",
   "feedback": [
     {
       "title": "default",
       "intended_max_points": 100,
       "parts": [
-        { "enabledText": null, "enabled": true, "points": 100 }
+        { "enabled": true, "points": 100 }
       ]      
     }
   ]

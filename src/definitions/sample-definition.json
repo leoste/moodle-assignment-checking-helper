@@ -1,0 +1,20 @@
+{
+  "name": "example",
+  "moodleIds": [1],
+  "course_code": "",
+  "feedback": [
+    {
+      "title": "example",
+      "intended_max_points": 1,
+      "parts": [
+        {
+          "labelText": "",
+          "enabledText": "",
+          "disabledText": "",
+          "points": 0,
+          "enabled": true
+        }
+      ]
+    }
+  ]
+}

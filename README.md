@@ -10,7 +10,9 @@ Automatically open necessary files in VSCode, run custom scripts, easily compose
 ### Folders
 
 - `src/` holds the code of both extensions.
+- `src/definitions/sample-definition.json` is the sample definition: every field a definition file can have. Definition files are checked against it when they're loaded (`checkAgainstSample()`), so changing the structure means changing the sample, together with the `Assignment` types.
 - `definitions/` holds assignment definitions.
+- `docs/` holds the user documentation.
 - `releases/` holds the built releases, one folder per version (see "Releasing").
 - `plans/` holds development plans.
 - `build-release.mjs` builds a release.

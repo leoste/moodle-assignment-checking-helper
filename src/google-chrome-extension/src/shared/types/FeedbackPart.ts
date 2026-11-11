@@ -1,7 +1,7 @@
 export interface FeedbackPart {
-  labelText?: string | null
-  enabledText?: string | null
-  disabledText?: string | null
+  labelText?: string
+  enabledText?: string
+  disabledText?: string
   points?: number
   enabled: boolean
 }

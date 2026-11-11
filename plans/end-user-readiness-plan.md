@@ -11,7 +11,7 @@ On 2026-11-09 the whole project was analysed for obstacles between its current f
 | # | Item (author's summary) | Where in this plan |
 |---|---|---|
 | 1 | Distribution: installable packages, a dev guide for building them, shared version numbers | Step 1 |
-| 2 | End-user guide | Written by the author after step 5. Key points: Appendix A |
+| 2 | End-user guide | Written by the author after step 6. Key points: Appendix A |
 | 3 | Safer grading: preview and an apply button instead of writing into Moodle immediately | Step 2 |
 | 4 | Hints that the panel is used together with Moodle's buttons; clearer texts | Step 4 |
 | 5 | Clickable things look clickable (whole box, hover glow) | Step 5 |
@@ -19,7 +19,7 @@ On 2026-11-09 the whole project was analysed for obstacles between its current f
 | 7 | VS Code extension is active in every window | Note in the guide (Appendix A) |
 | 8 | Status reports in both extensions | Step 3 |
 
-Order: step 1 is independent. Steps 2–4 build on each other: the status line of step 3 lives in the bottom strip of step 2, and step 4 rewrites the texts of steps 2–3. Step 5 is last because it styles every UI, including the new ones.
+Order: step 1 is independent. Steps 2–4 build on each other: the status line of step 3 lives in the bottom strip of step 2, and step 4 rewrites the texts of steps 2–3. Step 5 comes after them because it styles every UI, including the new ones. Step 6 tests everything steps 1–5 changed.
 
 ## How to read this plan
 
@@ -266,7 +266,18 @@ The extension name "Moodle Assignment Checking Helper" stays in English as a pro
 
 ---
 
-## Step 5: One UI style and hover feedback
+## Step 5: One UI style and hover feedback ✅
+
+> **Done:** solved as planned. Details:
+> - **One shared stylesheet:** `src/google-chrome-extension/src/shared/styles/theme.css` holds the three colours as CSS variables, the frame, the hover glow, and the button, hint and status line looks.
+>   - The manifest loads it into Moodle pages before each content script's own CSS; the popup loads it with a `<link>`.
+>   - Because it is loaded into Moodle pages, all its classes and variables have the existing `checking-helper-` prefix. The `hint` and `status` classes from steps 3–4 were renamed to match.
+> - **Popup:** it was rebuilt like the panel: a frame, a scroll area, and a bottom strip with the status line.
+> - **Hover glow:** everything interactable has the `checking-helper-interactive` class and a cyan glow on hover: part boxes, "Kommentaari algus", the apply button, popup buttons and the quiz button. The panel's left edge glows on the inside when the mouse is on it.
+> - **Glow size:** smaller than the thumbs-up's (1em blur, 0.25em spread). Near the scroll area's edges it is partly cut off, as the thumbs-up's glow already was. To be tuned in testing if needed.
+> - **Whole box clickable:** clicking anywhere in a part's box toggles it. Known side effect: selecting text in a box by dragging also toggles it. Avoiding that would be a behaviour change, so it's left as it is.
+> - **Quiz button:** it has the yellow button look with an orange frame.
+> - **README:** a new "Styles" building block. The "UI and CSS" entry was replaced by "Panel as a separate window".
 
 **Goal:** every UI of the extensions looks like the grader panel, and everything clickable reacts to the mouse.
 
@@ -304,9 +315,39 @@ The extension name "Moodle Assignment Checking Helper" stays in English as a pro
 
 ---
 
-## Final test round
+## Step 6: Testing
 
-The author tests the whole system once after step 5, then fixes in one test-fix cycle. What the steps changed and what to check:
+**Goal:** test everything steps 1–5 changed, once and as a whole, then fix what the test finds. The steps weren't tested one by one, so this step is where they are verified.
+
+**Author's decisions:**
+> i wont test things in the go right now and you dont need to either, ill test it all in the end as were doing so comprehensive and widespread changes each time that wed have to test the whole system each time, waste of time. much better is to test it once in the end and do one test-fix-test-fix cycle in the end.
+
+> mark 5 done and add step between 5 and 6 called testing and explain that its purpose is to test all steps 1-5. this way knowledge exists in a real file not only between us two
+
+**How:**
+1. The author tests the installed release, not the development builds. Steps 1–5 were never built or run by the solver, so this is their first real run.
+2. The author reports what failed, with the error output of the build or the browser console.
+3. The solver fixes it. As in every step, a fix that would change functionality is approved by the author first.
+4. Steps 2–3 repeat until everything works. Each finding and its fix is recorded under "Findings" below.
+
+**Before building:**
+- Run `npm run typecheck` in `src/google-chrome-extension/` and in `src/visual-studio-code-extension/`. Vite and esbuild only remove TypeScript types and don't check them, so a type error doesn't stop the build.
+- `releases/1.0.1/` already exists from step 1, built before steps 2–5. It was never handed out, so it is overwritten (answer `y`). The version is raised once a release is actually handed out.
+
+**Installing for the test:**
+- **Chrome:**
+  - Remove the development copy (`src/google-chrome-extension/dist`) and any earlier install. They have the same ID, so only one can be loaded.
+  - Unzip the release into a folder that stays, because Chrome loads the extension from it every time.
+  - Load that folder with Developer mode → Load unpacked.
+- **VS Code:**
+  - Uninstall an earlier 1.0.1 if there is one.
+  - Install the `.vsix` (Extensions view → "…" → Install from VSIX) and reload the window.
+- **After installing:**
+  - Choose the definitions folder again. The new ID starts with empty storage.
+  - Refresh any Moodle tabs that were already open.
+- **VS Code windows:** the installed extension runs in every window, and only the first one receives students; its editors and terminals get closed. Open the window with the downloaded submissions first, and don't run the F5 development host at the same time.
+
+**What to check:**
 
 **Release and install (step 1)**
 1. `node build-release.mjs` builds `releases/1.0.1/` with the zip and the `.vsix`. Running it again asks whether to overwrite.
@@ -341,11 +382,15 @@ The author tests the whole system once after step 5, then fixes in one test-fix 
 
 19. The quiz button has its new label, the look and the hover glow, and it still gives the maximum points and saves.
 
+**Findings:**
+
+None yet.
+
 ---
 
 ## Appendix A: points for the end-user guide
 
-This is what the project declares after step 5, collected for the author's guide. Nothing here is invented.
+This is what the project declares after step 5, collected for the author's guide. Nothing here is invented. Fixes in step 6 may change some of it.
 
 **Installing (after step 1):**
 - **Chrome:** unzip the zip, open `chrome://extensions`, turn on Developer mode, then Load unpacked.

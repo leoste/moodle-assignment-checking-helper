@@ -507,7 +507,9 @@ The author then removed the README's "Future concerns" section altogether, so th
 
 ---
 
-## Step 7: Dropped concerns and the "no work" text
+## Step 7: Dropped concerns and the "no work" text ✅
+
+> **Done:** solved as planned. The proposed text is in use, and the README entries went away with the whole "Future concerns" section.
 
 **Goal:** remove the two future concerns the author dropped, and replace the "no student selected" idea with a text addition.
 
@@ -561,9 +563,27 @@ The author then removed the README's "Future concerns" section altogether, so th
   - a constant written once, read from `chrome://extensions`;
   - or computed in VS Code from the manifest's `key`. The key would move to shared config; the ID is the first 32 hex digits of the key's SHA-256, written with the letters a–p.
 
+**Answers:**
+- **Prefix matching:** fix it.
+  > name matching: just implement it as a match that after the students name some sort of character should come, like space or underscore or whatever. [...] so just add thing that makes sure its the full name.
+- **The extension ID:**
+  > option b but what does it mean to compute it? can we use some actual real thing meant for it or is this going to be sort of hackfixy? i cant be the only person who needs to verify that its the right extension sending the message so here id like it to be solved very conventionally. if were going to hackfix something then id rather not do it at all.
+
+  The solver's answer:
+  - Checking the `Origin` header is the conventional mechanism: Chrome itself sets it to `chrome-extension://<id>` for the extension's WebSocket, and a web page can't fake it.
+  - Computing the ID (b) would reimplement Chrome's internal derivation of the ID from the key. That works, but it isn't an official API.
+  - The conventional way is a constant (a). Chrome's native messaging does exactly that: its host manifest lists `allowed_origins` with the extension's ID written out.
+  - So the recommendation changed to (a), pending the author's confirmation and the ID.
+
+  The author's follow-up:
+  > if im gonna have other users use this extension, then are they gonna have a different id? if i make a new version, is the extension id gonna change? or is this reading from chrome://extensions a legit one time thing that i do legit only now and never again? id is bhbkljcagkcajmgijfnmigphbldhidhm btw
+
+  The answer: the ID comes from the public `key` in the manifest. So it's the same for every user and every version, and changes only if the key changes. Reading it was a one-time thing. Solved with (a): `CHROME_EXTENSION_ID` in `shared/config/connection.ts`.
+
 **Functionality changes:**
 - **8a. Approved.** The events after applying.
 - **8b. Approved.** The origin check.
+- **8c. Approved.** A student's folder must start with the whole name (quote above).
 
 ---
 

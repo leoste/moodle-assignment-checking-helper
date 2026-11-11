@@ -31,10 +31,14 @@ export default class AssignmentGraderPage extends MoodlePage {
   }
 
   setGrade(grade: string): void {
-    this.query<HTMLInputElement>(GRADE_INPUT_SELECTOR).value = grade
+    const gradeInput = this.query<HTMLInputElement>(GRADE_INPUT_SELECTOR)
+    gradeInput.value = grade
+    this.notifyValueChanged(gradeInput)
   }
 
   setComment(comment: string): void {
-    this.query<HTMLTextAreaElement>(COMMENT_TEXTAREA_SELECTOR).value = comment
+    const commentTextarea = this.query<HTMLTextAreaElement>(COMMENT_TEXTAREA_SELECTOR)
+    commentTextarea.value = comment
+    this.notifyValueChanged(commentTextarea)
   }
 }

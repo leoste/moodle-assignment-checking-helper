@@ -11,6 +11,13 @@ export default abstract class MoodlePage {
     return queryElement<T>(this, selector)
   }
 
+  // Lets Moodle's form scripts notice a value set by the extension the same way as a typed one.
+  // The content script shares the page's DOM, so the page's own listeners receive these events.
+  protected notifyValueChanged(field: HTMLInputElement | HTMLTextAreaElement): void {
+    field.dispatchEvent(new Event('input', { bubbles: true }))
+    field.dispatchEvent(new Event('change', { bubbles: true }))
+  }
+
   protected getUrlParam(name: string): string {
     return new URLSearchParams(window.location.search).get(name) ?? ''
   }

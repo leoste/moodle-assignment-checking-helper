@@ -109,4 +109,5 @@ node build-release.mjs
 
 The script stops if the two versions differ. Otherwise it installs the dependencies, builds both extensions and puts them into `releases/<version>/`: the Chrome extension as a zip of its `dist/`, the VS Code extension as a `.vsix`. If the release already exists, it asks whether to overwrite it. Releases are committed to git.
 
-The Chrome extension's ID is fixed by the public `key` in `manifest.config.ts`, so it is the same wherever the extension is unpacked. The private key isn't needed and isn't in the repository.
+The Chrome extension's ID is fixed by the public `key` in `manifest.config.ts`, so it is the same for every user and every version, wherever the extension is unpacked. The private key isn't needed and isn't in the repository.
+VS Code accepts WebSocket connections only from this extension: it checks the `Origin` header against `CHROME_EXTENSION_ID` in `shared/config/connection.ts`. If the key ever changes, that ID has to be updated too.

@@ -3,7 +3,7 @@ import { WebSocketServer } from 'ws'
 import type { WebSocket } from 'ws'
 import type { VsCodeRequest, VsCodeResponse, VsCodeResponseStatus } from '@shared/types/VsCodeMessage'
 import { RESPONSE_STATUS_ERROR, RESPONSE_STATUS_OK, RESPONSE_STATUS_UNHANDLED } from '@shared/constants/vscode-message'
-import { WEBSOCKET_HOST, WEBSOCKET_PORT } from '@shared/config/connection'
+import { CHROME_EXTENSION_ORIGIN, WEBSOCKET_HOST, WEBSOCKET_PORT } from '@shared/config/connection'
 import { logger } from '@shared/reporting/logger'
 import { statusReporter } from '@shared/reporting/statusReporter'
 import { getConnectedStatus, getPortInUseStatus, getServerErrorStatus, getWaitingStatus } from '@shared/rules/status-rules'
@@ -11,6 +11,7 @@ import VsCodeMessageHandlerMap from '../shared/object/VsCodeMessageHandlerMap'
 import type { VsCodeMessageHandler } from '../shared/types/VsCodeMessageHandler'
 
 const ADDRESS_IN_USE_ERROR_CODE = 'EADDRINUSE'
+const POLICY_VIOLATION_CLOSE_CODE = 1008
 
 export interface RequestResponder {
   ws: WebSocket
@@ -33,7 +34,12 @@ class VsCodeMessageReceiver extends BaseMessageReceiver<VsCodeMessageHandler, Re
       logger.error(this, 'WebSocket server error', err)
       statusReporter.report(err.code === ADDRESS_IN_USE_ERROR_CODE ? getPortInUseStatus(WEBSOCKET_PORT) : getServerErrorStatus())
     })
-    server.on('connection', (ws) => {
+    server.on('connection', (ws, request) => {
+      if (request.headers.origin !== CHROME_EXTENSION_ORIGIN) {
+        logger.error(this, `refused a connection from origin ${request.headers.origin ?? '(none)'}`)
+        ws.close(POLICY_VIOLATION_CLOSE_CODE)
+        return
+      }
       logger.info(this, 'Chrome extension connected')
       this.#connectionCount++
       statusReporter.report(getConnectedStatus())

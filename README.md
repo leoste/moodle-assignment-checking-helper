@@ -12,7 +12,7 @@ Automatically open necessary files in VSCode, run custom scripts, easily compose
 - `src/` holds the code of both extensions.
 - `definitions/` holds assignment definitions.
 - `releases/` holds the built releases, one folder per version (see "Releasing").
-- `docs/` holds plans.
+- `plans/` holds development plans.
 - `build-release.mjs` builds a release.
 
 Code paths in this README are relative to `src/`.

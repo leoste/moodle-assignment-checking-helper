@@ -5,8 +5,8 @@
       "name": "Run VS Code Extension",
       "type": "extensionHost",
       "request": "launch",
-      "args": ["--extensionDevelopmentPath=${workspaceFolder}/visual-studio-code-extension"],
-      "outFiles": ["${workspaceFolder}/visual-studio-code-extension/dist/**/*.js"],
+      "args": ["--extensionDevelopmentPath=${workspaceFolder}/src/visual-studio-code-extension"],
+      "outFiles": ["${workspaceFolder}/src/visual-studio-code-extension/dist/**/*.js"],
       "preLaunchTask": "vscode-extension: watch"
     }
   ]

@@ -7,6 +7,16 @@ Automatically open necessary files in VSCode, run custom scripts, easily compose
 
 ## Project structure
 
+### Folders
+
+- `src/` holds the code of both extensions.
+- `definitions/` holds assignment definitions.
+- `releases/` holds the built releases, one folder per version (see "Releasing").
+- `docs/` holds plans.
+- `build-release.mjs` builds a release.
+
+Code paths in this README are relative to `src/`.
+
 ### Extensions and contexts
 
 - `google-chrome-extension/` is the main extension. It runs in three contexts:

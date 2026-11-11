@@ -23,7 +23,7 @@ Open the repository root in VS Code. You will be prompted to install the recomme
 **2. Install dependencies**
 
 ```bash
-cd visual-studio-code-extension
+cd src/visual-studio-code-extension
 npm install
 ```
 

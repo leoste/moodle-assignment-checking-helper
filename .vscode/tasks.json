@@ -4,7 +4,7 @@
     {
       "type": "npm",
       "script": "watch",
-      "path": "visual-studio-code-extension",
+      "path": "src/visual-studio-code-extension",
       "problemMatcher": "$esbuild-watch",
       "isBackground": true,
       "group": "build",

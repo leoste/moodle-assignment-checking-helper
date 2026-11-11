@@ -16,7 +16,7 @@ It can be paired with the Visual Studio Code extension to automatically open the
 **1. Install dependencies**
 
 ```bash
-cd google-chrome-extension
+cd src/google-chrome-extension
 npm install
 ```
 
@@ -33,7 +33,7 @@ Vite builds the extension into `dist/` and then watches for file changes, rebuil
 1. Open Chrome and go to `chrome://extensions`
 2. Enable **Developer mode** (toggle, top right)
 3. Click **Load unpacked**
-4. Select the `google-chrome-extension/dist/` folder
+4. Select the `src/google-chrome-extension/dist/` folder
 
 The extension is now active. After code changes, reload the extension in `chrome://extensions` (click the reload icon on the card) to apply changes.
 

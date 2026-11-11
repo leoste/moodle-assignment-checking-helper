@@ -67,7 +67,7 @@ Follow-up answers:
 - The VS Code README stays as it is until the end-user guide replaces it: "yes".
 
 **Tasks:**
-1. **Version 1.0.1** in `google-chrome-extension/package.json` and `visual-studio-code-extension/package.json`, including the version fields of their `package-lock.json`. The manifest ([manifest.config.ts](../google-chrome-extension/manifest.config.ts)) takes its version from the Chrome `package.json` (this needs `resolveJsonModule` in the Chrome tsconfig), so each extension holds its version in one place.
+1. **Version 1.0.1** in `google-chrome-extension/package.json` and `visual-studio-code-extension/package.json`, including the version fields of their `package-lock.json`. The manifest ([manifest.config.ts](../src/google-chrome-extension/manifest.config.ts)) takes its version from the Chrome `package.json` (this needs `resolveJsonModule` in the Chrome tsconfig), so each extension holds its version in one place.
 2. **Fixed extension ID.**
    - The author generates an RSA key once. The solver provides the two `openssl` commands; Git Bash includes `openssl`.
    - Only the public key goes into the manifest's `key`. The private key isn't needed for unpacked installs and isn't committed.
@@ -243,7 +243,7 @@ Follow-up answers:
 | 6 | The panel's left edge can be dragged to resize it. | Panel |
 | 7 | The quiz button saves by itself; no Moodle button is needed. | Quiz button |
 
-**Texts to rewrite** (in [translations.ts](../shared/translations/translations.ts)), together with the new texts from steps 2–3:
+**Texts to rewrite** (in [translations.ts](../src/shared/translations/translations.ts)), together with the new texts from steps 2–3:
 
 | Text | What it should add |
 |---|---|
@@ -352,28 +352,28 @@ This is what the project declares after step 5, collected for the author's guide
 - **VS Code:** in the Extensions view open the "…" menu and choose Install from VSIX.
 
 **Requirements:**
-- The Chrome extension works on its own. The VS Code extension is an optional companion that opens the student's files ([README](../google-chrome-extension/README.md)).
-- It only runs on `https://moodle.taltech.ee`, on three kinds of page: the assignment grader, quiz review and quiz comment pages ([manifest.config.ts](../google-chrome-extension/manifest.config.ts), [config.ts](../google-chrome-extension/src/config.ts)).
-- VS Code 1.90 or newer is required ([package.json](../visual-studio-code-extension/package.json)).
-- The extensions talk over `ws://127.0.0.1:54321`, so that port must be free ([connection.ts](../shared/config/connection.ts)).
+- The Chrome extension works on its own. The VS Code extension is an optional companion that opens the student's files ([README](../src/google-chrome-extension/README.md)).
+- It only runs on `https://moodle.taltech.ee`, on three kinds of page: the assignment grader, quiz review and quiz comment pages ([manifest.config.ts](../src/google-chrome-extension/manifest.config.ts), [config.ts](../src/google-chrome-extension/src/config.ts)).
+- VS Code 1.90 or newer is required ([package.json](../src/visual-studio-code-extension/package.json)).
+- The extensions talk over `ws://127.0.0.1:54321`, so that port must be free ([connection.ts](../src/shared/config/connection.ts)).
 
 **Popup and definitions folder:**
 - The popup opens with the hint "Abipaneel ilmub Moodle'is ülesande hindamislehele. Selleks vali siin kõigepealt definitsioonide kaust."
-- "Vali definitsioonide kaust" opens a folder picker with read-only access. The popup then shows the folder name, or "Kaust valimata" ([FolderAccessService.ts](../google-chrome-extension/src/popup/service/FolderAccessService.ts)).
+- "Vali definitsioonide kaust" opens a folder picker with read-only access. The popup then shows the folder name, or "Kaust valimata" ([FolderAccessService.ts](../src/google-chrome-extension/src/popup/service/FolderAccessService.ts)).
 - Definitions load as soon as a folder is chosen.
-- "Lae failidest uuesti" reads the files again. The popup then shows the time of the last load, or "Definitsioonid puuduvad" ([PopupRenderer.ts](../google-chrome-extension/src/popup/renderer/PopupRenderer.ts)). The hint under the button: "Pärast definitsioonifailide muutmist on vaja käsitsi vajutada värskendamise nuppu. Muudatused võetakse kasutusele Moodle'i lehe värskendamisel."
+- "Lae failidest uuesti" reads the files again. The popup then shows the time of the last load, or "Definitsioonid puuduvad" ([PopupRenderer.ts](../src/google-chrome-extension/src/popup/renderer/PopupRenderer.ts)). The hint under the button: "Pärast definitsioonifailide muutmist on vaja käsitsi vajutada värskendamise nuppu. Muudatused võetakse kasutusele Moodle'i lehe värskendamisel."
 - When reloading, Chrome may ask for permission to read the folder. If the lecturer refuses, nothing loads.
 - The whole folder is read, including subfolders. Files that aren't valid JSON are skipped and named in the status line as broken. This includes files that aren't definitions at all, e.g. a `README.md`.
 - The extension keeps a stored copy of the definitions:
   - editing a file has no effect until the lecturer reloads in the popup;
   - the panel reads the definition when a student's page opens, so after a reload the Moodle page has to be reloaded, or the next student opened.
-- The popup lists definitions as "course code - name (ids)", grouped by course code. It shows "?" when there's no course code and "Definitsioone ei leitud. Vali kaust või vajuta värskenda nuppu." when there are none ([DefinitionListRenderer.ts](../google-chrome-extension/src/popup/renderer/DefinitionListRenderer.ts)).
+- The popup lists definitions as "course code - name (ids)", grouped by course code. It shows "?" when there's no course code and "Definitsioone ei leitud. Vali kaust või vajuta värskenda nuppu." when there are none ([DefinitionListRenderer.ts](../src/google-chrome-extension/src/popup/renderer/DefinitionListRenderer.ts)).
 - The status line at the bottom shows:
   - the VS Code connection;
   - the folder state: folder not chosen / not loaded / how many definitions are loaded / no permission to read the folder;
   - the names of broken files.
 
-**Definition file format** ([Assignment.ts](../google-chrome-extension/src/shared/types/Assignment.ts), [Feedback.ts](../google-chrome-extension/src/shared/types/Feedback.ts), [FeedbackPart.ts](../google-chrome-extension/src/shared/types/FeedbackPart.ts)):
+**Definition file format** ([Assignment.ts](../src/google-chrome-extension/src/shared/types/Assignment.ts), [Feedback.ts](../src/google-chrome-extension/src/shared/types/Feedback.ts), [FeedbackPart.ts](../src/google-chrome-extension/src/shared/types/FeedbackPart.ts)):
 - `name` is shown in the popup.
 - `moodleIds` is a list of IDs, each compared with the `id` in the grader page's URL. One definition can serve several assignments. If two definitions share an ID, the first one found is used.
 - `course_code` is optional and only used for grouping in the popup.
@@ -386,11 +386,11 @@ This is what the project declares after step 5, collected for the author's guide
   - `labelText`: shown only in the panel, never in the comment.
 
   Empty or null texts add no line.
-- The grade is the sum of the points of the parts that are on. If the sum is 0 or less, the grade is 100 ([grading-rules.ts](../google-chrome-extension/src/content-script/rules/grading-rules.ts)).
+- The grade is the sum of the points of the parts that are on. If the sum is 0 or less, the grade is 100 ([grading-rules.ts](../src/google-chrome-extension/src/content-script/rules/grading-rules.ts)).
 - The comment is the "Kommentaari algus" text first, then each part's line in file order, one per line.
 
 **Grader panel:**
-- The panel appears on the assignment's grader page. Moodle's review panel and grade panel are squeezed to 20% width each ([assign-grader.css](../google-chrome-extension/src/content-script/assign-grader.css)).
+- The panel appears on the assignment's grader page. Moodle's review panel and grade panel are squeezed to 20% width each ([assign-grader.css](../src/google-chrome-extension/src/content-script/assign-grader.css)).
 - It's rebuilt for every student, about 1.2 s after the page stops changing. Selections and "Kommentaari algus" start over for each student.
 - Clicking anywhere in a part's box toggles it. The thumbs-up shows the state: glowing means on, grey means off. Everything clickable glows when the mouse is over it.
 - A part's box shows its panel-only text, then "Kommentaar valituna: …" and "Kommentaar valimata: …", and its points.
@@ -413,16 +413,16 @@ This is what the project declares after step 5, collected for the author's guide
 - The panel switches to two columns when it's at least 1000 px wide.
 
 **VS Code:**
-- The extension starts in every VS Code window. Its logs are in the Output panel under "Moodle Assignment Checking Helper", with an "activated" line on start ([extension.ts](../visual-studio-code-extension/src/extension.ts)).
+- The extension starts in every VS Code window. Its logs are in the Output panel under "Moodle Assignment Checking Helper", with an "activated" line on start ([extension.ts](../src/visual-studio-code-extension/src/extension.ts)).
 - Its status bar item, "Moodle Helper", shows the same as Chrome's status line:
   - the connection: disconnected / connected, or that the port is taken because another VS Code window receives the students;
   - the latest student's result.
 
   When there's a problem, the item gets a warning background. Clicking it opens the Output log.
-- Expected setup: submissions downloaded from Moodle all at once into separate folders, and that folder opened in VS Code ([README](../visual-studio-code-extension/README.md)). Only the top level of the first workspace folder is searched.
-- When a student's grader page opens, it first closes all terminals and all editors and collapses the explorer. Only then does it look for the student's folder ([StudentSubmissionService.ts](../visual-studio-code-extension/src/service/StudentSubmissionService.ts)).
-- A folder matches if its name starts with the student's name as Moodle shows it ([student-files-rules.ts](../visual-studio-code-extension/src/rules/student-files-rules.ts)).
-- It opens at most 20 files ([config.ts](../visual-studio-code-extension/src/config.ts)):
+- Expected setup: submissions downloaded from Moodle all at once into separate folders, and that folder opened in VS Code ([README](../src/visual-studio-code-extension/README.md)). Only the top level of the first workspace folder is searched.
+- When a student's grader page opens, it first closes all terminals and all editors and collapses the explorer. Only then does it look for the student's folder ([StudentSubmissionService.ts](../src/visual-studio-code-extension/src/service/StudentSubmissionService.ts)).
+- A folder matches if its name starts with the student's name as Moodle shows it ([student-files-rules.ts](../src/visual-studio-code-extension/src/rules/student-files-rules.ts)).
+- It opens at most 20 files ([config.ts](../src/visual-studio-code-extension/src/config.ts)):
   - subfolders are included except `.idea` and `.venv`;
   - files alternate between two editor columns;
   - images and PDFs open as previews.
@@ -431,8 +431,8 @@ This is what the project declares after step 5, collected for the author's guide
 - **Item 7:** every VS Code window starts the extension, but there is only one port. Only the window that started first receives students, and that is the window whose editors and terminals get closed. The other windows' status bar says the port is taken. This follows from the code: `activationEvents` and the fixed port.
 
 **Quiz:**
-- On the quiz review page, every manually graded question in the "complete" state gets an "Anna maksimumpunktid ilma kommentaarita (salvestab kohe)" button ([QuizPage.ts](../google-chrome-extension/src/content-script/pagemanager/QuizPage.ts)).
-- Clicking it opens the question's comment page, which fills in the maximum mark and saves on its own ([QuizCommentPresenter.ts](../google-chrome-extension/src/content-script/presenter/QuizCommentPresenter.ts)).
+- On the quiz review page, every manually graded question in the "complete" state gets an "Anna maksimumpunktid ilma kommentaarita (salvestab kohe)" button ([QuizPage.ts](../src/google-chrome-extension/src/content-script/pagemanager/QuizPage.ts)).
+- Clicking it opens the question's comment page, which fills in the maximum mark and saves on its own ([QuizCommentPresenter.ts](../src/google-chrome-extension/src/content-script/presenter/QuizCommentPresenter.ts)).
 
 **Troubleshooting** ([README](../README.md), "Reporting"):
 - First look at the status lines: the panel's, the popup's, and the VS Code status bar.

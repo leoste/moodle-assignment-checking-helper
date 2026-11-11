@@ -5,8 +5,8 @@ import { createInterface } from 'node:readline/promises'
 import { fileURLToPath } from 'node:url'
 
 const ROOT = dirname(fileURLToPath(import.meta.url))
-const CHROME_DIR = join(ROOT, 'google-chrome-extension')
-const VSCODE_DIR = join(ROOT, 'visual-studio-code-extension')
+const CHROME_DIR = join(ROOT, 'src', 'google-chrome-extension')
+const VSCODE_DIR = join(ROOT, 'src', 'visual-studio-code-extension')
 const RELEASES_DIR = join(ROOT, 'releases')
 
 function readVersion(extensionDir) {

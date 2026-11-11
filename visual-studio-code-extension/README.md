@@ -39,4 +39,4 @@ When it starts correctly, the Output panel channel "Moodle Assignment Checking H
 npm run vscode:prepublish
 ```
 
-Produces a minified `dist/extension.js` ready for packaging with `vsce`.
+Builds `dist/extension.js` without source maps. Builds are not minified (see "Logging" in the root README). Releases, including the `.vsix` package, are built with `build-release.mjs` in the project root (see "Releasing" in the root README).

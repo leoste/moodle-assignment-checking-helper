@@ -2,12 +2,14 @@ import { defineManifest } from '@crxjs/vite-plugin'
 import { MOODLE_ORIGIN } from './src/config'
 import { WEBSOCKET_HOST } from '../shared/config/connection'
 import { translations } from '../shared/translations/translations'
+import packageJson from './package.json'
 
 export default defineManifest({
   manifest_version: 3,
   name: translations.extension.name,
   description: translations.extension.description,
-  version: '0.1',
+  version: packageJson.version,
+  key: 'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAuMxJVpM89viad112VY/JLPW4+o3arwQvoHOBSQZrmw9zr9ARB62e5HojjWn3HnbOcWSN/ltr/1idZDX2fxNbHmRJsctUl1PZ0Q35ucfVIhVcWjln9O0YDbXUbd8/jZXHIreP4uAOcjhPZUItfSFQFVFxr5BwHzHtj10liDq2TkL2NYXg6mXzHOkk9sCWq7kogZRLirVcfFWibK2IUPId6LdzzlnFcVcldAH9M0pSLmSPrXq5Za5SnHCNxL8y+CafHsXGVIB4sVGfouAt+wokcco3g28/qRxGsL+fh9KAuKfqcVJZ+GlgV6gyqFhnBOC+MV+6opSUczy7m9y+snIu0QIDAQAB',
   icons: {
     16: 'images/128.png',
     128: 'images/128.png',

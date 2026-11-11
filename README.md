@@ -74,6 +74,19 @@ Infrastructure, repositories, services, controllers, clients, generators and pag
 A class is exported only if it is a base class, has multiple instances (renderers, pages, presenters) or is an object owned by another class.
 `static` fields are only for state shared by a whole class hierarchy.
 
+## Releasing
+
+Both extensions share one version number. It is set in both `package.json` files, the Chrome manifest takes it from there.
+To build a release, run in the project root (Node.js 20 or later, needed by `vsce`):
+
+```bash
+node build-release.mjs
+```
+
+The script stops if the two versions differ. Otherwise it installs the dependencies, builds both extensions and puts them into `releases/<version>/`: the Chrome extension as a zip of its `dist/`, the VS Code extension as a `.vsix`. If the release already exists, it asks whether to overwrite it. Releases are committed to git.
+
+The Chrome extension's ID is fixed by the public `key` in `manifest.config.ts`, so it is the same wherever the extension is unpacked. The private key isn't needed and isn't in the repository.
+
 ## Future concerns
 
 Known issues that are consciously left unsolved for now.

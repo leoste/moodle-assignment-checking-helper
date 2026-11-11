@@ -5,8 +5,9 @@ node_modules/
 dist/
 out/
 
-# VS Code extension packages
+# VS Code extension packages, except the released ones
 *.vsix
+!releases/**/*.vsix
 
 # OS
 .DS_Store

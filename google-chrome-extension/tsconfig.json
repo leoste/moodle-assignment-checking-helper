@@ -9,6 +9,7 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "isolatedModules": true,
+    "resolveJsonModule": true,
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "types": ["chrome"],
     "paths": {

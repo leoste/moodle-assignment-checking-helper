@@ -7,6 +7,7 @@ import {
   STATUS_LEVEL_INFO,
   STATUS_LEVEL_PROBLEM,
   STATUS_LEVEL_PROGRESS,
+  STATUS_TOPIC_APPLY,
   STATUS_TOPIC_BROKEN_DEFINITIONS,
   STATUS_TOPIC_DEFINITION,
   STATUS_TOPIC_DEFINITIONS_FOLDER,
@@ -87,4 +88,8 @@ export function getPanelNotActivatedStatus(): Status {
 
 export function getElementNotFoundStatus(selector: string): Status {
   return { topic: STATUS_TOPIC_MOODLE_PAGE, level: STATUS_LEVEL_PROBLEM, text: translations.moodlePage.elementNotFound(selector) }
+}
+
+export function getAppliedStatus(): Status {
+  return { topic: STATUS_TOPIC_APPLY, level: STATUS_LEVEL_INFO, text: translations.apply.applied }
 }

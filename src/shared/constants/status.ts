@@ -5,6 +5,7 @@ export const STATUS_TOPIC_DEFINITION = 'definition'
 export const STATUS_TOPIC_BROKEN_DEFINITIONS = 'broken-definitions'
 export const STATUS_TOPIC_PANEL = 'panel'
 export const STATUS_TOPIC_MOODLE_PAGE = 'moodle-page'
+export const STATUS_TOPIC_APPLY = 'apply'
 
 // The order in which the topics are shown.
 export const STATUS_TOPICS = [
@@ -15,6 +16,7 @@ export const STATUS_TOPICS = [
   STATUS_TOPIC_BROKEN_DEFINITIONS,
   STATUS_TOPIC_PANEL,
   STATUS_TOPIC_MOODLE_PAGE,
+  STATUS_TOPIC_APPLY,
 ] as const
 
 export const STATUS_LEVEL_INFO = 'info'

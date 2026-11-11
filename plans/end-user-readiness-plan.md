@@ -1012,6 +1012,33 @@ Step 6's checks aren't repeated, but anything found broken there is a finding to
 
 The author sends findings during the test and the solver records them here. Nothing is fixed until the author says the testing is finished.
 
+The author's summary:
+> i tested and everything seems to work, but theres a few small fixes id like to do.
+
+1. **The apply section as a 2×2 grid** (screenshot of the bottom strip: "Hinne: 100", the comment box, and the "Rakenda Moodle'isse" button with "Rakendatud. Salvesta Moodle'i nupuga." under it). The author:
+   > the buttons and comment text arent lined up vertically. id like to align them onto the same line at the top, so their top is all at the same height. another thing id like to do is make it two lines: the "rakenda" button moves onto the second line, and the text explaining what the button does goes next to it. and in terms of horizontal alignment, the box containing the grade inside of it is dragged horizontally long enough that its as wide as the button for applying grade, and the text with the comment starts horizontally at the same place as the text saying what applying does. so basically we get a 2x2 grid right.
+   - *Analysis:*
+     - **Today:** `ApplySectionRenderer` puts the grade, the comment and the controls (the button with the state text under it) in one flex row. The shared `.item-container` centres them vertically, so their tops differ. The hint "Rakendamine asendab…" is below the row.
+     - **The grid:**
+       - The first column is as wide as the button (11.3em), and the second column takes the rest.
+       - Row 1 has the grade and the comment, and row 2 has the button and the hint.
+       - Everything is aligned to the top.
+     - **The change:** the renderer's element order changes, and `assign-grader.css` gets a grid for `div.apply-section` in place of the row's rules. Only the layout changes.
+   - *Open question:* where the state text goes ("Rakenda muudatused Moodle'isse" in bold, or "Rakendatud. Salvesta Moodle'i nupuga."). Today it is under the button.
+   - **Decided** (with a second screenshot of the same strip): the state text leaves the apply section, and the status line says when the changes were applied. Also, an orange line goes between the apply section and the status line.
+     > lets get rid of the individual state text and instead put a thing in the bottom action bar, that changes were applied. you know the bottom status bar how it shows whats happened recently. additionally, here bring another orange line inbetween the part showing what to apply to moodle and the bottom status bar, as theyre independent things and should be visually separate.
+   - **Fixed:**
+     - **The grid:**
+       - `ApplySectionRenderer` puts the grade, the comment, the button and the hint straight into `div.apply-section`.
+       - `assign-grader.css` makes it a grid whose first column is 11.3em, the button's earlier width, and whose items are aligned to the top.
+       - The row's old rules (`apply-controls`, the grade's `flex: none`, the hint's top margin) are gone.
+     - **The line:** `div.apply-section` has a bottom border in the frame's orange. It exists only with the apply section, so a panel without a definition has no extra line.
+     - **The state:**
+       - The state element, `setApplied()` and the text "Rakenda muudatused Moodle'isse" are gone.
+       - "Rakendatud. Salvesta Moodle'i nupuga." is a status of the new topic `STATUS_TOPIC_APPLY`, last in the status line, from `getAppliedStatus()`.
+       - "Rakenda Moodle'isse" reports it. Any change to the selections or the comment prefix clears it, and so does a new student.
+     - **Functionality change:** with no state text, nothing says "Rakenda muudatused Moodle'isse" (in bold) any more before applying or after a later change. The status line shows only that the changes were applied.
+
 ---
 
 ## Appendix A: points for the end-user guide

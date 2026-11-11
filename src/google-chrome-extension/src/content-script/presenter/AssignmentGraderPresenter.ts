@@ -13,9 +13,14 @@ import { logger } from '@shared/reporting/logger'
 import { statusReporter } from '@shared/reporting/statusReporter'
 import { portStatusReceiver } from '../../shared/reporting/PortStatusReceiver'
 import { getStudentSubmissionOpeningStatus, getStudentSubmissionStatus } from '@shared/rules/status-rules'
-import { getBrokenDefinitionsStatus, getDefinitionSearchingStatus, getDefinitionStatus } from '../../shared/rules/status-rules'
+import {
+  getAppliedStatus,
+  getBrokenDefinitionsStatus,
+  getDefinitionSearchingStatus,
+  getDefinitionStatus,
+} from '../../shared/rules/status-rules'
 import { RESPONSE_STATUS_ERROR } from '@shared/constants/vscode-message'
-import { STATUS_TOPIC_BROKEN_DEFINITIONS, STATUS_TOPIC_MOODLE_PAGE } from '@shared/constants/status'
+import { STATUS_TOPIC_APPLY, STATUS_TOPIC_BROKEN_DEFINITIONS, STATUS_TOPIC_MOODLE_PAGE } from '@shared/constants/status'
 import { webLockProvider } from '../infrastructure/WebLockProvider'
 import { GRADING_TAB_LOCK_NAME } from '../constants/locks'
 
@@ -60,6 +65,7 @@ export default class AssignmentGraderPresenter extends BasePresenter {
   async #startGrading(): Promise<void> {
     statusReporter.clear(STATUS_TOPIC_MOODLE_PAGE)
     statusReporter.clear(STATUS_TOPIC_BROKEN_DEFINITIONS)
+    statusReporter.clear(STATUS_TOPIC_APPLY)
     portStatusReceiver.connect()
     const studentSubmissionOpened = this.#openStudentSubmission()
     const renderer = await this.#insertPanel()
@@ -168,14 +174,15 @@ export default class AssignmentGraderPresenter extends BasePresenter {
     this.#page.setGrade(String(grade))
     this.#page.setComment(this.#getComment())
     logger.info(this, `applied grade ${grade} and comment`)
-    this.#renderer?.setApplied(true)
+    statusReporter.report(getAppliedStatus())
   }
 
+  // A change after applying hasn't reached Moodle yet.
   #updatePreview(): void {
     const grade = this.#getGrade()
     logger.info(this, `grade: ${grade}`)
     this.#renderer?.setPreview(grade, this.#getComment())
-    this.#renderer?.setApplied(false)
+    statusReporter.clear(STATUS_TOPIC_APPLY)
   }
 
   #getGrade(): number {

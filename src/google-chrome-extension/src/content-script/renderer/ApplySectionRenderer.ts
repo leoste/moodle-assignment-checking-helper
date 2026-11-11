@@ -12,7 +12,6 @@ export class ApplySectionRenderer extends BaseRenderer {
 
   #gradeElement: HTMLElement | undefined
   #commentElement: HTMLElement | undefined
-  #stateElement: HTMLElement | undefined
 
   constructor(parentElement: HTMLElement, callbacks: ApplySectionCallbacks) {
     super()
@@ -25,21 +24,19 @@ export class ApplySectionRenderer extends BaseRenderer {
     return createAndAddChildElement(this.#parentElement, 'div', 'apply-section')
   }
 
+  // A 2×2 grid: the grade and the comment, then the button and the hint.
   protected async renderContent(root: HTMLElement) {
-    const container = createAndAddChildElement(root, 'div', 'item-container')
-    this.#gradeElement = createAndAddChildElement(container, 'div', ['text-section', 'apply-grade'])
-    this.#commentElement = createAndAddChildElement(container, 'div', ['text-section', 'apply-comment'])
+    this.#gradeElement = createAndAddChildElement(root, 'div', ['text-section', 'apply-grade'])
+    this.#commentElement = createAndAddChildElement(root, 'div', ['text-section', 'apply-comment'])
 
-    const controls = createAndAddChildElement(container, 'div', 'apply-controls')
     const button = createAndAddChildElement(
-      controls,
+      root,
       'button',
       ['apply-button', 'checking-helper-button', 'checking-helper-interactive'],
       translations.apply.button,
     ) as HTMLButtonElement
     button.type = 'button'
     button.addEventListener('click', this.#callbacks.onApply)
-    this.#stateElement = createAndAddChildElement(controls, 'div', 'apply-state')
 
     createAndAddChildElement(root, 'div', 'checking-helper-hint', translations.apply.hint)
   }
@@ -47,10 +44,5 @@ export class ApplySectionRenderer extends BaseRenderer {
   setPreview(grade: number, comment: string): void {
     this.#gradeElement!.textContent = translations.apply.grade(grade)
     this.#commentElement!.textContent = comment
-  }
-
-  setApplied(applied: boolean): void {
-    this.#stateElement!.textContent = applied ? translations.apply.applied : translations.apply.unapplied
-    this.#stateElement!.classList.toggle('unapplied', !applied)
   }
 }

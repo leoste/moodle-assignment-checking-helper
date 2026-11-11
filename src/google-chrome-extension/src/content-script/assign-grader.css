@@ -42,8 +42,14 @@ div.checking-helper-bottom-strip {
   border-top: var(--checking-helper-frame);
 }
 
+/* The first column is as wide as the apply button. The line below separates it from the status line. */
 div.apply-section {
-  padding-top: 0.67em;
+  display: grid;
+  grid-template-columns: 11.3em 1fr;
+  gap: 0.67em;
+  align-items: start;
+  padding: 0.67em 0;
+  border-bottom: var(--checking-helper-frame);
 }
 
 div.checking-helper-status-line {
@@ -52,12 +58,7 @@ div.checking-helper-status-line {
 
 div.apply-section div.text-section {
   padding: 0.67em;
-}
-
-div.text-section.apply-grade {
-  flex: none;
   min-width: 0;
-  margin-right: 0.67em;
 }
 
 div.apply-comment {
@@ -65,17 +66,9 @@ div.apply-comment {
   overflow-y: auto;
 }
 
-div.apply-controls {
-  width: 11.3em;
-  padding-left: 0.76em;
-}
-
 button.apply-button {
   width: 100%;
-}
-
-div.apply-state.unapplied {
-  font-weight: bold;
+  box-sizing: border-box;
 }
 
 div.grading-elsewhere button {
@@ -109,10 +102,6 @@ div[data-region="grade-panel"] {
 
 .feedback-subpanel > div.checking-helper-hint {
   margin-bottom: 0.67em;
-}
-
-div.apply-section > div.checking-helper-hint {
-  margin-top: 0.4em;
 }
 
 @container (min-width: 1000px) {

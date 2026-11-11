@@ -103,8 +103,4 @@ export default class CheckingHelperPanelRenderer extends BaseRenderer {
   setPreview(grade: number, comment: string): void {
     this.#applySectionRenderer?.setPreview(grade, comment)
   }
-
-  setApplied(applied: boolean): void {
-    this.#applySectionRenderer?.setApplied(applied)
-  }
 }

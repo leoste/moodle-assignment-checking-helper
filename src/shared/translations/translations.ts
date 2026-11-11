@@ -20,7 +20,6 @@ export const translations = {
   apply: {
     button: "Rakenda Moodle'isse",
     grade: (grade: number) => `Hinne: ${grade}`,
-    unapplied: "Rakenda muudatused Moodle'isse",
     applied: "Rakendatud. Salvesta Moodle'i nupuga.",
     hint: "Rakendamine asendab Moodle'i hinde ja kommentaari. Kirjuta soovi korral oma tekst „Kommentaari algus“ lahtrisse.",
   },

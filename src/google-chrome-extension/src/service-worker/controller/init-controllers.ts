@@ -1,4 +1,4 @@
-import type ChromeMessageController from './ChromeMessageController'
+import type ChromeMessageController from '../../shared/controller/ChromeMessageController'
 import { assignmentController } from './AssignmentController'
 import { fileCacheController } from './FileCacheController'
 import { studentSubmissionController } from './StudentSubmissionController'

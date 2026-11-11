@@ -12,6 +12,7 @@ import {
 import { translations } from '@shared/translations/translations'
 
 const BROKEN_FILE_NAME_SEPARATOR = ', '
+const SENTENCE_SEPARATOR = '. '
 
 export function getDefinitionSearchingStatus(): Status {
   return { topic: STATUS_TOPIC_DEFINITION, level: STATUS_LEVEL_PROGRESS, text: translations.definitions.searching }
@@ -21,10 +22,19 @@ export function getDefinitionSearchingStatus(): Status {
 export function getDefinitionStatus(lookup: DefinitionLookup | undefined, assignmentId: string): Status {
   const texts = translations.definitions
   if (!lookup) return { topic: STATUS_TOPIC_DEFINITION, level: STATUS_LEVEL_PROBLEM, text: texts.lookupFailed }
-  if (!lookup.folderChosen) return { topic: STATUS_TOPIC_DEFINITION, level: STATUS_LEVEL_PROBLEM, text: texts.folderNotChosen }
-  if (!lookup.loaded) return { topic: STATUS_TOPIC_DEFINITION, level: STATUS_LEVEL_PROBLEM, text: texts.notLoaded }
-  if (!lookup.definition) return { topic: STATUS_TOPIC_DEFINITION, level: STATUS_LEVEL_PROBLEM, text: texts.notFound(assignmentId) }
+  if (!lookup.folderChosen) return getMissingDefinitionStatus(texts.folderNotChosen, assignmentId)
+  if (!lookup.loaded) return getMissingDefinitionStatus(texts.notLoaded, assignmentId)
+  if (!lookup.definition) return getMissingDefinitionStatus(texts.notFound, assignmentId)
   return { topic: STATUS_TOPIC_DEFINITION, level: STATUS_LEVEL_INFO, text: texts.found(lookup.definition.name) }
+}
+
+// The ID is what the lecturer adds to a definition's `moodleIds`.
+function getMissingDefinitionStatus(text: string, assignmentId: string): Status {
+  return {
+    topic: STATUS_TOPIC_DEFINITION,
+    level: STATUS_LEVEL_PROBLEM,
+    text: [text, translations.definitions.moodleId(assignmentId)].join(SENTENCE_SEPARATOR),
+  }
 }
 
 export function getDefinitionsFolderStatus(folderChosen: boolean, loaded: boolean, definitionCount: number): Status {

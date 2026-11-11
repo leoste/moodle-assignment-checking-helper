@@ -19,6 +19,12 @@ import {
 } from '../constants/vscode-message'
 import { translations } from '../translations/translations'
 
+// No connection right now, but one can be made: the connection was closed while idle, or hasn't been needed yet.
+export function getWaitingStatus(): Status {
+  return { topic: STATUS_TOPIC_CONNECTION, level: STATUS_LEVEL_INFO, text: translations.connection.waiting }
+}
+
+// A connection attempt failed.
 export function getDisconnectedStatus(): Status {
   return { topic: STATUS_TOPIC_CONNECTION, level: STATUS_LEVEL_INFO, text: translations.connection.disconnected }
 }

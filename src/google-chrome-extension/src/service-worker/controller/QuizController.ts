@@ -1,4 +1,4 @@
-import ChromeMessageController from './ChromeMessageController'
+import ChromeMessageController from '../../shared/controller/ChromeMessageController'
 import { quizService } from '../service/QuizService'
 import {
   QUIZ_AUTO_GRADE_BEGIN,

@@ -55,21 +55,25 @@ export default class PopupPresenter extends BasePresenter {
     logger.info(this, `${source.cacheKey} ${refreshed ? 'refreshed' : 'not refreshed (no permission)'} after folder selection`)
     this.#renderer?.setRefreshing(false)
     await this.#showCacheState(await fileCacheClient.getFileSources())
-    if (!refreshed) statusReporter.report(getNoFolderPermissionStatus())
+    if (refreshed) await assignmentClient.notifyAssignmentsUpdated()
+    else statusReporter.report(getNoFolderPermissionStatus())
   }
 
   #onRefresh = async (): Promise<void> => {
     const sources = await fileCacheClient.getFileSources()
     this.#renderer?.setRefreshing(true)
     statusReporter.report(getDefinitionsLoadingStatus())
+    let anyRefreshed = false
     let permissionRefused = false
     for (const source of sources) {
       const refreshed = await folderAccessService.refreshSource(source)
       logger.info(this, `${source.cacheKey} ${refreshed ? 'refreshed' : 'not refreshed (no folder or no permission)'}`)
-      if (!refreshed && await directoryHandleRepository.getDirectoryHandle(source)) permissionRefused = true
+      if (refreshed) anyRefreshed = true
+      else if (await directoryHandleRepository.getDirectoryHandle(source)) permissionRefused = true
     }
     this.#renderer?.setRefreshing(false)
     await this.#showCacheState(await fileCacheClient.getFileSources())
+    if (anyRefreshed) await assignmentClient.notifyAssignmentsUpdated()
     if (permissionRefused) statusReporter.report(getNoFolderPermissionStatus())
   }
 

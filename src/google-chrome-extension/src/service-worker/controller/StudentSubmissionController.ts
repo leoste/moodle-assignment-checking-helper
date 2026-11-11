@@ -1,5 +1,5 @@
 import { studentSubmissionService } from '../service/StudentSubmissionService'
-import ChromeMessageController from './ChromeMessageController'
+import ChromeMessageController from '../../shared/controller/ChromeMessageController'
 import { STUDENT_SUBMISSION_OPEN } from '../../shared/constants/messages'
 
 class StudentSubmissionController extends ChromeMessageController {

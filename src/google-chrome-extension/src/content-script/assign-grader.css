@@ -35,24 +35,26 @@ div.checking-helper-scroll-area {
   align-items: stretch;
 }
 
+/* The same gap on the right as the panel's padding on the left. */
 div.checking-helper-bottom-strip {
   flex: none;
+  margin-right: 2.3em;
   border-top: var(--checking-helper-frame);
 }
 
 div.apply-section {
-  padding: 0.67em 1.35em 0 0;
+  padding-top: 0.67em;
 }
 
 div.checking-helper-status-line {
-  padding: 0.4em 1.35em 0.4em 0;
+  padding: 0.4em 0;
 }
 
 div.apply-section div.text-section {
   padding: 0.67em;
 }
 
-div.apply-grade {
+div.text-section.apply-grade {
   flex: none;
   min-width: 0;
   margin-right: 0.67em;

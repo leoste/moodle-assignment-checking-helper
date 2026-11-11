@@ -6,6 +6,10 @@ class AssignmentClient extends ChromeMessageClient {
   async getAllAssignments(): Promise<Definitions> {
     return this.send<Definitions>(assignmentChromeMessageGenerator.getAllAssignmentsMessage())
   }
+
+  async notifyAssignmentsUpdated(): Promise<void> {
+    await this.sendToTabs(assignmentChromeMessageGenerator.getAssignmentsUpdatedMessage())
+  }
 }
 
 export const assignmentClient = new AssignmentClient()

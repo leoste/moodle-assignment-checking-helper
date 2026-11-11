@@ -26,15 +26,15 @@ Code paths in this README are relative to `src/`.
 - `visual-studio-code-extension/` gets the student being graded from Chrome and opens their files.
 - `shared/` is code that has to be the same in both extensions. An extension's own `src/shared/` is code shared between its contexts.
 
-Contexts talk only through messages: content script and popup send Chrome messages to the service worker, the service worker sends VS Code messages over a WebSocket. The only way back is the service worker's statuses, sent to the panel and the popup over a port (see "Status").
+Contexts talk only through messages: content script and popup send Chrome messages to the service worker, the service worker sends VS Code messages over a WebSocket. Two messages go the other way: after reloading the definitions, the popup tells the content scripts of all tabs (`assignments/updated`), so an open panel updates itself; and the service worker sends its statuses to the panel and the popup over a port (see "Status").
 
 ### Layers
 
 Each layer uses only the layers below it:
-- **Infrastructure** (`infrastructure/`) owns a platform resource and knows nothing about features. Message receivers (`ChromeMessageReceiver`, `VsCodeMessageReceiver`) listen for messages and pass them to handlers, `VsCodeConnectionProvider` sends requests to VS Code, `IndexedDBProvider` owns the IndexedDB connection.
+- **Infrastructure** (`infrastructure/`) owns a platform resource and knows nothing about features. Message receivers (`ChromeMessageReceiver` in the service worker and the content script, `VsCodeMessageReceiver`) listen for messages and pass them to handlers, `VsCodeConnectionProvider` sends requests to VS Code, `IndexedDBProvider` owns the IndexedDB connection.
 - **Repositories** (`repository/`) store and load data.
 - **Services** (`service/`) do what the application does.
-- **Controllers** (`controller/`) register message handlers and pass the messages on to services.
+- **Controllers** (`controller/`) register message handlers and pass the messages on to services. The content script has no services, so its controllers pass them on to the page listener.
 
 ### Other building blocks
 
@@ -87,7 +87,7 @@ Both extensions have their own status bar that shows the current state: in VS Co
 `statusReporter` keeps the current status of every topic (connection, VS Code result, definition, ...), a new status replaces the old one of its topic. The topics and their order are in `shared/constants/status.ts`, the texts in the translations, and which status a situation gets is decided in the `status-rules.ts` rules.
 The status line's sink is set by the presenter, so the panel's new status line shows the current statuses on every page.
 
-The service worker's statuses (the VS Code connection) reach the panel and the popup over a long-lived port: `PortStatusSink` sends them, `PortStatusReceiver` passes them on to the context's own status reporter. When Chrome stops the idle service worker, its WebSocket to VS Code and the ports close together, so a closed port means disconnected. The panel opens the port again only on the next page, otherwise it would keep waking the service worker up.
+The service worker's statuses (the VS Code connection) reach the panel and the popup over a long-lived port: `PortStatusSink` sends them, `PortStatusReceiver` passes them on to the context's own status reporter. When Chrome stops the idle service worker, its WebSocket to VS Code and the ports close together, so a closed port means the connection is waiting ("ootel"): it's closed but can be made again. "Disconnected" ("puudub") is shown only when connecting fails. The panel opens the port again only on the next page, otherwise it would keep waking the service worker up.
 Results of one tab's request (VS Code's answer, the definition) come back in the response to that request, not over the port, so that open tabs don't show each other's results.
 
 ## Code conventions
@@ -123,13 +123,13 @@ None at the moment.
 
 To do conceptual changes, proper debugging sessions with the browser are necessary to validate proper functionality, as these changes can't be implemented with simple rewrites.
 
-#### Grade fallback and submit prevention
+#### Grade calculation
 
-`calculateGrade()` in `grading-rules.ts` gives 100 when the sum of points is 0 or negative. This is deliberate: a mistake in the definition should rather give the student 100 than 0. But with negative points only (e.g. `python-cafe-assignment.json`) big deductions also end up as 100. The proper fix is submit prevention like in form validation, maybe building the whole panel as a form. Additionally, the whole grading system of how grades are calculated needs to be reviewed and made more robust.
+`calculateGrade()` in `grading-rules.ts` sums the points of the enabled parts, and 0 is the lowest grade. The whole grading system of how grades are calculated needs to be reviewed and made more robust.
 
 #### Grade scale
 
-The grade has no scale. `calculateGrade()` sums the points of the enabled parts, the `intended_max_points` of a `Feedback` group is only displayed, and the fallback is a hard-coded 100, even for assignments graded out of 15 (`python-cafe-assignment.json`). The maximum points should be the scale of the grade and replace the hard-coded fallback. Ideally the maximum isn't written in the definition at all but read from Moodle's grading page, so the definition can't disagree with Moodle.
+The grade has no scale. `calculateGrade()` sums the points of the enabled parts and the `intended_max_points` of a `Feedback` group is only displayed, even for assignments graded out of 15 (`python-cafe-assignment.json`). The maximum points should be the scale of the grade. A definition with only deductions (negative points) needs this to work at all, because without a maximum to deduct from its grade is always 0. Ideally the maximum isn't written in the definition at all but read from Moodle's grading page, so the definition can't disagree with Moodle.
 
 #### Definition structure validation
 
@@ -166,3 +166,14 @@ The IndexedDB database (`IndexedDBProvider`: `DB_NAME`, `STORE_NAME`, `DB_VERSIO
 #### Page ready detection
 
 `executeOnPageReady` runs the callback only after at least one DOM mutation followed by 1.2 s of silence. If the page is already quiet when the content script starts, or never gets quiet (e.g. a timer), the callback never runs. The URL polling interval runs forever and every navigation creates a new `MutationObserver`. So far it has always worked.
+
+### Extra features
+
+#### Switching the receiving VS Code window
+
+Every VS Code window starts the extension, but only the first one gets the port and receives the students. The others show "port in use", and the only way to move the reception is to close the windows and open VS Code again in the right folder. The window without the port could offer a status bar button "switch to this window", after which the two windows swap.
+VS Code has no API for windows to talk to each other, but they can talk over the port they compete for: the window without the port connects to the receiving window as a WebSocket client and asks it to hand over, the receiving window closes its server, and the asking window starts its own, retrying until the port is free. Chrome reconnects on the next student. This needs a WebSocket client in the VS Code extension next to the server, a new message channel and a status bar command, built along the existing message system.
+
+#### No student selected
+
+When there are no students left to grade, Moodle's grader shows "No users selected" and the panel reports Moodle elements it didn't find, e.g. `a.comment-link`. The extension should recognise that no student is selected and say so calmly, e.g. "Kasutajat ei leitud". The recognition has to be robust, so that a real missing element is never mistaken for an empty grader.

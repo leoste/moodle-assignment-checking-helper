@@ -5,6 +5,7 @@ import { feedbackClient } from '../client/FeedbackClient'
 import { studentSubmissionClient } from '../client/StudentSubmissionClient'
 import { buildComment, calculateGrade } from '../rules/grading-rules'
 import { getDefaultSelection, getFeedbackView } from '../rules/feedback-rules'
+import { carryOverSelection } from '../rules/selection-rules'
 import deepCopy from '../../shared/util/deepCopy'
 import type { Feedback } from '../../shared/types/Feedback'
 import type { DefinitionLookup } from '../../shared/types/DefinitionLookup'
@@ -25,6 +26,7 @@ export default class AssignmentGraderPresenter extends BasePresenter {
   #renderer: CheckingHelperPanelRenderer | undefined
   // A stopped presenter's late answers mustn't overwrite the next page's statuses.
   #stopped = false
+  #feedbackShown = false
 
   constructor(page: AssignmentGraderPage) {
     super()
@@ -54,13 +56,11 @@ export default class AssignmentGraderPresenter extends BasePresenter {
     this.#feedback = deepCopy(lookup?.definition?.feedback ?? [])
     this.#selection = getDefaultSelection(this.#feedback)
     logger.info(this, `assignment ${assignmentId}: ${this.#feedback.length} feedback group(s)`)
-    await this.#renderer.renderFeedback(getFeedbackView(this.#feedback, this.#selection))
+    await this.#renderer.renderFeedback(getFeedbackView(this.#feedback, this.#selection), this.#commentPrefix)
+    this.#feedbackShown = true
 
     this.#page.expandCommentSection()
-    if (this.#feedback.length > 0) {
-      await this.#renderer.renderApplySection()
-      this.#updatePreview()
-    }
+    await this.#renderApplySection()
 
     await studentSubmissionOpened
   }
@@ -68,6 +68,33 @@ export default class AssignmentGraderPresenter extends BasePresenter {
   async stop(): Promise<void> {
     this.#stopped = true
     await this.#renderer?.clear()
+  }
+
+  // Called when the definitions were reloaded in the popup. The lecturer's selections and comment prefix are kept where the new definition allows it.
+  async refreshDefinition(): Promise<void> {
+    if (!this.#feedbackShown || this.#stopped) return
+    const assignmentId = this.#page.getAssignmentId()
+    statusReporter.clear(STATUS_TOPIC_BROKEN_DEFINITIONS)
+    statusReporter.report(getDefinitionSearchingStatus())
+    const lookup = await feedbackClient.getData(assignmentId)
+    this.#reportDefinition(lookup, assignmentId)
+    if (this.#stopped) return
+
+    const feedback = deepCopy(lookup?.definition?.feedback ?? [])
+    this.#selection = carryOverSelection(this.#feedback, this.#selection, feedback)
+    this.#feedback = feedback
+    logger.info(this, `assignment ${assignmentId} reloaded: ${this.#feedback.length} feedback group(s)`)
+    await this.#renderer!.renderFeedback(getFeedbackView(this.#feedback, this.#selection), this.#commentPrefix)
+    await this.#renderApplySection()
+  }
+
+  async #renderApplySection(): Promise<void> {
+    if (this.#feedback.length === 0) {
+      await this.#renderer?.clearApplySection()
+      return
+    }
+    await this.#renderer?.renderApplySection()
+    this.#updatePreview()
   }
 
   async #openStudentSubmission(): Promise<void> {

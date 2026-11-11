@@ -4,7 +4,7 @@ import type { VsCodeMessage, VsCodeRequest, VsCodeRequestStatus, VsCodeResponse,
 import { REQUEST_STATUS_NO_ANSWER, REQUEST_STATUS_UNREACHABLE } from '@shared/constants/vscode-message'
 import { logger } from '@shared/reporting/logger'
 import { statusReporter } from '@shared/reporting/statusReporter'
-import { getConnectedStatus, getDisconnectedStatus, getReconnectingStatus } from '@shared/rules/status-rules'
+import { getConnectedStatus, getDisconnectedStatus, getReconnectingStatus, getWaitingStatus } from '@shared/rules/status-rules'
 
 const REQUEST_TIMEOUT_MS = 5000
 
@@ -22,14 +22,14 @@ class VsCodeConnectionProvider extends BaseInfrastructure {
     this.#connection.onConnecting = () => statusReporter.report(getReconnectingStatus())
     this.#connection.onConnect = () => statusReporter.report(getConnectedStatus())
     this.#connection.onMessage = (raw) => this.#handleMessage(raw)
-    this.#connection.onDisconnect = () => {
-      statusReporter.report(getDisconnectedStatus())
+    this.#connection.onDisconnect = (wasConnected) => {
+      statusReporter.report(wasConnected ? getWaitingStatus() : getDisconnectedStatus())
       this.#cancelAll()
     }
   }
 
   protected override onInit(): undefined {
-    statusReporter.report(getDisconnectedStatus())
+    statusReporter.report(getWaitingStatus())
   }
 
   post(message: VsCodeMessage): Promise<VsCodeRequestStatus> {

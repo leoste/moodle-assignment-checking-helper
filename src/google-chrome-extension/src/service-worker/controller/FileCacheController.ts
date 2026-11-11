@@ -1,5 +1,5 @@
 import { FILES_GET_SOURCES, FILES_UPDATE_CACHE } from '../../shared/constants/messages'
-import ChromeMessageController from './ChromeMessageController'
+import ChromeMessageController from '../../shared/controller/ChromeMessageController'
 import { fileCacheService } from '../service/FileCacheService'
 
 class FileCacheController extends ChromeMessageController {

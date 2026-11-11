@@ -1,4 +1,4 @@
-import ChromeMessageController from './ChromeMessageController'
+import ChromeMessageController from '../../shared/controller/ChromeMessageController'
 import { assignmentService } from '../service/AssignmentService'
 import { ASSIGNMENTS_GET_ALL, FEEDBACK_GET } from '../../shared/constants/messages'
 

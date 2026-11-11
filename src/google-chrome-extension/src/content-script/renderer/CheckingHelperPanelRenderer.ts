@@ -81,13 +81,19 @@ export default class CheckingHelperPanelRenderer extends BaseRenderer {
     })
   }
 
-  async renderFeedback(feedback: FeedbackView[]) {
-    await this.#feedbackSectionRenderer!.renderFeedback(feedback)
+  async renderFeedback(feedback: FeedbackView[], commentPrefix: string) {
+    await this.#feedbackSectionRenderer!.renderFeedback(feedback, commentPrefix)
   }
 
   async renderApplySection() {
+    await this.clearApplySection()
     this.#applySectionRenderer = new ApplySectionRenderer(this.#applyArea!, this.#callbacks)
     await this.#applySectionRenderer.render()
+  }
+
+  async clearApplySection() {
+    await this.#applySectionRenderer?.clear()
+    this.#applySectionRenderer = undefined
   }
 
   setPreview(grade: number, comment: string): void {

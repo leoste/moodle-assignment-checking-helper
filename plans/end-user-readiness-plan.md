@@ -384,7 +384,86 @@ The extension name "Moodle Assignment Checking Helper" stays in English as a pro
 
 **Findings:**
 
-None yet.
+The author sends findings during the test and the solver records them here. Nothing is fixed until the author says the testing is finished, because findings may be related and are fixed together:
+> until i say that i have actually finished testing, do not implement fixes for any of them. i suspect that many of the things i find can be connected and fixed much easier together, or be related
+
+1. **VS Code shows the publisher ID instead of the author's name.** The Extensions list shows "karl-aleksander-leoste", while e.g. the Mermaid extension shows its author's real name. Author: "please fix so name is shown as real."
+   - *Analysis:* the real name shown for Marketplace extensions is the publisher's display name from their Marketplace account. VS Code gets it from the Marketplace, not from `package.json`. For an extension installed from a `.vsix` it falls back to the `publisher` field, which must be an ID without spaces. The `author` field holds the real name but isn't shown in that list.
+   - *Options:*
+     - (a) A more name-like ID, e.g. `KarlAleksanderLeoste` or `Karl-Aleksander-Leoste`. The ID allows capital letters and should be shown as written; this needs confirming. The extension's ID (`publisher.name`) changes, so an installed copy has to be uninstalled once.
+     - (b) Publish to the Marketplace, which was ruled out in step 1.
+     - (c) Leave it as is.
+   - **Decided:** leave it as is (c).
+
+2. **"Port in use": switching the receiving VS Code window.** Today the only way around it is to close both windows and reopen VS Code in the right folder. Author's idea: in the window that doesn't receive, the status bar offers a button "switch to this window". The windows then swap: the first window shows what the second one showed before, closes its connection, and the second one opens it. The author's conditions:
+   > kui seda on võrdlemisi lihtne teha, siis ma tahaks sellist asja teha, aga sellega peaks kindlasti kaasas käima ka teatav struktuuri lisamine-loomine, et ei tekiks spaghetti codei. olen valmis et see võib ka future concerns alla liikuda, kui see pole megalihtne asi mida teha.
+   - *Analysis:* VS Code has no API for windows to talk to each other; each window runs its own extension host. They can still talk through the WebSocket port they compete for:
+     1. The window without the port connects to the receiving window as a WebSocket client (`ws` includes a client) and sends a new "hand over" message.
+     2. The receiving window answers, closes its server and shows "port in use".
+     3. The asking window starts its server, retrying for a moment until the port is free.
+     4. Chrome's connection closes with the old server and reconnects to the new one on the next student.
+   - *Size:* medium, not "mega lihtne". It needs a new role in the VS Code extension (a WebSocket client next to the server), a new message channel, a status bar command and a retry while the port frees up. It fits the existing message system (channel, payload, handler), so the structure can follow existing patterns.
+   - *Decision in the fix phase:* build it, or move it to README "Future concerns".
+   - **Decided:** "switching the vscode window: future concern, not right now." It is described in README "Future concerns" under a new "Extra features" section.
+
+3. **The panel's orange divider runs to the right edge** (img1). The author wants a gap on the right like on the left.
+   - *Analysis:* the bottom strip's top border starts after the panel's left padding but has no right gap. A CSS fix: give the strip the same gap on the right.
+   - **Fixed:** the strip has a right margin equal to the panel's left padding (2.3em). Its contents no longer have their own right padding.
+
+4. **Show the assignment's Moodle ID in the status line.** The panel's "not found" text sends the user to the popup and the ID. The extension already knows the ID, so when the status says "Definitsioonide kaust valimata" or that no definition was found, it should add "Ülesande MoodleID on: <moodleid>".
+   - *Analysis:* a text and rule change in `getDefinitionStatus()`. Today only the "not found" status contains the ID, in a different wording. Probably "not loaded" should get it too. The panel's long "not found" text ("ID on näha all olekureal") may need adjusting to match.
+   - **Fixed:** the statuses "Definitsioonide kaust valimata", "Definitsioonid laadimata" and "Sellele ülesandele definitsiooni ei leitud" all end with ". Ülesande MoodleID on: <id>". "Not loaded" is included because it's the same situation. The panel's long text stays as it is, because it already points to the status line for the ID.
+
+5. **Refresh the panel when definitions are reloaded.** Today the lecturer reloads the definitions in the popup and then also has to refresh the Moodle page. The panel should update right away, using the existing message architecture. The panel's state has to survive this: the selections and the "Kommentaari algus" text, except for parts that no longer exist in the new definition.
+   - *Analysis:* the status port from step 3 can't carry this. The panel's port closes when the service worker idles (about 30 s), on purpose, and the lecturer usually reloads minutes after the last student. The message has to reach the panel without a port that's already open. Options:
+     - (a) The popup, or the service worker, broadcasts a new Chrome message to the tabs (`chrome.tabs.sendMessage`), and the content script gets a receiver for it. This fits the message system, but the content script is a new receiving side.
+     - (b) A "definitions updated" value in `chrome.storage.local`, which content scripts can listen to (`chrome.storage.onChanged`). This is simpler, but not the message system.
+   - *Keeping the state:* old selections have to be matched to the new definition's parts, either by position (simple, but wrong if parts are reordered) or by the parts' texts. To be decided in the fix phase.
+   - *Functionality change:* approved by the author's request.
+   - **Decided:** option (a), the Chrome message, and matching by texts. On the matching:
+     > match by texts as you recommended, but please definitely make this a separate helper or class or something, cause i can already see how this could take a bunch of room in the original file while not really being relevant to the overall structure and logic of it, so its best suited to live in a helper
+   - **Fixed:**
+     - **The message:** `assignments/updated`. After a successful reload, the popup's `AssignmentClient.notifyAssignmentsUpdated()` sends it to all tabs with the new `ChromeMessageClient.sendToTabs()`. Tabs without a listening content script reject it, which is ignored.
+     - **The content script's receiving side:** `ChromeMessageReceiver` and `ChromeMessageController` moved from `service-worker/` to Chrome's `src/shared/`, following the `IndexedDBProvider` pattern (shared code, one instance per context). The service worker's imports were updated. The author deletes the old files.
+     - **The handler:** the assignment grader content script initialises its own receiver and a content-script `AssignmentController`. The controller passes the message on to `AssignmentGraderListener.refreshDefinition()`, which forwards it to the current presenter.
+     - **The presenter:** `AssignmentGraderPresenter.refreshDefinition()` looks the definition up again and reports its status. It carries the selections over and renders the feedback and the apply section again. "Kommentaari algus" is rendered again with its text, and the apply state goes back to "Rakenda muudatused Moodle'isse".
+     - **The matching:** a separate rule, `carryOverSelection()` in `content-script/rules/selection-rules.ts`. A part is identified by its group title and its three texts; new and edited parts get their default selection.
+     - **Re-rendering:** `FeedbackSectionRenderer.renderFeedback()` replaces the feedback it rendered before, and `CommentPrefixRenderer` takes the current text. `CheckingHelperPanelRenderer` got `clearApplySection()`.
+     - **README:** "Extensions and contexts" and "Layers" describe the new message direction, and controllers in the content script.
+     - **The popup's reload hint:** its second sentence said changes take effect when the Moodle page is refreshed, which is no longer true. The solver proposed: "Pärast definitsioonifailide muutmist on vaja käsitsi vajutada värskendamise nuppu. Avatud hindamislehtedel võetakse muudatused kohe kasutusele." Waiting for the author's approval.
+
+6. **Grade 0 becomes 100** (img2). The lecturer turns all parts off to give 0 points, and the grade shows 100. The author removes the fallback grade:
+   > see pärines ajast, mil commit mõiste puudus ja oli vaja vältida olukorda, kus kogemata antakse tudengile hinne 0. aga nüüd on tegelikult see funktsionaalsus iganenud, kuna on võimalik committida rakenda nupuga. seega, kaotame selle default skoori mõiste täiesti projektist välja.
+   - *Analysis:* `FALLBACK_GRADE` in `grading-rules.ts` goes away, and the grade is the plain sum of points. The README entries "Grade fallback and submit prevention" and "Grade scale" have to be updated. *Open question:* definitions with negative points only (e.g. `python-cafe-assignment.json`) can now sum below 0. Should the grade then be 0, or the negative sum as it is? Moodle probably rejects a negative grade when saving.
+   - *Functionality change:* approved (quote above).
+   - **Decided:** "6: 0 is lowest grade possible".
+   - **Fixed:** `FALLBACK_GRADE` was replaced by `MIN_GRADE = 0`, so the grade is the sum of points but never below 0. In the README, "Grade fallback and submit prevention" became "Grade calculation", and "Grade scale" now says that a definition with only deductions needs a scale to work at all.
+
+7. **"VS Code: ühendus puudub" after an idle period is misleading.** It should be "VS Code: ühendus ootel" when the connection closed only because the service worker idled. "Ühendus puudub" should appear only when the WebSocket can't connect. This is what the solver suggested in step 3.
+   - *Analysis:*
+     - Chrome: a connection that closes after it was open, the panel's port closing, or a fresh service worker that hasn't tried yet → "ootel". A failed connection attempt → "puudub".
+     - VS Code: it never sees a failed attempt, so it shows "ootel" while listening without a client, plus "ühendatud" and "port hõivatud".
+   - **Fixed:** new text "VS Code: ühendus ootel" and rule `getWaitingStatus()`.
+     - `WebSocketConnection` tells whether a closed socket had been connected.
+     - The service worker reports "ootel" at start and when a connected socket closes, and "puudub" only when connecting fails.
+     - The panel's and popup's port closing means "ootel".
+     - VS Code reports "ootel" while it listens without a client.
+     - The README "Status" section explains the difference.
+
+8. **"Laiendus ei leidnud Moodle'i lehelt: a.comment-link" when no students are left** (img3: "No users selected", 0 of 0). The extension should recognise that no student is selected and show something calmer, such as "Kasutajat ei leitud". Telling that apart from real errors has to be robust, so for now it goes to the README:
+   > nii et lükka praegu see asi future concerns ekstra feature alla.
+   - *In the fix phase:* a new entry in README "Future concerns".
+   - **Done:** described in README "Future concerns" → "Extra features" → "No student selected".
+
+9. **VS Code extension icon** (answers the solver's question about finding 1): use the Chrome extension's icon, the yellow square.
+   - *Analysis:* VS Code needs an `icon` in `package.json`, a PNG of at least 128×128 px inside the VS Code extension's own folder. `vsce` doesn't package files from outside it.
+     - The simplest way: the author copies `src/google-chrome-extension/images/128.png` into the VS Code extension (the solver can't copy image files), and the solver adds the `icon` field.
+     - A single shared image used by both would need the Chrome build to take the image from outside its own folder.
+   - **Fixed:** the VS Code `package.json` has `"icon": "images/icon.png"`. The author copies `src/google-chrome-extension/images/128.png` to `src/visual-studio-code-extension/images/icon.png`; until then the release build fails, because `vsce` can't find the icon.
+
+10. **Noticed by the solver in img2: the grade preview box is too wide.** The grade box should be only as wide as its text, but it takes about half of the strip.
+    - *Cause:* in `assign-grader.css`, `div.text-section { flex: 1 }` comes after `div.apply-grade { flex: none }` and has the same specificity, so it wins. A CSS ordering bug from step 2.
+    - **Fixed:** the selector is now `div.text-section.apply-grade`, which is more specific, so it wins regardless of order.
 
 ---
 
@@ -406,12 +485,12 @@ This is what the project declares after step 5, collected for the author's guide
 - The popup opens with the hint "Abipaneel ilmub Moodle'is ülesande hindamislehele. Selleks vali siin kõigepealt definitsioonide kaust."
 - "Vali definitsioonide kaust" opens a folder picker with read-only access. The popup then shows the folder name, or "Kaust valimata" ([FolderAccessService.ts](../src/google-chrome-extension/src/popup/service/FolderAccessService.ts)).
 - Definitions load as soon as a folder is chosen.
-- "Lae failidest uuesti" reads the files again. The popup then shows the time of the last load, or "Definitsioonid puuduvad" ([PopupRenderer.ts](../src/google-chrome-extension/src/popup/renderer/PopupRenderer.ts)). The hint under the button: "Pärast definitsioonifailide muutmist on vaja käsitsi vajutada värskendamise nuppu. Muudatused võetakse kasutusele Moodle'i lehe värskendamisel."
+- "Lae failidest uuesti" reads the files again. The popup then shows the time of the last load, or "Definitsioonid puuduvad" ([PopupRenderer.ts](../src/google-chrome-extension/src/popup/renderer/PopupRenderer.ts)). The hint under the button: "Pärast definitsioonifailide muutmist on vaja käsitsi vajutada värskendamise nuppu. Avatud hindamislehtedel võetakse muudatused kohe kasutusele."
 - When reloading, Chrome may ask for permission to read the folder. If the lecturer refuses, nothing loads.
 - The whole folder is read, including subfolders. Files that aren't valid JSON are skipped and named in the status line as broken. This includes files that aren't definitions at all, e.g. a `README.md`.
 - The extension keeps a stored copy of the definitions:
   - editing a file has no effect until the lecturer reloads in the popup;
-  - the panel reads the definition when a student's page opens, so after a reload the Moodle page has to be reloaded, or the next student opened.
+  - after a reload, open grading pages update their panel right away. The selections and the "Kommentaari algus" text are kept, except for parts that were removed or whose texts changed.
 - The popup lists definitions as "course code - name (ids)", grouped by course code. It shows "?" when there's no course code and "Definitsioone ei leitud. Vali kaust või vajuta värskenda nuppu." when there are none ([DefinitionListRenderer.ts](../src/google-chrome-extension/src/popup/renderer/DefinitionListRenderer.ts)).
 - The status line at the bottom shows:
   - the VS Code connection;
@@ -431,7 +510,7 @@ This is what the project declares after step 5, collected for the author's guide
   - `labelText`: shown only in the panel, never in the comment.
 
   Empty or null texts add no line.
-- The grade is the sum of the points of the parts that are on. If the sum is 0 or less, the grade is 100 ([grading-rules.ts](../src/google-chrome-extension/src/content-script/rules/grading-rules.ts)).
+- The grade is the sum of the points of the parts that are on, and never below 0 ([grading-rules.ts](../src/google-chrome-extension/src/content-script/rules/grading-rules.ts)).
 - The comment is the "Kommentaari algus" text first, then each part's line in file order, one per line.
 
 **Grader panel:**
@@ -448,9 +527,9 @@ This is what the project declares after step 5, collected for the author's guide
   - The hint below the button: "Rakendamine asendab Moodle'i hinde ja kommentaari. Kirjuta soovi korral oma tekst „Kommentaari algus“ lahtrisse."
   - Moodle's save button saves both the grade and the comment.
 - The status line under the strip shows:
-  - the VS Code connection: disconnected / reconnecting / connected. The connection closes about 30 s after the last student, which is normal.
+  - the VS Code connection: waiting ("ootel") / reconnecting / connected, or "puudub" when connecting failed. The connection closes about 30 s after the last student and then shows "ootel", which is normal.
   - VS Code's answer for the student: files opened / nothing opened / student's folder not found / no folder open in VS Code / VS Code not open or the extension not installed / no answer;
-  - the definition: found ("name") / no definition for this assignment ID / folder not chosen / not loaded;
+  - the definition: found ("name") / no definition for this assignment / folder not chosen / not loaded. The last three end with "Ülesande MoodleID on: <id>", the ID to add to a definition's `moodleIds`;
   - the names of broken definition files;
   - Moodle page elements the extension didn't find.
 - When no definition matches, the panel says what to do: choose and load the folder in the popup, or add the assignment's ID (shown in the status line) to a definition's `moodleIds`.
@@ -460,7 +539,7 @@ This is what the project declares after step 5, collected for the author's guide
 **VS Code:**
 - The extension starts in every VS Code window. Its logs are in the Output panel under "Moodle Assignment Checking Helper", with an "activated" line on start ([extension.ts](../src/visual-studio-code-extension/src/extension.ts)).
 - Its status bar item, "Moodle Helper", shows the same as Chrome's status line:
-  - the connection: disconnected / connected, or that the port is taken because another VS Code window receives the students;
+  - the connection: waiting ("ootel") / connected, or that the port is taken because another VS Code window receives the students;
   - the latest student's result.
 
   When there's a problem, the item gets a warning background. Clicking it opens the Output log.

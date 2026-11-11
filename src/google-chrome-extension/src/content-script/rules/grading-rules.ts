@@ -1,7 +1,7 @@
 import type { Feedback } from '../../shared/types/Feedback'
 import { getPartCommentText, getPartPoints } from './feedback-rules'
 
-const FALLBACK_GRADE = 100
+const MIN_GRADE = 0
 
 export function calculateGrade(feedback: Feedback[], selection: boolean[][]): number {
   const totalPoints = feedback.reduce((sum, group, groupIndex) => {
@@ -9,7 +9,7 @@ export function calculateGrade(feedback: Feedback[], selection: boolean[][]): nu
       return ps + getPartPoints(part, selection[groupIndex][partIndex])
     }, 0)
   }, 0)
-  return totalPoints > 0 ? totalPoints : FALLBACK_GRADE
+  return Math.max(totalPoints, MIN_GRADE)
 }
 
 export function buildComment(prefix: string, feedback: Feedback[], selection: boolean[][]): string {

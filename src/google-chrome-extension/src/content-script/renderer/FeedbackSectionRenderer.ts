@@ -14,6 +14,9 @@ export class FeedbackSectionRenderer extends BaseRenderer {
   readonly #parentElement: HTMLElement
   readonly #callbacks: FeedbackSectionCallbacks
 
+  #feedbackRenderers: BaseRenderer[] = []
+  #notFoundElement: HTMLElement | undefined
+
   constructor(parentElement: HTMLElement, callbacks: FeedbackSectionCallbacks) {
     super()
 
@@ -30,17 +33,31 @@ export class FeedbackSectionRenderer extends BaseRenderer {
     createAndAddChildElement(root, 'div', 'checking-helper-hint', translations.feedback.resizeHint)
   }
 
-  async renderFeedback(feedback: FeedbackView[]) {
+  // Replaces the feedback rendered before, e.g. when the definition was reloaded.
+  async renderFeedback(feedback: FeedbackView[], commentPrefix: string) {
+    await this.#clearFeedback()
+
     if (feedback.length === 0) {
-      createAndAddChildElement(this.element, 'div', null, translations.feedback.notFound)
+      this.#notFoundElement = createAndAddChildElement(this.element, 'div', null, translations.feedback.notFound)
       return
     }
 
-    await new CommentPrefixRenderer(this.element, this.#callbacks.onCommentPrefixChanged).render()
-
+    this.#feedbackRenderers.push(new CommentPrefixRenderer(this.element, commentPrefix, this.#callbacks.onCommentPrefixChanged))
     for (const [feedbackIndex, item] of feedback.entries()) {
       const onPartToggled = (partIndex: number, selected: boolean) => this.#callbacks.onPartToggled(feedbackIndex, partIndex, selected)
-      await new FeedbackPartListRenderer(this.element, item, onPartToggled).render()
+      this.#feedbackRenderers.push(new FeedbackPartListRenderer(this.element, item, onPartToggled))
     }
+    for (const renderer of this.#feedbackRenderers) {
+      await renderer.render()
+    }
+  }
+
+  async #clearFeedback(): Promise<void> {
+    this.#notFoundElement?.remove()
+    this.#notFoundElement = undefined
+    for (const renderer of this.#feedbackRenderers) {
+      await renderer.clear()
+    }
+    this.#feedbackRenderers = []
   }
 }

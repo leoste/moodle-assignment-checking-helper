@@ -37,7 +37,8 @@ export const translations = {
     noCourseCode: '?',
     searching: 'Definitsiooni otsimine...',
     found: (name: string) => `Definitsioon: ${name}`,
-    notFound: (assignmentId: string) => `Ülesandele ${assignmentId} definitsiooni ei leitud`,
+    notFound: 'Sellele ülesandele definitsiooni ei leitud',
+    moodleId: (assignmentId: string) => `Ülesande MoodleID on: ${assignmentId}`,
     folderNotChosen: 'Definitsioonide kaust valimata',
     notLoaded: 'Definitsioonid laadimata',
     lookupFailed: 'Definitsiooni otsimine ebaõnnestus',
@@ -52,7 +53,7 @@ export const translations = {
     refresh: 'Lae failidest uuesti',
     refreshing: 'Laadimine...',
     notRefreshed: 'Definitsioonid puuduvad',
-    refreshHint: "Pärast definitsioonifailide muutmist on vaja käsitsi vajutada värskendamise nuppu. Muudatused võetakse kasutusele Moodle'i lehe värskendamisel.",
+    refreshHint: 'Pärast definitsioonifailide muutmist on vaja käsitsi vajutada värskendamise nuppu. Avatud hindamislehtedel võetakse muudatused kohe kasutusele.',
   },
 
   studentSubmission: {
@@ -70,6 +71,7 @@ export const translations = {
   },
 
   connection: {
+    waiting: 'VS Code: ühendus ootel',
     disconnected: 'VS Code: ühendus puudub',
     reconnecting: 'VS Code: ühendumine...',
     connected: 'VS Code: ühendatud',

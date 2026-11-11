@@ -1,5 +1,5 @@
 import type BaseInfrastructure from '@shared/infrastructure/BaseInfrastructure'
-import { chromeMessageReceiver } from './ChromeMessageReceiver'
+import { chromeMessageReceiver } from '../../shared/infrastructure/ChromeMessageReceiver'
 import { vsCodeConnectionProvider } from './VsCodeConnectionProvider'
 import { indexedDBProvider } from '../../shared/infrastructure/IndexedDBProvider'
 

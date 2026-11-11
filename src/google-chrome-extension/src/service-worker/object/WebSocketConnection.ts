@@ -7,7 +7,7 @@ export default class WebSocketConnection {
   onConnecting: () => void = () => {}
   onConnect: () => void = () => {}
   onMessage: (rawString: string) => void = () => {}
-  onDisconnect: () => void = () => {}
+  onDisconnect: (wasConnected: boolean) => void = () => {}
 
   async send(rawString: string): Promise<void> {
     const socket = await this.#getSocket()
@@ -34,13 +34,15 @@ export default class WebSocketConnection {
     this.onConnecting()
     const socket = new WebSocket(this.#address)
     this.#socket = socket
+    let wasConnected = false
 
     socket.onopen = () => {
+      wasConnected = true
       this.onConnect()
       resolve(socket)
     }
     socket.onmessage = (event) => this.onMessage(event.data as string)
-    socket.onclose = () => this.onDisconnect()
+    socket.onclose = () => this.onDisconnect(wasConnected)
     socket.onerror = (err) => reject(err)
   }
 }

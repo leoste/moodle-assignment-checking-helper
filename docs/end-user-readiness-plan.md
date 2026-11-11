@@ -43,7 +43,16 @@ Every step therefore lists its **functionality changes** separately. Each one is
 
 ---
 
-## Step 1: Releases
+## Step 1: Releases ✅
+
+> **Done:** solved as planned. The author built release 1.0.1 successfully. Details:
+> - The `vsce` flags (`--no-dependencies --allow-missing-repository --skip-license`) are in a `package` script in the VS Code `package.json`. `build-release.mjs` calls `npm run package -- --out <file>`.
+> - The script deletes an existing release folder only after both extensions have been built, so a failed build leaves the old release in place.
+> - The Chrome zip contains the contents of `dist/`, not the folder itself.
+> - `@vscode/vsce` resolved to 3.9.2, which requires Node.js 20 or later. The root README says so.
+> - The public key is written inline as `key` in `manifest.config.ts`. The author keeps the private key outside the repository.
+> - The lockfiles' version fields were updated by hand. The `vsce` entries were added to the VS Code lockfile by `npm install` during the first release run.
+> - The development build and an installed release now have the same extension ID, so only one of them can be loaded in Chrome at a time.
 
 **Goal:** one command builds both extensions into installable files in a versioned folder, and the dev guide explains it.
 

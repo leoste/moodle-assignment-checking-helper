@@ -107,6 +107,10 @@ To do conceptual changes, proper debugging sessions with the browser are necessa
 
 The grade has no scale. `calculateGrade()` sums the points of the enabled parts, the `intended_max_points` of a `Feedback` group is only displayed, and the fallback is a hard-coded 100, even for assignments graded out of 15 (`python-cafe-assignment.json`). The maximum points should be the scale of the grade and replace the hard-coded fallback. Ideally the maximum isn't written in the definition at all but read from Moodle's grading page, so the definition can't disagree with Moodle.
 
+#### Notifying Moodle's form of applied values
+
+`AssignmentGraderPage.setGrade()` and `setComment()` set the values of Moodle's grade input and comment box directly, without the `input` and `change` events that Moodle's form scripts listen to. So Moodle's own change detection, e.g. its check for unsaved changes, may not notice an applied grade and comment. Applying should notify the form the same way typing the values does.
+
 #### Matching students and submissions
 
 `isStudentFolder()` in the VS Code `student-files-rules.ts` matches the student's folder with `folderName.startsWith(studentName)`, so "Mari Maa" also matches "Mari Maasikas_…" and opens the wrong student's files. To be solved together with downloading submissions.

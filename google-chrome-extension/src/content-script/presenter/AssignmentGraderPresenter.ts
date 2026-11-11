@@ -29,6 +29,7 @@ export default class AssignmentGraderPresenter extends BasePresenter {
       onPartToggled: this.#onPartToggled,
       onCommentPrefixChanged: this.#onCommentPrefixChanged,
       onResized: this.#onPanelResized,
+      onApply: this.#onApply,
     })
     await this.#renderer.render()
     this.#page.insertPanel(this.#renderer.element)
@@ -41,8 +42,8 @@ export default class AssignmentGraderPresenter extends BasePresenter {
 
     this.#page.expandCommentSection()
     if (this.#feedback.length > 0) {
-      this.#updateGrade()
-      this.#updateComment()
+      await this.#renderer.renderApplySection()
+      this.#updatePreview()
     }
 
     await studentSubmissionOpened
@@ -60,26 +61,38 @@ export default class AssignmentGraderPresenter extends BasePresenter {
 
   #onPartToggled = (feedbackIndex: number, partIndex: number, selected: boolean): void => {
     this.#selection[feedbackIndex][partIndex] = selected
-    this.#updateGrade()
-    this.#updateComment()
+    this.#updatePreview()
   }
 
   #onCommentPrefixChanged = (prefix: string): void => {
     this.#commentPrefix = prefix
-    this.#updateComment()
+    this.#updatePreview()
   }
 
   #onPanelResized = (left: number): void => {
     this.#page.resizeGradePanel(left)
   }
 
-  #updateGrade(): void {
-    const grade = calculateGrade(this.#feedback, this.#selection)
-    logger.info(this, `grade: ${grade}`)
+  #onApply = (): void => {
+    const grade = this.#getGrade()
     this.#page.setGrade(String(grade))
+    this.#page.setComment(this.#getComment())
+    logger.info(this, `applied grade ${grade} and comment`)
+    this.#renderer?.setApplied(true)
   }
 
-  #updateComment(): void {
-    this.#page.setComment(buildComment(this.#commentPrefix, this.#feedback, this.#selection))
+  #updatePreview(): void {
+    const grade = this.#getGrade()
+    logger.info(this, `grade: ${grade}`)
+    this.#renderer?.setPreview(grade, this.#getComment())
+    this.#renderer?.setApplied(false)
+  }
+
+  #getGrade(): number {
+    return calculateGrade(this.#feedback, this.#selection)
+  }
+
+  #getComment(): string {
+    return buildComment(this.#commentPrefix, this.#feedback, this.#selection)
   }
 }

@@ -11,6 +11,16 @@ div.checking-helper-panel {
   bottom: 60px;
   left: 40%;
   right: 0;
+  overflow: hidden;
+
+  display: flex;
+  flex-direction: column;
+  container-type: inline-size;
+}
+
+div.checking-helper-scroll-area {
+  flex: 1;
+  min-height: 0;
   overflow-y: scroll;
   overflow-x: auto;
 
@@ -19,7 +29,44 @@ div.checking-helper-panel {
   grid-template-rows: 1fr;
   gap: 1.2em;
   align-items: stretch;
-  container-type: inline-size;
+}
+
+div.checking-helper-bottom-strip {
+  flex: none;
+}
+
+div.apply-section {
+  border-top: 0.34em solid #FF7E2E;
+  padding: 0.67em 1.35em 0.67em 0;
+}
+
+div.apply-section div.text-section {
+  padding: 0.67em;
+}
+
+div.apply-grade {
+  flex: none;
+  min-width: 0;
+  margin-right: 0.67em;
+}
+
+div.apply-comment {
+  max-height: 6em;
+  overflow-y: auto;
+}
+
+div.apply-controls {
+  width: 11.3em;
+  padding-left: 0.76em;
+}
+
+button.apply-button {
+  width: 100%;
+  padding: 0.67em;
+}
+
+div.apply-state.unapplied {
+  font-weight: bold;
 }
 
 div[data-region="review-panel"] {

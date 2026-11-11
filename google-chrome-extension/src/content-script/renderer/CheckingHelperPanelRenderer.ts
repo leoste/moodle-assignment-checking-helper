@@ -1,19 +1,22 @@
 import type { FeedbackView } from '../../shared/types/FeedbackView';
 import { FeedbackSectionRenderer, type FeedbackSectionCallbacks } from './FeedbackSectionRenderer';
-import { createElementWithClasses } from '../../shared/util/element-creation-helper';
+import { ApplySectionRenderer, type ApplySectionCallbacks } from './ApplySectionRenderer';
+import { createAndAddChildElement, createElementWithClasses } from '../../shared/util/element-creation-helper';
 import BaseRenderer from '../../shared/renderer/BaseRenderer';
 
 const RESIZE_EDGE_WIDTH = 10
 const MIN_PANEL_WIDTH = 200
 
-export interface CheckingHelperPanelCallbacks extends FeedbackSectionCallbacks {
+export interface CheckingHelperPanelCallbacks extends FeedbackSectionCallbacks, ApplySectionCallbacks {
   onResized: (left: number) => void
 }
 
 export default class CheckingHelperPanelRenderer extends BaseRenderer {
   readonly #callbacks: CheckingHelperPanelCallbacks
 
+  #bottomStrip: HTMLElement | undefined
   #feedbackSectionRenderer: FeedbackSectionRenderer | undefined
+  #applySectionRenderer: ApplySectionRenderer | undefined
 
   constructor(callbacks: CheckingHelperPanelCallbacks) {
     super()
@@ -26,7 +29,10 @@ export default class CheckingHelperPanelRenderer extends BaseRenderer {
 
   protected async renderContent(root: HTMLElement) {
     this.#addResizing(root)
-    this.#feedbackSectionRenderer = new FeedbackSectionRenderer(root, this.#callbacks)
+    const scrollArea = createAndAddChildElement(root, 'div', 'checking-helper-scroll-area')
+    this.#bottomStrip = createAndAddChildElement(root, 'div', 'checking-helper-bottom-strip')
+
+    this.#feedbackSectionRenderer = new FeedbackSectionRenderer(scrollArea, this.#callbacks)
     await this.#feedbackSectionRenderer.render()
   }
 
@@ -60,5 +66,18 @@ export default class CheckingHelperPanelRenderer extends BaseRenderer {
 
   async renderFeedback(feedback: FeedbackView[]) {
     await this.#feedbackSectionRenderer!.renderFeedback(feedback)
+  }
+
+  async renderApplySection() {
+    this.#applySectionRenderer = new ApplySectionRenderer(this.#bottomStrip!, this.#callbacks)
+    await this.#applySectionRenderer.render()
+  }
+
+  setPreview(grade: number, comment: string): void {
+    this.#applySectionRenderer?.setPreview(grade, comment)
+  }
+
+  setApplied(applied: boolean): void {
+    this.#applySectionRenderer?.setApplied(applied)
   }
 }

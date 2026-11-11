@@ -14,6 +14,13 @@ export const translations = {
     partUnselectedText: (text: string) => `disabled: ${text}`,
   },
 
+  apply: {
+    button: 'Rakenda',
+    grade: (grade: number) => `Hinne: ${grade}`,
+    unapplied: 'Rakendamata muudatused',
+    applied: 'Rakendatud',
+  },
+
   quizAutoGrade: {
     assignMaxPoints: 'Assign max points with no comment',
   },

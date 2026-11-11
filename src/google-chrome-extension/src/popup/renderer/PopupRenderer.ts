@@ -1,10 +1,10 @@
 import type { Assignment } from '../../shared/types/Assignment'
 import type { FileSourceInfo } from '../../shared/types/FileSourceInfo'
-import BaseRenderer from '../../shared/renderer/BaseRenderer'
+import BaseRenderer from '@shared/renderer/BaseRenderer'
 import DefinitionListRenderer from './DefinitionListRenderer'
-import StatusLineRenderer from '../../shared/renderer/StatusLineRenderer'
+import StatusLineRenderer from '@shared/renderer/StatusLineRenderer'
 import type { StatusSink } from '@shared/reporting/StatusSink'
-import { createAndAddChildElement } from '../../shared/util/element-creation-helper'
+import { createAndAddChildElement } from '@shared/util/element-creation-helper'
 import formatDateTime from '../../shared/util/formatDateTime'
 import { translations } from '@shared/translations/translations'
 

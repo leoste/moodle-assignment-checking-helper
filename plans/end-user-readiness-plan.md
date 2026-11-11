@@ -597,7 +597,16 @@ The author then removed the README's "Future concerns" section altogether, so th
 
 ---
 
-## Step 9: Definition validation and the sample definition
+## Step 9: Definition validation and the sample definition ✅
+
+> **Done:** solved as planned, with the answers below. Details:
+> - **The sample:** `src/definitions/sample-definition.json`. It is imported into the Chrome bundle at build time.
+> - **The check:** `checkAgainstSample()` in Chrome's `src/shared/util/` is generic. It compares any parsed JSON with a sample and returns every difference (`SampleMismatch`: missing, not allowed, wrong type) with its path. The kinds and the JSON value types are constants in `shared/constants/sample-check.ts`.
+> - **Where it runs:** `AssignmentRepository.getAllDefinitions()`, right after `JSON.parse`. A broken file is a `BrokenFile` (name plus its first mismatch, or null for invalid JSON).
+> - **The status text:** the status rule turns the mismatch into the status text, worded in the `definitionProblems` translations.
+> - **Types:** `Assignment.moodleIds` are numbers, and `FeedbackPart` texts can't be `null`. `AssignmentService` converts the URL's ID to a number.
+> - **The repo's definitions:** they use numeric `moodleIds` and no `null`.
+> - **Docs:** `docs/user setup.md` has "Create your definition files", which the link from `docs/user using.md` now reaches. The README's folder list mentions the sample and `docs/`.
 
 **Goal:** a definition file with a wrong structure is recognised when the definitions are loaded and reported as broken. A sample definition shows everything a definition can contain.
 
@@ -679,6 +688,34 @@ The author then removed the README's "Future concerns" section altogether, so th
 1. The solver presents VS Code's standard ways for an extension's settings, with their strengths, drawbacks and fit for this project.
 2. The author decides.
 3. Then `OPEN_SUB_DIRECTORIES` becomes the setting.
+
+**Options presented:**
+- (A) contributed settings in VS Code's Settings editor;
+- (B) a sidebar tree view;
+- (C) a sidebar webview;
+- (D) a webview in an editor tab, a bad fit because the extension closes all editors on every student;
+- (E) a quick-pick menu.
+
+**Decided:** A stores the settings, and C shows them in the panel's look. The sidebar also shows a copy of the status bar's information.
+> lets go for the yellow panel look, what with all the toggles and whatnot. i want my extensions to feel as one visually cohesive unit. and into this sidebar, we can duplicate the information thats currently shown at the bottom of vscode - duplicate, not remove.
+
+**Texts:** every user-facing text has to be in easily found files.
+> make sure all texts across the platform are easily editable in easily findable files, cause later on i will have a langugage editor go it all over
+
+The VS Code `package.json` texts move to `package.nls.json`, VS Code's standard file for them. Every other text is already in `translations.ts`.
+
+**Shared page code and type checks.** The sidebar page needs the page code that lived only in Chrome's `src/shared/`. That raised the question of where code shared by both extensions' pages belongs, and how type checks keep it out of components without a DOM.
+- **The gap found:** Chrome's single type check allows the DOM for all its components, so the service worker isn't protected.
+- **The decision:** one check per component, each with that component's environment. Page code goes into the shared folders by kind, with no special folder:
+  > i dont wnat to create a separate ui folder as you proposed, i simply want to have things in shared folders the same way its already been built, as it makes my understanding a lot simpler.
+
+**The author's plan for the step:**
+1. Move the page code into the root `src/shared/`, so that VS Code can use it.
+2. Finish the implementation, so that everything works together.
+3. Change the type checks to one per component, fixing the gap.
+4. The author runs the type checks (`npm run typecheck` in both extensions; the release script doesn't run them) and reports errors.
+5. The solver fixes them. Steps 4–5 repeat until the checks pass.
+6. Step 11 is done.
 
 *From the README:* `OPEN_SUB_DIRECTORIES` in the VS Code `config.ts` (used by `shouldCollectSubFolders()`) is hard-coded to `true`. So files are always collected recursively, the `false` branch (top-level files only) never runs, and changing it requires rebuilding. `MAX_AUTO_OPENED_FILES` and `BLACKLISTED_FOLDER_NAMES` could become settings too.
 

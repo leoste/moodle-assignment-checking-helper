@@ -2,7 +2,7 @@ import Initialisable from '../../../../shared/Initialisable'
 import { logger } from '@shared/reporting/logger'
 import executeOnPageReady from '../pagemanager/executeOnPageReady'
 import type MoodlePage from '../pagemanager/MoodlePage'
-import type BasePresenter from '../../shared/presenter/BasePresenter'
+import type BasePresenter from '@shared/presenter/BasePresenter'
 
 export default abstract class BaseMoodlePageListener<TPage extends MoodlePage> extends Initialisable {
   #presenter: BasePresenter | undefined

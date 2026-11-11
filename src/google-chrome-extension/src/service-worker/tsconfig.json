@@ -1,0 +1,8 @@
+{
+  // The service worker runs in the background without the DOM: only what a worker has, e.g. fetch, WebSocket and IndexedDB.
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "lib": ["ES2020", "WebWorker"]
+  },
+  "include": ["./**/*"]
+}

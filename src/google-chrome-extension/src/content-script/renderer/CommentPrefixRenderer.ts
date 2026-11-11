@@ -1,5 +1,5 @@
-import { createAndAddChildElement } from '../../shared/util/element-creation-helper';
-import BaseRenderer from '../../shared/renderer/BaseRenderer';
+import { createAndAddChildElement } from '@shared/util/element-creation-helper';
+import BaseRenderer from '@shared/renderer/BaseRenderer';
 import { translations } from '@shared/translations/translations';
 
 export class CommentPrefixRenderer extends BaseRenderer {

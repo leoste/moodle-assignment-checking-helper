@@ -1,7 +1,7 @@
 {
   "name": "moodle-assignment-checking-helper",
-  "displayName": "Moodle Assignment Checking Helper",
-  "description": "Võtab Chrome'i laienduselt vastu hinnatava õpilase ja avab tema failid VS Code'is.",
+  "displayName": "%extension.displayName%",
+  "description": "%extension.description%",
   "version": "1.0.2",
   "publisher": "karl-aleksander-leoste",
   "author": "Karl Aleksander Leoste",
@@ -13,7 +13,7 @@
     "commands": [
       {
         "command": "moodle-helper.runPythonInTerminal",
-        "title": "Käivita Pythoni skript uues terminalis"
+        "title": "%command.runPythonInTerminal.title%"
       }
     ],
     "menus": {
@@ -31,13 +31,41 @@
           "group": "navigation"
         }
       ]
+    },
+    "configuration": {
+      "title": "%extension.displayName%",
+      "properties": {
+        "moodle-helper.openSubDirectories": {
+          "type": "boolean",
+          "default": true,
+          "description": "%setting.openSubDirectories.description%"
+        }
+      }
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "moodle-helper",
+          "title": "%viewContainer.title%",
+          "icon": "images/sidebar-icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "moodle-helper": [
+        {
+          "type": "webview",
+          "id": "moodle-helper.sidebar",
+          "name": "%view.sidebar.name%"
+        }
+      ]
     }
   },
   "main": "./dist/extension.js",
   "scripts": {
     "compile":          "node esbuild.js",
     "watch":            "node esbuild.js --watch",
-    "typecheck":        "tsc --noEmit",
+    "typecheck":        "tsc --noEmit && tsc --noEmit -p src/webview",
     "vscode:prepublish": "node esbuild.js --production",
     "package":          "vsce package --no-dependencies --allow-missing-repository --skip-license",
     "lint":             "eslint src"

@@ -1,6 +1,6 @@
 import type { FeedbackView } from '../../shared/types/FeedbackView';
-import { createAndAddChildElement } from '../../shared/util/element-creation-helper';
-import BaseRenderer from '../../shared/renderer/BaseRenderer';
+import { createAndAddChildElement } from '@shared/util/element-creation-helper';
+import BaseRenderer from '@shared/renderer/BaseRenderer';
 import { FeedbackPartRenderer } from './FeedbackPartRenderer';
 import { translations } from '@shared/translations/translations';
 

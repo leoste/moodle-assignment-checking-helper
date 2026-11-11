@@ -1,9 +1,8 @@
 {
-  // Editor-only config for code shared by both extensions. The real type checking of
-  // this code happens in each extension's own tsconfig, which includes ../shared.
-  // Shared code must stay platform neutral: no chrome.*, no Node.js APIs, no DOM APIs.
-  // "DOM" is in lib only to get `console`; using browser APIs here would still fail
-  // the VS Code extension's typecheck, which has no DOM lib.
+  // Editor-only config for code shared by both extensions. The real type checking of this code happens in every
+  // component's own tsconfig (content script, popup, service worker, VS Code app, sidebar page), each with only what its
+  // environment has. So shared code may contain page code (renderers, styles, DOM helpers), but a component without
+  // the DOM (service worker, VS Code app) fails its check if it imports it. chrome.* and Node.js APIs don't belong here.
   // Keep "target" in sync with the extensions: esbuild reads the nearest tsconfig when
   // bundling these files, and target affects how class fields are compiled.
   "compilerOptions": {

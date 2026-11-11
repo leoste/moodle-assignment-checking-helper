@@ -1,4 +1,4 @@
-import BaseRepository from './BaseRepository'
+import BaseRepository from '@shared/repository/BaseRepository'
 import { indexedDBProvider } from '../infrastructure/IndexedDBProvider'
 import type { IndexedDBSchema } from '../types/StorageSchema'
 

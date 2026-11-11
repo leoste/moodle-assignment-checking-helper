@@ -1,19 +1,6 @@
-export function createAndAddChildElement(
-  parent: HTMLElement,
-  childDefinition: string,
-  childClasses: string | string[] | null = null,
-  textContent: string | null = null
-): HTMLElement {
-  const child = createElementWithClasses(childDefinition, childClasses)
-  parent.appendChild(child)
+import { createAndAddChildElement } from '@shared/util/element-creation-helper'
 
-  if (textContent) {
-    child.textContent = textContent
-  }
-
-  return child
-}
-
+// Chrome only, because the image is one of the extension's own files.
 export function createAndAddChildImage(
   parent: HTMLElement,
   src: string,
@@ -22,20 +9,4 @@ export function createAndAddChildImage(
   const img = createAndAddChildElement(parent, 'img', classes) as HTMLImageElement
   img.src = chrome.runtime.getURL(src)
   return img
-}
-
-export function createElementWithClasses(
-  elementDefinition: string,
-  classes: string | string[] | null = null
-): HTMLElement {
-  const element = document.createElement(elementDefinition)
-
-  if (classes) {
-    const classesArray = ([] as string[]).concat(classes)
-    if (classesArray.length > 0) {
-      element.classList.add(...classesArray)
-    }
-  }
-
-  return element
 }

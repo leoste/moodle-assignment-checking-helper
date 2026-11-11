@@ -1,4 +1,4 @@
-import BaseRepository from './BaseRepository'
+import BaseRepository from '@shared/repository/BaseRepository'
 import type { ChromeStorageSchema } from '../types/StorageSchema'
 
 export default abstract class LocalStorageRepository extends BaseRepository<ChromeStorageSchema> {

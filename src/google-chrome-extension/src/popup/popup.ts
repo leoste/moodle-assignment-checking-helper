@@ -1,3 +1,5 @@
+// The look shared by both extensions lies outside this extension's folder, so it's imported here instead of being linked in popup.html.
+import '@shared/styles/theme.css'
 import { logger } from '@shared/reporting/logger'
 import ConsoleLogSink from '@shared/reporting/ConsoleLogSink'
 import initInfrastructure from './infrastructure/init-infrastructure'

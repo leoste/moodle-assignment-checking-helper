@@ -1,4 +1,7 @@
 {
+  // The whole extension, its build config and all shared code, with the DOM. The editor uses it for the shared code.
+  // Every component (content-script/, popup/, service-worker/) is checked once more by its own tsconfig, with only
+  // what its environment has: shared code is allowed to contain page code, and a component without the DOM fails if it uses it.
   "compilerOptions": {
     "target": "ES2020",
     "module": "ESNext",

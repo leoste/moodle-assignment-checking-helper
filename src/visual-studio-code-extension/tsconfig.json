@@ -1,4 +1,6 @@
 {
+  // The extension's app runs in VS Code's background (Node.js) without the DOM. Shared code is checked only as far
+  // as the app imports it: shared code may contain page code, and the app fails this check if it uses it.
   "compilerOptions": {
     "target": "ES2020",
     "module": "commonjs",
@@ -13,5 +15,7 @@
       "@shared/*": ["../shared/*"]
     }
   },
-  "include": ["src/**/*", "../shared/**/*"]
+  "include": ["src/**/*"],
+  // The sidebar's page runs in a browser context and is checked with its own tsconfig.
+  "exclude": ["src/webview"]
 }

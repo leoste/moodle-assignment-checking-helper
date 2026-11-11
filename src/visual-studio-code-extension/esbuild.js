@@ -19,31 +19,52 @@ const problemMatcherPlugin = {
   },
 }
 
+/** @type {import('esbuild').BuildOptions} */
+const commonOptions = {
+  bundle: true,
+  // Readable builds: class names are used in logs and the code stays debuggable.
+  minify: false,
+  keepNames: true,
+  sourcemap: !production,
+  sourcesContent: false,
+  logLevel: 'warning',
+  alias: {
+    '@shared': path.resolve(__dirname, '../shared'),
+  },
+  plugins: [problemMatcherPlugin],
+}
+
+/** @type {import('esbuild').BuildOptions} */
+const extensionOptions = {
+  ...commonOptions,
+  entryPoints: ['src/extension.ts'],
+  format: 'cjs',
+  platform: 'node',
+  outfile: 'dist/extension.js',
+  external: ['vscode'],   // provided by the VS Code runtime — never bundle it
+}
+
+// The sidebar's page: a browser context of its own. Its imported CSS ends up in dist/webview/sidebar.css.
+/** @type {import('esbuild').BuildOptions} */
+const webviewOptions = {
+  ...commonOptions,
+  entryPoints: ['src/webview/sidebar.ts'],
+  format: 'iife',
+  platform: 'browser',
+  outdir: 'dist/webview',
+}
+
 async function main() {
-  const ctx = await esbuild.context({
-    entryPoints: ['src/extension.ts'],
-    bundle: true,
-    format: 'cjs',
-    platform: 'node',
-    outfile: 'dist/extension.js',
-    external: ['vscode'],   // provided by the VS Code runtime — never bundle it
-    // Readable builds: class names are used in logs and the code stays debuggable.
-    minify: false,
-    keepNames: true,
-    sourcemap: !production,
-    sourcesContent: false,
-    logLevel: 'warning',
-    alias: {
-      '@shared': path.resolve(__dirname, '../shared'),
-    },
-    plugins: [problemMatcherPlugin],
-  })
+  const contexts = await Promise.all([
+    esbuild.context(extensionOptions),
+    esbuild.context(webviewOptions),
+  ])
 
   if (watch) {
-    await ctx.watch()
+    await Promise.all(contexts.map(ctx => ctx.watch()))
   } else {
-    await ctx.rebuild()
-    await ctx.dispose()
+    await Promise.all(contexts.map(ctx => ctx.rebuild()))
+    await Promise.all(contexts.map(ctx => ctx.dispose()))
   }
 }
 

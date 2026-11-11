@@ -1,5 +1,3 @@
-export const OPEN_SUB_DIRECTORIES = true
-
 export const MAX_AUTO_OPENED_FILES = 20
 
 export const BLACKLISTED_FOLDER_NAMES = new Set(['.idea', '.venv'])
@@ -16,5 +14,11 @@ export const RUN_PYTHON_IN_TERMINAL_COMMAND = 'moodle-helper.runPythonInTerminal
 
 // Not declared in package.json: only the status bar item runs it.
 export const SHOW_LOG_COMMAND = 'moodle-helper.showLog'
+
+// Must match the prefix of the settings declared in package.json (contributes.configuration).
+export const SETTINGS_SECTION = 'moodle-helper'
+
+// Must match the view id declared in package.json (contributes.views).
+export const SIDEBAR_VIEW_ID = 'moodle-helper.sidebar'
 
 export const PYTHON_COMMAND = 'python'

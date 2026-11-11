@@ -8,6 +8,7 @@ const ROOT = dirname(fileURLToPath(import.meta.url))
 const CHROME_DIR = join(ROOT, 'src', 'google-chrome-extension')
 const VSCODE_DIR = join(ROOT, 'src', 'visual-studio-code-extension')
 const RELEASES_DIR = join(ROOT, 'releases')
+const NO_TYPE_CHECKING_FLAG = '--no-type-checking'
 
 function readVersion(extensionDir) {
   return JSON.parse(readFileSync(join(extensionDir, 'package.json'), 'utf8')).version
@@ -51,8 +52,15 @@ async function main() {
   }
 
   run('npm install', CHROME_DIR)
-  run('npm run build', CHROME_DIR)
   run('npm install', VSCODE_DIR)
+  // The builds only remove TypeScript's types without checking them, so type errors are found here.
+  if (process.argv.includes(NO_TYPE_CHECKING_FLAG)) {
+    console.log(`\nType checking skipped (${NO_TYPE_CHECKING_FLAG}).`)
+  } else {
+    run('npm run typecheck', CHROME_DIR)
+    run('npm run typecheck', VSCODE_DIR)
+  }
+  run('npm run build', CHROME_DIR)
 
   rmSync(releaseDir, { recursive: true, force: true })
   mkdirSync(releaseDir, { recursive: true })

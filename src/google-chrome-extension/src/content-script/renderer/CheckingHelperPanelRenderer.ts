@@ -1,9 +1,9 @@
 import type { FeedbackView } from '../../shared/types/FeedbackView';
 import { FeedbackSectionRenderer, type FeedbackSectionCallbacks } from './FeedbackSectionRenderer';
 import { ApplySectionRenderer, type ApplySectionCallbacks } from './ApplySectionRenderer';
-import { createAndAddChildElement, createElementWithClasses } from '../../shared/util/element-creation-helper';
-import BaseRenderer from '../../shared/renderer/BaseRenderer';
-import StatusLineRenderer from '../../shared/renderer/StatusLineRenderer';
+import { createAndAddChildElement, createElementWithClasses } from '@shared/util/element-creation-helper';
+import BaseRenderer from '@shared/renderer/BaseRenderer';
+import StatusLineRenderer from '@shared/renderer/StatusLineRenderer';
 import type { StatusSink } from '@shared/reporting/StatusSink';
 
 const RESIZE_EDGE_WIDTH = 10

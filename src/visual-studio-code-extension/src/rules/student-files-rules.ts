@@ -1,5 +1,5 @@
 import * as path from 'path'
-import { OPEN_SUB_DIRECTORIES, SAFE_BINARY_EXTENSIONS, MAX_AUTO_OPENED_FILES, BLACKLISTED_FOLDER_NAMES, EDITOR_COLUMN_COUNT } from '../config'
+import { SAFE_BINARY_EXTENSIONS, MAX_AUTO_OPENED_FILES, BLACKLISTED_FOLDER_NAMES, EDITOR_COLUMN_COUNT } from '../config'
 
 // Letters, digits and the characters inside names like "Mari-Liis" or "O'Brien".
 const NAME_CHARACTER = /[\p{L}\p{N}'-]/u
@@ -10,10 +10,6 @@ export function isStudentFolder(folderName: string, studentName: string): boolea
   if (!folderName.startsWith(studentName)) return false
   const nextCharacter = folderName.charAt(studentName.length)
   return nextCharacter === '' || !NAME_CHARACTER.test(nextCharacter)
-}
-
-export function shouldCollectSubFolders(): boolean {
-  return OPEN_SUB_DIRECTORIES
 }
 
 export function shouldEnterFolder(folderName: string): boolean {

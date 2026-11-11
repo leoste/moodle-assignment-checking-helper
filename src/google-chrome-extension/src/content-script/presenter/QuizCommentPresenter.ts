@@ -1,4 +1,4 @@
-import BasePresenter from '../../shared/presenter/BasePresenter'
+import BasePresenter from '@shared/presenter/BasePresenter'
 import type QuizCommentPage from '../pagemanager/QuizCommentPage'
 import { quizClient } from '../client/QuizClient'
 import { getAutoGrade } from '../rules/quiz-rules'

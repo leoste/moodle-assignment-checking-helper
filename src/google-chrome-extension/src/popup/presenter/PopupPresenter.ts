@@ -1,4 +1,4 @@
-import BasePresenter from '../../shared/presenter/BasePresenter'
+import BasePresenter from '@shared/presenter/BasePresenter'
 import PopupRenderer, { type PopupSource } from '../renderer/PopupRenderer'
 import { fileCacheClient } from '../client/FileCacheClient'
 import { assignmentClient } from '../client/AssignmentClient'

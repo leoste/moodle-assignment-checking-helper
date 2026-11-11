@@ -1,4 +1,4 @@
-import BasePresenter from '../../shared/presenter/BasePresenter'
+import BasePresenter from '@shared/presenter/BasePresenter'
 import type AssignmentGraderPage from '../pagemanager/AssignmentGraderPage'
 import CheckingHelperPanelRenderer from '../renderer/CheckingHelperPanelRenderer'
 import { feedbackClient } from '../client/FeedbackClient'

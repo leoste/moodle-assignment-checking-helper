@@ -1,0 +1,8 @@
+{
+  "extension.displayName": "Moodle Assignment Checking Helper",
+  "extension.description": "Võtab Chrome'i laienduselt vastu hinnatava õpilase ja avab tema failid VS Code'is.",
+  "command.runPythonInTerminal.title": "Käivita Pythoni skript uues terminalis",
+  "setting.openSubDirectories.description": "Õpilase failide avamisel avatakse ka tema alamkaustades olevad failid.",
+  "viewContainer.title": "Moodle Helper",
+  "view.sidebar.name": "Seaded ja olek"
+}

@@ -104,6 +104,11 @@ export const translations = {
     label: 'Moodle Helper',
   },
 
+  sidebar: {
+    settingsTitle: 'Seaded',
+    openSubDirectories: 'Ava failid ka alamkaustadest',
+  },
+
   pythonRunner: {
     terminalName: 'Pythoni käivitaja',
   },

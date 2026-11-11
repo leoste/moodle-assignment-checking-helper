@@ -1,0 +1,49 @@
+html, body {
+  margin: 0;
+  height: 100%;
+}
+
+body {
+  box-sizing: border-box;
+  padding: 1.35em;
+  color: black;
+  font-family: var(--vscode-font-family);
+  font-size: var(--vscode-font-size);
+}
+
+.checking-helper-sidebar-frame {
+  height: 100%;
+  box-sizing: border-box;
+  border: var(--checking-helper-frame);
+  box-shadow: var(--checking-helper-frame-rings);
+  background-color: var(--checking-helper-background-color);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.checking-helper-sidebar-scroll-area {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 1em;
+}
+
+.checking-helper-sidebar-scroll-area h2 {
+  margin-top: 0;
+}
+
+.checking-helper-sidebar-bottom-strip {
+  flex: none;
+  border-top: var(--checking-helper-frame);
+  padding: 0.5em 1em;
+}
+
+label.setting-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.67em;
+  border: 1px solid black;
+  padding: 0.67em;
+  cursor: pointer;
+}

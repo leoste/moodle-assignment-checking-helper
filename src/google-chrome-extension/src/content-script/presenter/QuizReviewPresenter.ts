@@ -1,4 +1,4 @@
-import BasePresenter from '../../shared/presenter/BasePresenter'
+import BasePresenter from '@shared/presenter/BasePresenter'
 import type QuizReviewPage from '../pagemanager/QuizReviewPage'
 import type QuizQuestionBox from '../pagemanager/QuizQuestionBox'
 import { AutoGradeButtonRenderer } from '../renderer/AutoGradeButtonRenderer'

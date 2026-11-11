@@ -25,8 +25,17 @@ Code paths in this README are relative to `src/`.
   - `content-script/` runs on Moodle pages and adds the helper panel and buttons.
   - `service-worker/` runs in the background, holds the data and talks to VS Code.
   - `popup/` selects and refreshes the definitions folder.
-- `visual-studio-code-extension/` gets the student being graded from Chrome and opens their files.
+- `visual-studio-code-extension/` gets the student being graded from Chrome and opens their files. It runs in two contexts:
+  - the extension's app (`src/` apart from `webview/`) runs in VS Code's background.
+  - `webview/` is the sidebar's page: the settings and a copy of the status bar, in the panel's look.
 - `shared/` is code that has to be the same in both extensions. An extension's own `src/shared/` is code shared between its contexts.
+
+The settings of the VS Code extension are stored by VS Code itself (`SettingsRepository`), so they can be changed in VS Code's Settings editor as well as in the sidebar.
+
+### Type checking
+
+Every context is type checked on its own, with only what its environment has: the content script, the popup and the sidebar's page with the DOM, the service worker with a worker's environment and the VS Code app with Node.js. Each context folder has its own `tsconfig.json`, which checks the context and everything it imports. `npm run typecheck` runs all of an extension's checks.
+So shared code may contain page code (renderers, styles, DOM helpers), but a context without the DOM fails its check if it imports it.
 
 Contexts talk only through messages: content script and popup send Chrome messages to the service worker, the service worker sends VS Code messages over a WebSocket. Two messages go the other way: after reloading the definitions, the popup tells the content scripts of all tabs (`assignments/updated`), so an open panel updates itself; and the service worker sends its statuses to the panel and the popup over a port (see "Status").
 
@@ -36,7 +45,7 @@ Each layer uses only the layers below it:
 - **Infrastructure** (`infrastructure/`) owns a platform resource and knows nothing about features. Message receivers (`ChromeMessageReceiver` in the service worker and the content script, `VsCodeMessageReceiver`) listen for messages and pass them to handlers, `VsCodeConnectionProvider` sends requests to VS Code, `IndexedDBProvider` owns the IndexedDB connection.
 - **Repositories** (`repository/`) store and load data.
 - **Services** (`service/`) do what the application does.
-- **Controllers** (`controller/`) register message handlers and pass the messages on to services. The content script has no services, so its controllers pass them on to the page listener.
+- **Controllers** (`controller/`) register message handlers and pass the messages on to services. The content script and the sidebar's page have no services, so their controllers pass them on to the page listener and to the presenter.
 
 ### Other building blocks
 
@@ -49,13 +58,13 @@ Each layer uses only the layers below it:
 - **Renderers** (`renderer/`) only build the extension's own UI from the data they get and report user actions through callbacks. Each renderer owns one root element: `render()` creates it, `clear()` removes it.
 - **Objects** (`object/`) are building blocks owned by another class, e.g. `MessageHandlerMap`, `WebSocketConnection`.
 - **Utils** (`util/`) are stateless functions.
-- **Styles** (`google-chrome-extension/src/shared/styles/theme.css`) hold the colours and the looks shared by all of the Chrome extension's UIs, which all have the panel's look. The file is loaded into Moodle pages as well, so its classes and variables have the `checking-helper-` prefix. Everything the user can interact with has the `checking-helper-interactive` class and glows when hovered.
-- **Translations** (`shared/translations/translations.ts`) hold every user-facing text of both extensions, grouped by concept. Texts with values are functions, e.g. `translations.studentSubmission.noStudentFolder(studentName)`. The VS Code command title is the only exception, it stays in `package.json`.
+- **Styles** (`shared/styles/theme.css`) hold the colours and the looks shared by all pages of both extensions, which all have the panel's look. The pages import the file in their code. It is loaded into Moodle pages as well, so its classes and variables have the `checking-helper-` prefix. Everything the user can interact with has the `checking-helper-interactive` class and glows when hovered.
+- **Translations** (`shared/translations/translations.ts`) hold every user-facing text of both extensions, grouped by concept. Texts with values are functions, e.g. `translations.studentSubmission.noStudentFolder(studentName)`. The texts of the VS Code `package.json` (name, descriptions, command title, setting, sidebar) are in `visual-studio-code-extension/package.nls.json`, VS Code's own file for them.
 
 ### Messages
 
-A message is transport-specific: `ChromeMessage` (`{ type, content }` over `chrome.runtime`) or `VsCodeMessage` (`{ channel, content }` over WebSocket). Its `content` is a payload (`BasePayload`), the part that is the same in both extensions.
-Every message key has exactly one payload type, listed in `ChromeMessagePayloads` and `VsCodeMessagePayloads`. Generators and controllers are type checked against these maps, so a new message is added there first.
+A message is transport-specific: `ChromeMessage` (`{ type, content }` over `chrome.runtime`), `VsCodeMessage` (`{ channel, content }` over WebSocket) or `WebviewMessage` (`{ type, content }` between the VS Code app and the sidebar's page). Its `content` is a payload (`BasePayload`), the part that is the same in both extensions.
+Every message key has exactly one payload type, listed in `ChromeMessagePayloads`, `VsCodeMessagePayloads` and `WebviewMessagePayloads`. Generators and controllers are type checked against these maps, so a new message is added there first.
 Everything around a message is named `<message type><role>`: `ChromeMessageClient`, `VsCodeMessageReceiver`, `QuizChromeMessageGenerator` etc.
 
 ### Storage
@@ -85,7 +94,7 @@ Builds are not minified, so class names in logs and the code in the debugger sta
 
 #### Status
 
-Both extensions have their own status bar that shows the current state: in VS Code a status bar item (clicking it opens the log), in Chrome a status line in the panel and in the popup. They show the same things the same way.
+Both extensions have their own status bar that shows the current state: in VS Code a status bar item (clicking it opens the log) and a copy in the sidebar (`StatusSinkGroup` shows the statuses in both), in Chrome a status line in the panel and in the popup. They show the same things the same way.
 `statusReporter` keeps the current status of every topic (connection, VS Code result, definition, ...), a new status replaces the old one of its topic. The topics and their order are in `shared/constants/status.ts`, the texts in the translations, and which status a situation gets is decided in the `status-rules.ts` rules.
 The status line's sink is set by the presenter, so the panel's new status line shows the current statuses on every page.
 
@@ -98,6 +107,7 @@ Results of one tab's request (VS Code's answer, the definition) come back in the
 
 Infrastructure, repositories, services, controllers, clients, generators and page listeners are singletons. Only the instance is exported, not the class: `export const quizService = new QuizService()`.
 A class is exported only if it is a base class, has multiple instances (renderers, pages, presenters) or is an object owned by another class.
+The sidebar page's presenter is the exception: its page loads once per run of its bundle, so it's a singleton its controller can reach.
 `static` fields are only for state shared by a whole class hierarchy.
 
 ## Releasing
@@ -109,7 +119,8 @@ To build a release, run in the project root (Node.js 20 or later, needed by `vsc
 node build-release.mjs
 ```
 
-The script stops if the two versions differ. Otherwise it installs the dependencies, builds both extensions and puts them into `releases/<version>/`: the Chrome extension as a zip of its `dist/`, the VS Code extension as a `.vsix`. If the release already exists, it asks whether to overwrite it. Releases are committed to git.
+The script stops if the two versions differ. Otherwise it installs the dependencies, runs the type checks (`npm run typecheck` of both extensions) and stops on errors, builds both extensions and puts them into `releases/<version>/`: the Chrome extension as a zip of its `dist/`, the VS Code extension as a `.vsix`. If the release already exists, it asks whether to overwrite it. Releases are committed to git.
+`node build-release.mjs --no-type-checking` skips the type checks.
 
 The Chrome extension's ID is fixed by the public `key` in `manifest.config.ts`, so it is the same for every user and every version, wherever the extension is unpacked. The private key isn't needed and isn't in the repository.
 VS Code accepts WebSocket connections only from this extension: it checks the `Origin` header against `CHROME_EXTENSION_ID` in `shared/config/connection.ts`. If the key ever changes, that ID has to be updated too.

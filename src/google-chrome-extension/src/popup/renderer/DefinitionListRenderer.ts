@@ -1,6 +1,6 @@
 import type { Assignment } from '../../shared/types/Assignment'
-import BaseRenderer from '../../shared/renderer/BaseRenderer'
-import { createAndAddChildElement } from '../../shared/util/element-creation-helper'
+import BaseRenderer from '@shared/renderer/BaseRenderer'
+import { createAndAddChildElement } from '@shared/util/element-creation-helper'
 import { translations } from '@shared/translations/translations'
 
 export default class DefinitionListRenderer extends BaseRenderer {

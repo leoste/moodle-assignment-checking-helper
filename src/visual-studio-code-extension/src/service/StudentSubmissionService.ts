@@ -16,9 +16,9 @@ import {
   getEditorColumnOffset,
   isBinaryFile,
   isStudentFolder,
-  shouldCollectSubFolders,
   shouldEnterFolder,
 } from '../rules/student-files-rules'
+import { settingsRepository } from '../repository/SettingsRepository'
 
 type FileEntry = [dirUri: vscode.Uri, fileName: string]
 
@@ -88,7 +88,8 @@ class StudentSubmissionService extends BaseService {
   }
 
   async #collectSubmissionFiles(folderUri: vscode.Uri): Promise<FileEntry[]> {
-    if (shouldCollectSubFolders()) {
+    const { openSubDirectories } = await settingsRepository.getSettings()
+    if (openSubDirectories) {
       return this.#collectFilesRecursively(folderUri)
     }
     const entries = await vscode.workspace.fs.readDirectory(folderUri)

@@ -1,4 +1,4 @@
-/* The look of all of the extension's UIs. Loaded into Moodle pages too, so every class has the checking-helper prefix. */
+/* The look of all of both extensions' pages. Loaded into Moodle pages too, so every class has the checking-helper prefix. */
 
 :root {
   --checking-helper-frame-color: #FF7E2E;

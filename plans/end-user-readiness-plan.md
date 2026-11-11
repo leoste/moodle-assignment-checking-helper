@@ -839,7 +839,33 @@ To confirm when implementing: the expectation is that content scripts get the pa
 
 ---
 
-## Step 14: Taking over: the receiving VS Code window and the grading tab
+## Step 14: Taking over: the receiving VS Code window and the grading tab ✅
+
+> **Done:** solved as decided. The author on the review:
+> > ok seems good for now, we can continue
+>
+> - **Chrome:**
+>   - The refused panel has the button "Võta hindamine üle". It steals the lock (`WebLockProvider.steal()`) and starts grading in the same panel.
+>   - The browser tells the tab that lost the lock, and its `GradingTabController` reloads the panel into the refused state.
+>   - A refused panel disconnects from the service worker's statuses and clears the ones it had.
+>   - The lock name is in `content-script/constants/locks.ts`.
+> - **VS Code:**
+>   - `ReceptionService` starts the server and handles taking over and handing over.
+>   - The asking window sends `reception-hand-over` through `VsCodeWindowConnectionProvider`. The receiving window answers, then closes Chrome's connection and its server, and shows "port in use" and the button.
+>   - The asking window tries to start its server for up to 5 s (25 tries, 200 ms apart). If no window answers at all, the port counts as free. If the port stays taken, `getTakeOverFailedStatus()` is shown.
+>   - `VsCodeMessageReceiver` has `listen()` and `stop()`.
+> - **Buttons:**
+>   - `StatusBarButtonProvider` shows the status bar button only while it can be used, because a status bar item can't be greyed out.
+>   - The sidebar's "Ühendus" section, under "Seaded", has the same button. It is greyed out in the receiving window, and until the extension has said which window this is.
+> - **Origin check:** `isAllowedOrigin()` in VS Code's `rules/connection-rules.ts`, checked before a connection's messages are handled.
+> - **Shared code:** `VsCodeRequestTracker` (request ids, timeouts, answers) and `VsCodeMessageGenerator` moved to the root `shared/`. Chrome's `VsCodeConnectionProvider` uses the tracker and works as before. The author deletes Chrome's old `service-worker/generator/VsCodeMessageGenerator.ts`.
+> - **README:** the sections "One receiving VS Code window" and "One grading tab".
+> - **To confirm in step 15:** the port is free soon enough after the receiving window stops, and Chrome reconnects to the new window on the next request.
+
+**Functionality changes:**
+- **14a. Approved.** The take-over buttons in both extensions (author's request).
+- **14b. Approved.** The grading tab or the receiving window loses its role when another one takes over. Unapplied selections in the old tab are lost; what was applied into Moodle's form stays.
+- **14c. Approved.** The VS Code server also accepts connections without an Origin (author's decision on the origin check).
 
 **Goal:**
 - The VS Code window that doesn't receive students can take the reception over.
@@ -906,6 +932,85 @@ To confirm when implementing: the expectation is that content scripts get the pa
 ## Step 15: Testing
 
 **Goal:** test everything steps 7–14 changed, once and as a whole, then fix what the test finds. This works like step 6: the author reports findings, and nothing is fixed until the author says the testing is finished.
+
+**How:**
+1. The author tests the installed release, not the development builds. Steps 12–14 were never type-checked or run, so this is their first real run.
+2. The author reports what failed, with the error output of the build, the browser console or VS Code's Output log.
+3. The solver records each finding under "Findings" below. Nothing is fixed until the author says the testing is finished.
+4. The solver then fixes them. A fix that would change functionality is approved by the author first.
+
+**Before building:**
+- Delete `src/google-chrome-extension/src/service-worker/generator/VsCodeMessageGenerator.ts`. Step 14 moved it to the root `shared/`.
+- `releases/1.0.3/` was built in step 11. If it wasn't handed out, it is overwritten (answer `y`). Otherwise the version is raised first in both `package.json` files.
+- `node build-release.mjs` runs both extensions' type checks and stops on errors.
+
+**Installing for the test:** as in step 6.
+- Only one copy of the Chrome extension can be loaded, and Moodle tabs that were open before installing need a refresh.
+- In VS Code the installed extension runs in every window. Don't run the F5 development host at the same time.
+
+**What to check:**
+
+**Texts and definitions (steps 7 and 9)**
+1. A grading page without a student ("No users selected") says "Laiendus ei leidnud Moodle'i lehelt: … (Moodle'i leht võib olla ümber arendatud või pole tööd, mida kontrollida)".
+2. The definitions in use load without problems.
+3. A broken definition file is named in the popup's status line with its first problem, and the other definitions still load. For example:
+   - `moodleIds` is missing;
+   - a field the sample doesn't have;
+   - a text where a number belongs;
+   - a text in `moodleIds`;
+   - a file that isn't a definition at all, such as a `README.md`.
+
+**Moodle form, submissions and the origin check (step 8)**
+
+4. After "Rakenda Moodle'isse", Moodle treats the grade and the comment as typed: its save button saves them, and its own change detection notices them.
+5. When one student's name begins another's (e.g. "Mari Maa" and "Mari Maasikas"), each student opens only their own folder. Test folders will do if there are no such students.
+6. The link in `docs/user using.md` reaches "Create your definition files" in `docs/user setup.md`.
+7. A web page can't use the VS Code server. Run `new WebSocket('ws://127.0.0.1:54321')` in the DevTools console of any web page. The connection closes at once, and VS Code's Output log says "refused a connection from origin …".
+
+**VS Code sidebar (step 11)**
+
+8. The extension's icon in VS Code's left bar opens the sidebar in the panel's look:
+   - "Seaded" with the toggle;
+   - "Ühendus" with the take-over button;
+   - the status line at the bottom, showing the same as the status bar.
+9. The toggle "Ava failid ka alamkaustadest" and `moodle-helper.openSubDirectories` in the Settings editor follow each other. When it is off, only the files at the top of the student's folder open.
+10. A closed and reopened sidebar shows the current setting and statuses.
+11. The setting's texts in the Settings editor are the ones in `package.nls.json`.
+
+**Popup reload (step 12)**
+
+12. With the grading page as the active tab, "Lae sisupaneel uuesti" loads the panel again.
+13. In a tab without the panel's script, e.g. a Moodle tab opened before installing, the popup's status line says "Laiendus pole veel aktiveeritud. Värskenda Moodle'i lehte, et laiendus muutuks aktiivseks."
+
+**One grading tab (steps 13 and 14)**
+
+14. A second grading tab shows only "Hindamine käib juba teises Moodle'i vahekaardis. Jätka seal või võta hindamine siia üle." and the button "Võta hindamine üle".
+    - Its status line is empty.
+    - Switching students in it opens nothing in VS Code.
+15. The grading tab keeps grading across page refreshes and student switches.
+16. Moodle pages without the panel, e.g. the course page, don't stop another tab from grading.
+17. Once the grading tab is closed, the other tab grades after a refresh or "Lae sisupaneel uuesti".
+18. "Võta hindamine üle" makes its tab the grading tab at once.
+    - The other tab switches to the message and the button.
+    - Unapplied selections in the other tab are lost; what was applied stays in Moodle's form.
+    - Taking over back and forth works.
+
+**Receiving VS Code window (step 14)**
+
+19. With two VS Code windows open:
+    - the receiving one has a greyed-out sidebar button and no status bar button;
+    - the other one says the port is taken, shows the status bar button "Võta vastuvõtmine üle", and its sidebar button can be pressed.
+20. Either button in the other window swaps the windows.
+    - The first window then says the port is taken and shows the button.
+    - Chrome's status says "VS Code: ühendus ootel", and the next student opens in the second window.
+    - Taking over back and forth works.
+21. After the receiving window is closed, the other window's button takes over, although no window answers.
+
+Step 6's checks aren't repeated, but anything found broken there is a finding too.
+
+**Findings:**
+
+The author sends findings during the test and the solver records them here. Nothing is fixed until the author says the testing is finished.
 
 ---
 

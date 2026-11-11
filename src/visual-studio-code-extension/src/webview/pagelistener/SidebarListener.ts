@@ -19,6 +19,10 @@ class SidebarListener extends Initialisable {
   showStatuses(statuses: readonly Status[]): void {
     this.#presenter?.showStatuses(statuses)
   }
+
+  showReception(receiving: boolean): void {
+    this.#presenter?.showReception(receiving)
+  }
 }
 
 export const sidebarListener = new SidebarListener()

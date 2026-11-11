@@ -10,7 +10,8 @@ export const translations = {
     commentPrefix: 'Kommentaari algus',
     commentPrefixPlaceholder: 'Siia kirjutatud tekst läheb kommentaari algusesse',
     notFound: 'Selle ülesande hindamismaatriksit ei leitud. Vali laienduse aknas (laienduse ikoon brauseri tööriistaribal) definitsioonide kaust ja lae failid. Kui kaust on valitud, lisa selle ülesande ID definitsiooni välja „moodleIds“ alla – ID on näha all olekureal.',
-    gradingElsewhere: "Hindamine käib juba teises Moodle'i vahekaardis. Jätka seal või sulge teine vahekaart ja lae sisupaneel siin uuesti.",
+    gradingElsewhere: "Hindamine käib juba teises Moodle'i vahekaardis. Jätka seal või võta hindamine siia üle.",
+    takeOverGrading: 'Võta hindamine üle',
     points: (points: number) => `${points}p`,
     partSelectedText: (text: string) => `Kommentaar valituna: ${text}`,
     partUnselectedText: (text: string) => `Kommentaar valimata: ${text}`,
@@ -98,6 +99,8 @@ export const translations = {
     connected: 'VS Code: ühendatud',
     portInUse: (port: number) => `VS Code: port ${port} on hõivatud, õpilasi võtab vastu teine VS Code'i aken`,
     serverError: 'VS Code: õpilaste vastuvõtmine ei käivitunud',
+    takeOver: 'Võta vastuvõtmine üle',
+    takeOverFailed: 'VS Code: ülevõtmine ebaõnnestus, teine aken ei vastanud',
   },
 
   moodlePage: {
@@ -110,6 +113,7 @@ export const translations = {
 
   sidebar: {
     settingsTitle: 'Seaded',
+    connectionTitle: 'Ühendus',
     openSubDirectories: 'Ava failid ka alamkaustadest',
   },
 

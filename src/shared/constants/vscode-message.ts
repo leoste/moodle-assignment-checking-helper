@@ -1,4 +1,6 @@
 export const STUDENT_SUBMISSION_CHANNEL = 'student-submission'
+// Sent by a VS Code window to the window that receives the students, to take the reception over.
+export const RECEPTION_HAND_OVER_CHANNEL = 'reception-hand-over'
 
 export const RESPONSE_STATUS_OK = 'ok'
 export const RESPONSE_STATUS_ERROR = 'error'

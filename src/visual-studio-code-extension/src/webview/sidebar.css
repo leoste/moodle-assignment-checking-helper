@@ -33,6 +33,10 @@ body {
   margin-top: 0;
 }
 
+.checking-helper-sidebar-section + .checking-helper-sidebar-section {
+  margin-top: 1.5em;
+}
+
 .checking-helper-sidebar-bottom-strip {
   flex: none;
   border-top: var(--checking-helper-frame);

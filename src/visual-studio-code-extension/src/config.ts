@@ -15,6 +15,9 @@ export const RUN_PYTHON_IN_TERMINAL_COMMAND = 'moodle-helper.runPythonInTerminal
 // Not declared in package.json: only the status bar item runs it.
 export const SHOW_LOG_COMMAND = 'moodle-helper.showLog'
 
+// Not declared in package.json: only the status bar button runs it.
+export const TAKE_OVER_COMMAND = 'moodle-helper.takeOver'
+
 // Must match the prefix of the settings declared in package.json (contributes.configuration).
 export const SETTINGS_SECTION = 'moodle-helper'
 

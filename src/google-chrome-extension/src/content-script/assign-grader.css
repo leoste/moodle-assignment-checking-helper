@@ -78,6 +78,10 @@ div.apply-state.unapplied {
   font-weight: bold;
 }
 
+div.grading-elsewhere button {
+  margin-top: 1.35em;
+}
+
 div[data-region="review-panel"] {
   width: 20% !important;
 }

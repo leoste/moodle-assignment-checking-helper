@@ -6,6 +6,7 @@ import { chromeMessageReceiver } from '../shared/infrastructure/ChromeMessageRec
 import { webLockProvider } from './infrastructure/WebLockProvider'
 import { assignmentController } from './controller/AssignmentController'
 import { panelController } from './controller/PanelController'
+import { gradingTabController } from './controller/GradingTabController'
 import { assignmentGraderListener } from "./pagelistener/AssignmentGraderListener";
 
 logger.init(new ConsoleLogSink())
@@ -13,4 +14,5 @@ chromeMessageReceiver.init()
 webLockProvider.init()
 assignmentController.init()
 panelController.init()
+gradingTabController.init()
 assignmentGraderListener.init()

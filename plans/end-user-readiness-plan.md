@@ -780,7 +780,17 @@ The solver wrote "muutuks" in place of "muutus", the grammatical form for "so th
 
 ---
 
-## Step 13: One grading tab
+## Step 13: One grading tab ✅
+
+> **Done:** solved as decided.
+> - `WebLockProvider` (content script infrastructure) holds the lock. `AssignmentGraderPresenter.start()` asks for it before anything else.
+> - A refused tab shows only `translations.feedback.gradingElsewhere` in the panel, and its status line stays empty. It doesn't talk to VS Code or the service worker.
+> - Getting the lock later isn't coded: every panel load asks for the lock, and the browser frees it when the grading tab closes or leaves the page.
+> - The README has a "One grading tab" section.
+> - To confirm in step 15: content scripts share the Moodle page's locks.
+>
+> The author on the refused tab:
+> > the permission should be the highest order thing: if one tab has already locked that its running the functionality, then other tab wont run any functionality. itll only say that other tab is using.
 
 **Goal:** only one Moodle tab with a grading panel works at a time. A tab that loads a grading panel while another tab is grading shows only a notice. The tab that was grading first keeps grading across its page refreshes and moves to the next student.
 
@@ -821,7 +831,7 @@ To confirm when implementing: the expectation is that content scripts get the pa
 **Decided: the browser lock.**
 > regarding owner tab. lets use the weblocks concept, seems like a good one. the gap seems like a nonissue cause a user has to really try to cause it to happen, and the fallout is minimal too, they can just refresh so whatever.
 
-**Message text:** the solver used the clearer form ("sulge teine vahekaart … siin"), in `translations.feedback.gradingElsewhere`. It awaits the author's review.
+**Message text:** the solver used the clearer form ("sulge teine vahekaart … siin"), in `translations.feedback.gradingElsewhere`. The author approved it.
 
 **How:**
 1. The solver implements it.
@@ -854,6 +864,42 @@ To confirm when implementing: the expectation is that content scripts get the pa
 1. The solver analyses the code and presents the changes needed, with questions.
 2. The author and the solver discuss them.
 3. Then the solver implements it.
+
+**The solver's proposal.** The shared idea: the side that isn't working shows a "take over" button. Pressing it swaps the two sides, so the other side shows the button.
+- **Chrome tab:** Web Locks can `steal` a lock.
+  - The refused tab's button steals the lock and loads its panel as the grading tab.
+  - The browser tells the old tab that its lock was taken. A new content-script controller then runs `loadPage()` there, so the old tab is refused and shows the button.
+  - Unapplied selections in the old tab are lost. What was applied into Moodle's form stays.
+  - The lock name moves into a constants file.
+- **VS Code window:** the window without the port connects to the receiving window as a WebSocket client and sends `reception/hand-over`.
+  - The receiving window answers, closes Chrome's connection and its server, and shows "port in use" and the button.
+  - The asking window starts its server, retrying for a few seconds.
+  - Chrome connects to the new window on the next student, or on "Lae sisupaneel uuesti".
+  - If the receiving window doesn't answer properly, "take over failed" is shown.
+- **VS Code structure:**
+  - `VsCodeMessageReceiver` gets `listen()` and `stop()`.
+  - A new `VsCodeWindowConnectionProvider` is the client.
+  - The `reception/hand-over` channel comes with a generator.
+  - New `ReceptionMessageController` and `ReceptionCommandController`, `ReceptionService` and `ReceptionClient`.
+
+**Decided:**
+- **Buttons:** the take-over button is in the status bar and, as a separate button, in the sidebar's own "Connection" section. Both run the same command.
+  > put in sidebar as separate button. its grayed out when its main, active when its not. also put in status bar, but they both direct to same functionality ofc. in sidebar, see to it that this is also in its own "Connection" section, and move other things related to the connection in there as well if there are any.
+  - The sidebar has nothing else about the connection. It has the settings toggle and the status line, which shows every topic, so both stay where they are.
+- **Texts:** approved as proposed.
+  - VS Code button: "Võta vastuvõtmine üle".
+  - VS Code failure: "VS Code: ülevõtmine ebaõnnestus, teine aken ei vastanud".
+  - Chrome button: "Võta hindamine üle".
+  - Chrome's refused message: "Hindamine käib juba teises Moodle'i vahekaardis. Jätka seal või võta hindamine siia üle."
+- **No confirmation** before taking over.
+  > dont ask, the user already understands what this means
+- **Shared request code:** the request ids, timeouts and waiting for answers in Chrome's `VsCodeConnectionProvider` move to the root `shared/`, so the VS Code client uses them too.
+  > yeah it should be shared
+
+- **Origin check:** there's one check, before any message is handled. It lets in Chrome's origin and connections without an Origin, which only programs on the computer can make. After that, every message is handled the same way.
+  > i wouldnt add a further limitation check. id keep all message handling logic the same, and the origin check acts as a separate check before the message is even distributed to listeners. basically before distribution there is a check to see if message is allowed, and the checking part deals with all that, and then message listeners thing acts as business as usual
+
+**In the implementation:** the channel is named `reception-hand-over`, like the existing `student-submission` channel.
 
 ---
 

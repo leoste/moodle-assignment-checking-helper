@@ -19,6 +19,12 @@ class PortStatusReceiver {
     })
     this.#port = port
   }
+
+  // A port's own disconnect() doesn't fire its onDisconnect, so no waiting status is reported.
+  disconnect(): void {
+    this.#port?.disconnect()
+    this.#port = undefined
+  }
 }
 
 export const portStatusReceiver = new PortStatusReceiver()

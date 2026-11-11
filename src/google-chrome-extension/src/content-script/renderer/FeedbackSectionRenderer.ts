@@ -8,6 +8,7 @@ import { CommentPrefixRenderer } from './CommentPrefixRenderer';
 export interface FeedbackSectionCallbacks {
   onPartToggled: (feedbackIndex: number, partIndex: number, selected: boolean) => void
   onCommentPrefixChanged: (prefix: string) => void
+  onTakeOver: () => void
 }
 
 export class FeedbackSectionRenderer extends BaseRenderer {
@@ -54,7 +55,15 @@ export class FeedbackSectionRenderer extends BaseRenderer {
 
   async renderGradingElsewhere() {
     await this.#clearFeedback()
-    this.#messageElement = createAndAddChildElement(this.element, 'div', null, translations.feedback.gradingElsewhere)
+    this.#messageElement = createAndAddChildElement(this.element, 'div', 'grading-elsewhere')
+    createAndAddChildElement(this.#messageElement, 'div', null, translations.feedback.gradingElsewhere)
+    const takeOverButton = createAndAddChildElement(
+      this.#messageElement,
+      'button',
+      ['checking-helper-button', 'checking-helper-interactive'],
+      translations.feedback.takeOverGrading,
+    )
+    takeOverButton.addEventListener('click', this.#callbacks.onTakeOver)
   }
 
   async #clearFeedback(): Promise<void> {

@@ -45,6 +45,10 @@ export function getServerErrorStatus(): Status {
   return { topic: STATUS_TOPIC_CONNECTION, level: STATUS_LEVEL_PROBLEM, text: translations.connection.serverError }
 }
 
+export function getTakeOverFailedStatus(): Status {
+  return { topic: STATUS_TOPIC_CONNECTION, level: STATUS_LEVEL_PROBLEM, text: translations.connection.takeOverFailed }
+}
+
 export function getStudentSubmissionOpeningStatus(studentName: string): Status {
   return getStudentSubmissionTopicStatus(STATUS_LEVEL_PROGRESS, translations.studentSubmission.opening(studentName))
 }

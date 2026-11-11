@@ -23,6 +23,11 @@ class StatusReporter extends BaseReporter<StatusSink> {
     this.sink.show(this.#getStatuses())
   }
 
+  clearAll(): void {
+    this.#statuses.clear()
+    this.sink.show(this.#getStatuses())
+  }
+
   protected createFallbackSink(): StatusSink {
     return { show: () => {} }
   }

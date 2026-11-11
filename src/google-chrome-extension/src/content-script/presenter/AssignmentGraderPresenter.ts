@@ -17,9 +17,7 @@ import { getBrokenDefinitionsStatus, getDefinitionSearchingStatus, getDefinition
 import { RESPONSE_STATUS_ERROR } from '@shared/constants/vscode-message'
 import { STATUS_TOPIC_BROKEN_DEFINITIONS, STATUS_TOPIC_MOODLE_PAGE } from '@shared/constants/status'
 import { webLockProvider } from '../infrastructure/WebLockProvider'
-
-// Held by the one tab that grades, see "One grading tab" in the README.
-const GRADING_TAB_LOCK_NAME = 'moodle-helper/grading-tab'
+import { GRADING_TAB_LOCK_NAME } from '../constants/locks'
 
 export default class AssignmentGraderPresenter extends BasePresenter {
   readonly #page: AssignmentGraderPage
@@ -31,6 +29,7 @@ export default class AssignmentGraderPresenter extends BasePresenter {
   // A stopped presenter's late answers mustn't overwrite the next page's statuses.
   #stopped = false
   #feedbackShown = false
+  #takingOver = false
 
   constructor(page: AssignmentGraderPage) {
     super()
@@ -38,17 +37,29 @@ export default class AssignmentGraderPresenter extends BasePresenter {
   }
 
   async start(): Promise<void> {
-    statusReporter.clear(STATUS_TOPIC_MOODLE_PAGE)
-    statusReporter.clear(STATUS_TOPIC_BROKEN_DEFINITIONS)
     const isGradingTab = await webLockProvider.acquire(GRADING_TAB_LOCK_NAME)
     logger.info(this, isGradingTab ? 'grading in this tab' : 'another tab is grading')
     if (this.#stopped) return
-    if (!isGradingTab) {
-      const renderer = await this.#insertPanel()
-      await renderer.renderGradingElsewhere()
-      return
-    }
+    if (isGradingTab) await this.#startGrading()
+    else await this.#showGradingElsewhere()
+  }
 
+  async stop(): Promise<void> {
+    this.#stopped = true
+    await this.#renderer?.clear()
+  }
+
+  // The statuses belong to the grading tab, also when this tab's grading was just taken over.
+  async #showGradingElsewhere(): Promise<void> {
+    portStatusReceiver.disconnect()
+    statusReporter.clearAll()
+    const renderer = await this.#insertPanel()
+    await renderer.renderGradingElsewhere()
+  }
+
+  async #startGrading(): Promise<void> {
+    statusReporter.clear(STATUS_TOPIC_MOODLE_PAGE)
+    statusReporter.clear(STATUS_TOPIC_BROKEN_DEFINITIONS)
     portStatusReceiver.connect()
     const studentSubmissionOpened = this.#openStudentSubmission()
     const renderer = await this.#insertPanel()
@@ -67,11 +78,6 @@ export default class AssignmentGraderPresenter extends BasePresenter {
     await this.#renderApplySection()
 
     await studentSubmissionOpened
-  }
-
-  async stop(): Promise<void> {
-    this.#stopped = true
-    await this.#renderer?.clear()
   }
 
   // Called when the definitions were reloaded in the popup. The lecturer's selections and comment prefix are kept where the new definition allows it.
@@ -98,6 +104,7 @@ export default class AssignmentGraderPresenter extends BasePresenter {
       onCommentPrefixChanged: this.#onCommentPrefixChanged,
       onResized: this.#onPanelResized,
       onApply: this.#onApply,
+      onTakeOver: this.#onTakeOver,
     })
     this.#renderer = renderer
     await renderer.render()
@@ -139,6 +146,17 @@ export default class AssignmentGraderPresenter extends BasePresenter {
   #onCommentPrefixChanged = (prefix: string): void => {
     this.#commentPrefix = prefix
     this.#updatePreview()
+  }
+
+  // The tab the grading is taken from loads its panel again through GradingTabController.
+  #onTakeOver = async (): Promise<void> => {
+    if (this.#takingOver) return
+    this.#takingOver = true
+    await webLockProvider.steal(GRADING_TAB_LOCK_NAME)
+    logger.info(this, 'took the grading over from another tab')
+    if (this.#stopped) return
+    await this.#renderer?.clear()
+    await this.#startGrading()
   }
 
   #onPanelResized = (left: number): void => {

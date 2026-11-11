@@ -37,12 +37,12 @@ The settings of the VS Code extension are stored by VS Code itself (`SettingsRep
 Every context is type checked on its own, with only what its environment has: the content script, the popup and the sidebar's page with the DOM, the service worker with a worker's environment and the VS Code app with Node.js. Each context folder has its own `tsconfig.json`, which checks the context and everything it imports. `npm run typecheck` runs all of an extension's checks.
 So shared code may contain page code (renderers, styles, DOM helpers), but a context without the DOM fails its check if it imports it.
 
-Contexts talk only through messages: content script and popup send Chrome messages to the service worker, the service worker sends VS Code messages over a WebSocket. Three messages go the other way: after reloading the definitions, the popup tells the content scripts of all tabs (`assignments/updated`), so an open panel updates itself; the popup's "Lae sisupaneel uuesti" tells the content script of the active tab to load its panel (`panel/reload`); and the service worker sends its statuses to the panel and the popup over a port (see "Status").
+Contexts talk only through messages: content script and popup send Chrome messages to the service worker, the service worker sends VS Code messages over a WebSocket. VS Code windows talk to each other over the same WebSocket port, to hand the reception over (see "One receiving VS Code window"). Three messages go the other way: after reloading the definitions, the popup tells the content scripts of all tabs (`assignments/updated`), so an open panel updates itself; the popup's "Lae sisupaneel uuesti" tells the content script of the active tab to load its panel (`panel/reload`); and the service worker sends its statuses to the panel and the popup over a port (see "Status").
 
 ### Layers
 
 Each layer uses only the layers below it:
-- **Infrastructure** (`infrastructure/`) owns a platform resource and knows nothing about features. Message receivers (`ChromeMessageReceiver` in the service worker and the content script, `VsCodeMessageReceiver`) listen for messages and pass them to handlers, `VsCodeConnectionProvider` sends requests to VS Code, `IndexedDBProvider` owns the IndexedDB connection, `WebLockProvider` holds the content script's Web Locks.
+- **Infrastructure** (`infrastructure/`) owns a platform resource and knows nothing about features. Message receivers (`ChromeMessageReceiver` in the service worker and the content script, `VsCodeMessageReceiver`) listen for messages and pass them to handlers, `VsCodeConnectionProvider` sends requests to VS Code, `VsCodeWindowConnectionProvider` sends requests to the VS Code window that receives the students, `IndexedDBProvider` owns the IndexedDB connection, `WebLockProvider` holds the content script's Web Locks, `StatusBarButtonProvider` owns VS Code's status bar button.
 - **Repositories** (`repository/`) store and load data.
 - **Services** (`service/`) do what the application does.
 - **Controllers** (`controller/`) register message handlers and pass the messages on to services. The content script and the sidebar's page have no services, so their controllers pass them on to the page listener.
@@ -63,9 +63,10 @@ Each layer uses only the layers below it:
 
 ### Messages
 
-A message is transport-specific: `ChromeMessage` (`{ type, content }` over `chrome.runtime`), `VsCodeMessage` (`{ channel, content }` over WebSocket) or `WebviewMessage` (`{ type, content }` between the VS Code app and the sidebar's page). Its `content` is a payload (`BasePayload`), the part that is the same in both extensions.
+A message is transport-specific: `ChromeMessage` (`{ type, content }` over `chrome.runtime`), `VsCodeMessage` (`{ channel, content }` over WebSocket, from Chrome or from another VS Code window) or `WebviewMessage` (`{ type, content }` between the VS Code app and the sidebar's page). Its `content` is a payload (`BasePayload`), the part that is the same in both extensions.
 Every message key has exactly one payload type, listed in `ChromeMessagePayloads`, `VsCodeMessagePayloads` and `WebviewMessagePayloads`. Generators and controllers are type checked against these maps, so a new message is added there first.
 Everything around a message is named `<message type><role>`: `ChromeMessageClient`, `VsCodeMessageReceiver`, `QuizChromeMessageGenerator` etc.
+A `VsCodeMessage` is a request that VS Code answers with a status. `VsCodeRequestTracker` (`shared/object/`) pairs the requests with their answers and times them out, for Chrome and for a VS Code window alike.
 
 ### Storage
 
@@ -75,12 +76,23 @@ The Chrome extension stores data in two backends:
 
 Every stored key is in `shared/constants/storage.ts` and its value type in `StorageSchema`. Repositories are type checked against the schema, so new storage is added there first. Outside the repositories, code only uses their domain methods, e.g. `DirectoryHandleRepository.getDirectoryHandle()`, never keys.
 
+### One receiving VS Code window
+
+Every VS Code window starts the extension, but only the window whose server has the port receives the students. The others show "port in use" and a take-over button, in the status bar (`StatusBarButtonProvider`) and in the sidebar's "Ühendus" section, where the button is greyed out in the receiving window. `ReceptionService` starts the server and swaps the windows:
+1. The window taking over connects to the port as a client (`VsCodeWindowConnectionProvider`) and sends `reception-hand-over`.
+2. The receiving window answers, closes Chrome's connection and its server, and shows "port in use" and the button.
+3. The window taking over starts its server, retrying for a few seconds until the port is free. If nobody answered, the port is free already, so it just starts.
+4. Chrome's connection closed with the old server; it connects to the new one with the next request.
+
+The origin check (`isAllowedOrigin()`) runs before any message is handled. It lets in Chrome's origin and connections without an Origin: browsers always send the page's Origin, so a connection without one comes from a program on this computer, such as another VS Code window. Messages are then handled the same way, whoever sent them.
+
 ### One grading tab
 
 Only one Moodle tab grades at a time, much like only one VS Code window receives the students. The grading panel holds a Web Lock (`WebLockProvider`), which all tabs of the Moodle site share. It keeps the lock for as long as its page lives, so moving to the next student keeps it too.
-- A panel that starts while another tab holds the lock shows only a message (`translations.feedback.gradingElsewhere`). It doesn't open the student's files in VS Code, look the definition up or connect to the service worker's statuses.
-- The browser frees the lock when the grading tab closes or leaves the grading page. The other tab then takes it over on its next page load or "Lae sisupaneel uuesti".
-- A full refresh frees the lock for a moment. A tab that loads its panel in that moment takes it over.
+- A panel that starts while another tab holds the lock shows only a message (`translations.feedback.gradingElsewhere`) and a take-over button. It doesn't open the student's files in VS Code, look the definition up or connect to the service worker's statuses, and it clears the statuses it had.
+- The take-over button steals the lock, and the panel starts grading. The browser tells the tab that held the lock, and its `GradingTabController` loads that tab's panel again, which now shows the message and the button.
+- The browser frees the lock when the grading tab closes or leaves the grading page. The other tab then takes it on its next page load or "Lae sisupaneel uuesti".
+- A full refresh frees the lock for a moment. A tab that loads its panel in that moment takes it.
 
 ### Lifecycle
 
@@ -129,4 +141,4 @@ The script stops if the two versions differ. Otherwise it installs the dependenc
 `node build-release.mjs --no-type-checking` skips the type checks.
 
 The Chrome extension's ID is fixed by the public `key` in `manifest.config.ts`, so it is the same for every user and every version, wherever the extension is unpacked. The private key isn't needed and isn't in the repository.
-VS Code accepts WebSocket connections only from this extension: it checks the `Origin` header against `CHROME_EXTENSION_ID` in `shared/config/connection.ts`. If the key ever changes, that ID has to be updated too.
+VS Code accepts WebSocket connections only from this extension and from programs on the computer, such as its other windows: it checks the `Origin` header against `CHROME_EXTENSION_ID` in `shared/config/connection.ts` (see "One receiving VS Code window"). If the key ever changes, that ID has to be updated too.

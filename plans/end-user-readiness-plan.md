@@ -21,7 +21,7 @@ On 2026-11-09 the whole project was analysed for obstacles between its current f
 
 Order: step 1 is independent. Steps 2–4 build on each other: the status line of step 3 lives in the bottom strip of step 2, and step 4 rewrites the texts of steps 2–3. Step 5 comes after them because it styles every UI, including the new ones. Step 6 tests everything steps 1–5 changed.
 
-Steps 7–14 work through what was the README's "Future concerns" section (see "Part 2" below).
+Steps 7–15 work through what was the README's "Future concerns" section (see "Part 2" below). Step 13 came up along the way.
 
 ## How to read this plan
 
@@ -491,7 +491,7 @@ After step 6 the author went through the README's "Future concerns" one by one: 
 | Panel as a separate window (item 6) | Only the README, with the new requirement | 10 |
 | Opening sub-directories is a compile-time setting | A VS Code settings UI; options first | 11 |
 | Page ready detection | A manual reload as a failsafe; discussion first | 12 |
-| Switching the receiving VS Code window | Analysis and discussion first | 13 |
+| Switching the receiving VS Code window | Analysis and discussion first; joined by the Chrome tab takeover | 14 |
 | Database | Not decided yet; not in the author's breakdown | — |
 
 The author then removed the README's "Future concerns" section altogether, so this plan is now the only place for these items. Each step below keeps the README entry's technical details under "From the README".
@@ -502,8 +502,9 @@ The author then removed the README's "Future concerns" section altogether, so th
 **Order:**
 - Steps 7–8 are the blocks with several items.
 - Steps 9–10 are single items that need no input from the author.
-- Steps 11–13 are single items where the author decides after the solver's input.
-- Step 14 tests steps 7–13 in one round, as step 6 did for steps 1–5.
+- Steps 11–12 and 14 are single items where the author decides after the solver's input.
+- Step 13 isn't from the README: it came up during step 12.
+- Step 15 tests steps 7–14 in one round, as step 6 did for steps 1–5.
 
 ---
 
@@ -539,7 +540,7 @@ The author then removed the README's "Future concerns" section altogether, so th
 >   - `CHROME_EXTENSION_ID` and `CHROME_EXTENSION_ORIGIN` are in `shared/config/connection.ts`.
 >   - `VsCodeMessageReceiver` closes a connection from any other origin with code 1008, before any message handling is attached, and logs it.
 >   - The README's "Releasing" section explains the dependency on the key.
->   - Step 13's VS Code-to-VS Code connection will have to take this check into account.
+>   - Step 14's VS Code-to-VS Code connection will have to take this check into account.
 
 **Goal:**
 - Moodle's form notices the applied grade and comment.
@@ -677,7 +678,29 @@ The author then removed the README's "Future concerns" section altogether, so th
 
 ---
 
-## Step 11: VS Code settings (opening sub-directories)
+## Step 11: VS Code settings (opening sub-directories) ✅
+
+> **Done:** decided and built as described below. The author's typechecks passed, and the version became 1.0.3. Details:
+> - **Settings (A):** `moodle-helper.openSubDirectories` is declared in `package.json` (default `true`) and stored in the user's settings.
+>   - `SettingsRepository` (on the root `BaseRepository`) reads and writes it.
+>   - `SettingsService` sends the settings to the sidebar at start and after every change, including changes made in VS Code's Settings editor.
+>   - The student-files service reads the setting; `OPEN_SUB_DIRECTORIES` and `shouldCollectSubFolders()` are gone.
+> - **Texts:** all `package.json` texts are in `package.nls.json`. The sidebar's texts are in `translations.ts`.
+> - **The sidebar (C):** our own icon in VS Code's left bar opens a webview view.
+>   - `SidebarViewProvider` (infrastructure, on `BaseMessageReceiver`) owns the page and keeps the latest message of every type. It sends them all when the page reports it's ready, so a reopened sidebar shows the current state.
+>   - The third message transport, `WebviewMessage`, has its constants, payloads, generators and handler map in VS Code's `src/shared/`.
+>   - On the app's side, `SettingsController` receives changes; `SettingsClient` and `StatusClient` send.
+> - **The sidebar's page (`src/webview/`):** a context of its own, built like the popup.
+>   - Infrastructure `VsCodeApiProvider` and `WebviewMessageReceiver`, plus clients and a controller.
+>   - The singleton page listener `SidebarListener` creates the ordinary `SidebarPresenter`, whose renderers show the toggle and the status line.
+>   - esbuild builds it as a second, browser build into `dist/webview/`.
+> - **Statuses:** `StatusSinkGroup` (root `shared/reporting/`) shows them in the status bar and in the sidebar.
+> - **Shared page code:** `BaseRenderer`, `StatusLineRenderer`, `BasePresenter`, the element-creation helper and `theme.css` moved to the root `src/shared/` by kind, and `BaseRepository` too. The Chrome-only image helper stayed in Chrome. The Chrome pages import the stylesheet in their code.
+> - **Type checks:** one per component.
+>   - Chrome: `content-script/`, `popup/` (with the DOM), `service-worker/` (`WebWorker`), plus the extension-wide check.
+>   - VS Code: the app (no DOM, only what it imports) and `webview/` (DOM).
+>   - The README has a "Type checking" section.
+> - **Release script:** runs both extensions' type checks unless `--no-type-checking` is given.
 
 **Goal:** the VS Code extension gets a place for its settings, like the Chrome popup. Opening sub-directories becomes a true/false setting there.
 
@@ -740,11 +763,72 @@ So, like the content script, a singleton page listener (`webview/pagelistener/Si
 
 *From the README:* `executeOnPageReady` runs the callback only after at least one DOM mutation followed by 1.2 s of silence. If the page is already quiet when the content script starts, or never gets quiet (e.g. a timer), the callback never runs. The URL polling interval runs forever, and every navigation creates a new `MutationObserver`. So far it has always worked.
 
+**Decided:** the button only skips the page-ready detection, and loads the panel the same way the detection does.
+> the manual reload button only exists to circumvent the observer, it doesnt do anything else uniquely. its just a "skip mutation observing" button basically.
+
+When the active tab has no panel content script, the popup's status line says so:
+> popup status should say "Laiendus pole veel aktiveeritud. Värskenda Moodle'i lehte, et laiendus muutus aktiivseks."
+
+The solver wrote "muutuks" in place of "muutus", the grammatical form for "so that it would become". The text is in `translations.popup.panelNotActivated`.
+
+**Raised in this step:** grading in only one Moodle tab. It became step 13.
+
 ---
 
-## Step 13: Switching the receiving VS Code window
+## Step 13: One grading tab
 
-**Goal:** the VS Code window that doesn't receive students can take the reception over.
+**Goal:** only one Moodle tab with a grading panel works at a time. A tab that loads a grading panel while another tab is grading shows only a notice. The tab that was grading first keeps grading across its page refreshes and moves to the next student.
+
+**Author's decision:**
+> i actually intend the person to always be using only one moodle tab and havent even considered the possibility that multiple tabs could be used. lets fix this by enforcing singularity. know how in vscode you have the thing that sees websocket already open, i.e basically vscode knows other vscode instance is already using. could we do some check for chrome so if moodle is already open in other tab with the extension active there (key part: with the extension having an active panel, cause not all moodle pages cause the panel to appear), it wouldnt work? and this one would take priority, by this i mean that between page refreshes it wouldnt lose its ownership of the assignmetn checking process.
+
+> i would like to handle the one grading tab separately from the rest of these changes, own step like you said.
+
+**First proposal (in step 12): an owner record.**
+- The service worker keeps the owner tab's id in `chrome.storage.session`.
+- A starting panel claims ownership. The claim is granted if there is no owner or the owner is the claiming tab.
+- If another tab owns it, the claim is refused while that tab is loading or its grading script answers a ping.
+
+**The author's question:**
+> regarding the one grading tab though, even though i called it ownerism, idk if actually coding in the concept of owner is needed? or is the case that there is no clear detection, like in vscode we can detect that socket is in use but here theres nothing to indicate it?
+
+**The solver's answer: the browser has its own equivalent of the port.** In VS Code, the operating system holds the port and frees it when the window closes. Chrome's Web Locks API (`navigator.locks`) works the same way for tabs:
+- All tabs of the same site (Moodle's origin) share their locks.
+- A tab asks for a named lock "only if free" and gets yes or no at once.
+- The browser frees the lock when the page that holds it closes or goes away.
+
+With it:
+- No owner record, no service worker messages and no pings are needed.
+- The grading script asks for the lock when it starts and holds it as long as its page lives. Moving to the next student keeps the same page, and so the lock.
+- A second grading tab gets "no" and shows the notice.
+- Once the grading tab closes or leaves the grading page, another tab gets the lock on its next load or "Lae sisupaneel uuesti".
+
+The gap: during a full refresh, the old page frees the lock and the new page takes it again moments later. A second grading tab that loads in that moment, or has its panel reloaded then, wins. A refused tab doesn't retry by itself, so this takes the lecturer acting in the other tab during that moment. The owner record closes the gap by treating a loading owner tab as still grading, at the cost of the service worker, storage and a ping message. VS Code has the same gap when the receiving window reloads.
+
+To confirm when implementing: the expectation is that content scripts get the page's locks, as they get the page's storage.
+
+**Decided:**
+- **What the refused tab shows:** the same as the panel without a definition, an empty panel with a message, plus the status line.
+  > refused tab shows  just status line. if theres no definitions its empty panel with some message. and in same style, if its not owned then we do same but show the message you proposed
+- **The message proposed in step 12:** "Hindamine käib juba teises Moodle'i vahekaardis. Jätka seal või sulge see vahekaart ja lae sisupaneel uuesti." The solver noted that "sulge see vahekaart" can read as "close this tab". A clearer form would be "…või sulge teine vahekaart ja lae sisupaneel siin uuesti." This is still open.
+- **No takeover button in this step:** taking over is one feature across both extensions, so it moved to step 14.
+
+**Still to decide:** the mechanism (browser lock or owner record) and the message text.
+
+**How:**
+1. The author decides what is still open.
+2. The solver implements it.
+
+---
+
+## Step 14: Taking over: the receiving VS Code window and the grading tab
+
+**Goal:**
+- The VS Code window that doesn't receive students can take the reception over.
+- A Moodle tab refused in step 13 can take the grading over.
+
+**Author's decision on joining them:**
+> and takeover button: lets not add it here, but combine this idea into same task which handles vscode takeover possibility, as takeover is basically one feature even though its done in two different extensions
 
 *From the README:*
 - **The problem:** every VS Code window starts the extension, but only the first one gets the port and receives the students. The others show "port in use", and the only way to move the reception is to close the windows and open VS Code again in the right folder. The window without the port could offer a status bar button "switch to this window", after which the two windows swap.
@@ -765,9 +849,9 @@ So, like the content script, a singleton page listener (`webview/pagelistener/Si
 
 ---
 
-## Step 14: Testing
+## Step 15: Testing
 
-**Goal:** test everything steps 7–13 changed, once and as a whole, then fix what the test finds. This works like step 6: the author reports findings, and nothing is fixed until the author says the testing is finished.
+**Goal:** test everything steps 7–14 changed, once and as a whole, then fix what the test finds. This works like step 6: the author reports findings, and nothing is fixed until the author says the testing is finished.
 
 ---
 

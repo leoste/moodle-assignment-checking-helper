@@ -16,6 +16,7 @@ export interface PopupSource {
 export interface PopupCallbacks {
   onSelectFolder: (source: FileSourceInfo) => void
   onRefresh: () => void
+  onReloadPanel: () => void
 }
 
 export default class PopupRenderer extends BaseRenderer {
@@ -28,6 +29,8 @@ export default class PopupRenderer extends BaseRenderer {
   readonly #statusContainer: HTMLElement
   readonly #introHint: HTMLElement
   readonly #refreshHint: HTMLElement
+  readonly #reloadPanelBtn: HTMLButtonElement
+  readonly #reloadPanelHint: HTMLElement
 
   readonly #folderNameElements = new Map<FileSourceInfo, HTMLElement>()
   #definitionListRenderer: DefinitionListRenderer | undefined
@@ -44,6 +47,8 @@ export default class PopupRenderer extends BaseRenderer {
     this.#statusContainer = document.getElementById('status-container')!
     this.#introHint = document.getElementById('intro-hint')!
     this.#refreshHint = document.getElementById('refresh-hint')!
+    this.#reloadPanelBtn = document.getElementById('reload-panel-btn') as HTMLButtonElement
+    this.#reloadPanelHint = document.getElementById('reload-panel-hint')!
   }
 
   protected createRoot(): HTMLElement {
@@ -53,17 +58,21 @@ export default class PopupRenderer extends BaseRenderer {
   protected async renderContent(root: HTMLElement): Promise<void> {
     this.#introHint.textContent = translations.popup.intro
     this.#refreshHint.textContent = translations.fileSource.refreshHint
+    this.#reloadPanelBtn.textContent = translations.popup.reloadPanel
+    this.#reloadPanelHint.textContent = translations.popup.reloadPanelHint
     for (const source of this.#sources) {
       this.#addSourceElement(root, source)
     }
     this.setRefreshing(false)
     this.#refreshBtn.addEventListener('click', this.#callbacks.onRefresh)
+    this.#reloadPanelBtn.addEventListener('click', this.#callbacks.onReloadPanel)
     this.#statusLineRenderer = new StatusLineRenderer(this.#statusContainer)
     await this.#statusLineRenderer.render()
   }
 
   async clear(): Promise<void> {
     this.#refreshBtn.removeEventListener('click', this.#callbacks.onRefresh)
+    this.#reloadPanelBtn.removeEventListener('click', this.#callbacks.onReloadPanel)
     this.#folderNameElements.clear()
     await this.#definitionListRenderer?.clear()
     await this.#statusLineRenderer?.clear()

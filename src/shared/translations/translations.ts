@@ -29,6 +29,9 @@ export const translations = {
 
   popup: {
     intro: "Abipaneel ilmub Moodle'is ülesande hindamislehele. Selleks vali siin kõigepealt definitsioonide kaust.",
+    reloadPanel: 'Lae sisupaneel uuesti',
+    reloadPanelHint: "Kui abipaneel Moodle'i hindamislehel ei ilmu, lae see siit uuesti.",
+    panelNotActivated: "Laiendus pole veel aktiveeritud. Värskenda Moodle'i lehte, et laiendus muutuks aktiivseks.",
   },
 
   definitions: {

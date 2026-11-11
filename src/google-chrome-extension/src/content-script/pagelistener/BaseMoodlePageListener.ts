@@ -8,16 +8,15 @@ export default abstract class BaseMoodlePageListener<TPage extends MoodlePage> e
   #presenter: BasePresenter | undefined
 
   protected override onInit(): undefined {
-    executeOnPageReady(() => this.#onPageReady())
+    executeOnPageReady(() => {
+      logger.info(this, `page ready: ${location.href}`)
+      void this.loadPage()
+    })
   }
 
-  protected abstract createPage(): TPage
-
-  protected abstract createPresenter(page: TPage): BasePresenter
-
-  async #onPageReady(): Promise<void> {
-    logger.info(this, `page ready: ${location.href}`)
-
+  // Replaces the previous page load's presenter, if there is one, with a new one.
+  // Runs when the page is ready, and when the lecturer reloads the panel from the popup, skipping the page ready detection.
+  async loadPage(): Promise<void> {
     if (this.#presenter) {
       await this.#presenter.stop()
       logger.info(this.#presenter, 'stopped')
@@ -28,4 +27,8 @@ export default abstract class BaseMoodlePageListener<TPage extends MoodlePage> e
     await this.#presenter.start()
     logger.info(this.#presenter, 'started')
   }
+
+  protected abstract createPage(): TPage
+
+  protected abstract createPresenter(page: TPage): BasePresenter
 }

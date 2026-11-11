@@ -2,7 +2,7 @@
   "name": "moodle-assignment-checking-helper",
   "displayName": "%extension.displayName%",
   "description": "%extension.description%",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "publisher": "karl-aleksander-leoste",
   "author": "Karl Aleksander Leoste",
   "icon": "images/icon.png",

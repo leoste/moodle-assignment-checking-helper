@@ -24,7 +24,7 @@ Code paths in this README are relative to `src/`.
 - `google-chrome-extension/` is the main extension. It runs in three contexts:
   - `content-script/` runs on Moodle pages and adds the helper panel and buttons.
   - `service-worker/` runs in the background, holds the data and talks to VS Code.
-  - `popup/` selects and refreshes the definitions folder.
+  - `popup/` selects and refreshes the definitions folder, and can reload the panel in the active tab.
 - `visual-studio-code-extension/` gets the student being graded from Chrome and opens their files. It runs in two contexts:
   - the extension's app (`src/` apart from `webview/`) runs in VS Code's background.
   - `webview/` is the sidebar's page: the settings and a copy of the status bar, in the panel's look.
@@ -37,7 +37,7 @@ The settings of the VS Code extension are stored by VS Code itself (`SettingsRep
 Every context is type checked on its own, with only what its environment has: the content script, the popup and the sidebar's page with the DOM, the service worker with a worker's environment and the VS Code app with Node.js. Each context folder has its own `tsconfig.json`, which checks the context and everything it imports. `npm run typecheck` runs all of an extension's checks.
 So shared code may contain page code (renderers, styles, DOM helpers), but a context without the DOM fails its check if it imports it.
 
-Contexts talk only through messages: content script and popup send Chrome messages to the service worker, the service worker sends VS Code messages over a WebSocket. Two messages go the other way: after reloading the definitions, the popup tells the content scripts of all tabs (`assignments/updated`), so an open panel updates itself; and the service worker sends its statuses to the panel and the popup over a port (see "Status").
+Contexts talk only through messages: content script and popup send Chrome messages to the service worker, the service worker sends VS Code messages over a WebSocket. Three messages go the other way: after reloading the definitions, the popup tells the content scripts of all tabs (`assignments/updated`), so an open panel updates itself; the popup's "Lae sisupaneel uuesti" tells the content script of the active tab to load its panel (`panel/reload`); and the service worker sends its statuses to the panel and the popup over a port (see "Status").
 
 ### Layers
 
@@ -51,7 +51,7 @@ Each layer uses only the layers below it:
 
 - **Clients** (`client/`) send the messages of one feature, e.g. `FeedbackClient`.
 - **Generators** (`generator/`) put messages together, e.g. `QuizChromeMessageGenerator.getBeginAutoGradeMessage()`.
-- **Page listeners** (`pagelistener/`) start a page: they create its presenter and pass the controllers' messages on to it. The content script's listeners create a new page and presenter on every Moodle page load, the sidebar's listener once.
+- **Page listeners** (`pagelistener/`) start a page: they create its presenter and pass the controllers' messages on to it. The content script's listeners create a new page and presenter on every Moodle page load, the sidebar's listener once. A content script listener's `loadPage()` stops the previous presenter, if there is one, and starts a new one. It runs when `executeOnPageReady` finds the page ready, and when the popup's `panel/reload` skips that detection. Both take the same path.
 - **Presenters** (`presenter/`) run the workflow of one page load: fetch data, create renderers, react to their events, apply rules and write the results to the page. A presenter holds the state of that page load.
 - **Rules** (`rules/`) are the project's own decisions as plain functions, e.g. `calculateGrade()`, `isStudentFolder()`. In the service worker the services play this role.
 - **Pages** (`content-script/pagemanager/`) are the only place that knows Moodle's DOM, e.g. `AssignmentGraderPage.setGrade()`.

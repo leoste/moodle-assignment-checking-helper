@@ -18,4 +18,18 @@ export default class ChromeMessageClient extends BaseClient {
         await chrome.tabs.sendMessage(tab.id, message).catch(() => {})
       }))
     }
+
+    // Sends to the content script of the tab the lecturer is looking at.
+    // False when no content script there listens for messages, e.g. when the page was open before the extension was installed.
+    protected async sendToActiveTab(message: ChromeMessage): Promise<boolean> {
+      logger.info(this, `sent ${message.type} to the active tab`, message.content)
+      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true })
+      if (tab?.id === undefined) return false
+      try {
+        await chrome.tabs.sendMessage(tab.id, message)
+        return true
+      } catch {
+        return false
+      }
+    }
 }

@@ -6,6 +6,7 @@ import type {
   FEEDBACK_GET,
   FILES_GET_SOURCES,
   FILES_UPDATE_CACHE,
+  PANEL_RELOAD,
   QUIZ_AUTO_GRADE_BEGIN,
   QUIZ_AUTO_GRADE_END,
   QUIZ_AUTO_GRADE_IS_ACTIVE,
@@ -22,6 +23,7 @@ export type ChromeMessagePayloads = {
   [ASSIGNMENTS_UPDATED]: BasePayload
   [FEEDBACK_GET]: AssignmentIdPayload
   [STUDENT_SUBMISSION_OPEN]: StudentNamePayload
+  [PANEL_RELOAD]: BasePayload
   [QUIZ_AUTO_GRADE_BEGIN]: AutoGradeIdPayload
   [QUIZ_AUTO_GRADE_END]: AutoGradeIdPayload
   [QUIZ_AUTO_GRADE_IS_ACTIVE]: AutoGradeIdPayload

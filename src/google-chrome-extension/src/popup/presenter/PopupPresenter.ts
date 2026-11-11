@@ -2,6 +2,7 @@ import BasePresenter from '@shared/presenter/BasePresenter'
 import PopupRenderer, { type PopupSource } from '../renderer/PopupRenderer'
 import { fileCacheClient } from '../client/FileCacheClient'
 import { assignmentClient } from '../client/AssignmentClient'
+import { panelClient } from '../client/PanelClient'
 import { directoryHandleRepository } from '../../shared/repository/DirectoryHandleRepository'
 import { folderAccessService } from '../service/FolderAccessService'
 import type { FileSourceInfo } from '../../shared/types/FileSourceInfo'
@@ -14,8 +15,9 @@ import {
   getDefinitionsFolderStatus,
   getDefinitionsLoadingStatus,
   getNoFolderPermissionStatus,
+  getPanelNotActivatedStatus,
 } from '../../shared/rules/status-rules'
-import { STATUS_TOPIC_BROKEN_DEFINITIONS } from '@shared/constants/status'
+import { STATUS_TOPIC_BROKEN_DEFINITIONS, STATUS_TOPIC_PANEL } from '@shared/constants/status'
 
 export default class PopupPresenter extends BasePresenter {
   #renderer: PopupRenderer | undefined
@@ -33,6 +35,7 @@ export default class PopupPresenter extends BasePresenter {
     this.#renderer = new PopupRenderer(sources, {
       onSelectFolder: this.#onSelectFolder,
       onRefresh: this.#onRefresh,
+      onReloadPanel: this.#onReloadPanel,
     })
     await this.#renderer.render()
     statusReporter.setSink(this.#renderer.statusLine)
@@ -41,6 +44,13 @@ export default class PopupPresenter extends BasePresenter {
 
   async stop(): Promise<void> {
     await this.#renderer?.clear()
+  }
+
+  #onReloadPanel = async (): Promise<void> => {
+    const reloaded = await panelClient.reloadPanel()
+    logger.info(this, reloaded ? 'panel reloaded' : 'no panel to reload in the active tab')
+    if (reloaded) statusReporter.clear(STATUS_TOPIC_PANEL)
+    else statusReporter.report(getPanelNotActivatedStatus())
   }
 
   #onSelectFolder = async (source: FileSourceInfo): Promise<void> => {

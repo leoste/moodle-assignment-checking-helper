@@ -11,6 +11,7 @@ import {
   STATUS_TOPIC_DEFINITION,
   STATUS_TOPIC_DEFINITIONS_FOLDER,
   STATUS_TOPIC_MOODLE_PAGE,
+  STATUS_TOPIC_PANEL,
 } from '@shared/constants/status'
 import { translations } from '@shared/translations/translations'
 
@@ -78,6 +79,10 @@ function getMismatchText(mismatch: SampleMismatch | null): string {
     case MISMATCH_WRONG_TYPE:
       return texts.wrongType(path, texts.valueTypes[mismatch.expectedType])
   }
+}
+
+export function getPanelNotActivatedStatus(): Status {
+  return { topic: STATUS_TOPIC_PANEL, level: STATUS_LEVEL_PROBLEM, text: translations.popup.panelNotActivated }
 }
 
 export function getElementNotFoundStatus(selector: string): Status {

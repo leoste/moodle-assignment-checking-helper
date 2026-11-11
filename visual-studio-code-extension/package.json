@@ -1,7 +1,7 @@
 {
   "name": "moodle-assignment-checking-helper",
   "displayName": "Moodle Assignment Checking Helper",
-  "description": "Listens for signals from the Chrome extension and opens student files in VS Code.",
+  "description": "Võtab Chrome'i laienduselt vastu hinnatava õpilase ja avab tema failid VS Code'is.",
   "version": "1.0.1",
   "publisher": "karl-aleksander-leoste",
   "author": "Karl Aleksander Leoste",
@@ -12,7 +12,7 @@
     "commands": [
       {
         "command": "moodle-helper.runPythonInTerminal",
-        "title": "Run Python script in a new terminal"
+        "title": "Käivita Pythoni skript uues terminalis"
       }
     ],
     "menus": {

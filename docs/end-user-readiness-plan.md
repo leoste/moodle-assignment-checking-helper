@@ -131,7 +131,17 @@ Follow-up answers:
 
 ---
 
-## Step 3: Status bars
+## Step 3: Status bars ✅
+
+> **Done:** built according to the approved design (below). Details:
+> - **`BaseReporter`** has `setSink()`, `hasSink()` and a fallback sink. The logger's behaviour is unchanged: its sink is still set once, with the console as fallback. `statusReporter.setSink()` is public and immediately shows the current statuses in the new sink; its fallback sink shows nothing.
+> - **Folders:** the logger moved from `shared/logging/` to `shared/reporting/`; the author deleted the old files. The extensions' own reporting files are in `reporting/` folders: VS Code `src/reporting/`, Chrome `service-worker/reporting/` and `src/shared/reporting/`. Which status a situation gets is decided in two new `rules/` folders: root `shared/rules/` and Chrome's `src/shared/rules/`.
+> - **Requests without a response:** `VsCodeConnectionProvider` now resolves them with a status (`unreachable` / `no-answer`) instead of rejecting.
+> - **New response shapes:** `feedback/get` answers with a `DefinitionLookup`, `assignments/get-all` with `Definitions` (assignments plus broken file names).
+> - **Stored definitions:** they now keep file names. A copy stored in the old format counts as not loaded, so definitions have to be reloaded once after updating.
+> - **Non-JSON files are reported as broken:** every file in the definitions folder is read. This is documented in the README entry "Definition structure validation"; the author accepted it as is.
+> - **Late answers:** a stopped presenter's late answers don't overwrite the next page's statuses. Only the status reports are guarded; the page flow is unchanged.
+> - **Smaller decisions:** an empty student name is answered with "not found". VS Code's existing warning pop-ups stay unchanged.
 
 **Goal:** both extensions have their own status bar that shows the current state: connection, the latest events and problems. Both behave the same way, so they feel like one tool.
 
@@ -201,7 +211,16 @@ So `BaseReporter`, the logger and the status reporter are all in `shared/reporti
 
 ---
 
-## Step 4: Texts and hints
+## Step 4: Texts and hints ✅
+
+> **Done:** the solver proposed Estonian wording; the author changed parts of it and approved the result. Details:
+> - **Hint 3** ("moving to another student starts fresh") was left out: "see hint pole üldse vajalik sain just aru, jätame selle välja".
+> - **Hint 1** became the apply state. Before applying it reads "Rakenda muudatused Moodle'isse", after applying "Rakendatud. Salvesta Moodle'i nupuga."
+> - **Hint 4** is the author's own text: "Pärast definitsioonifailide muutmist on vaja käsitsi vajutada värskendamise nuppu. Muudatused võetakse kasutusele Moodle'i lehe värskendamisel."
+> - **Hint 7** is the quiz button's own label: "Anna maksimumpunktid ilma kommentaarita (salvestab kohe)".
+> - **Where the hints are:** the resize hint is under the panel title, hint 2 under the apply preview, and the intro (hint 5) and the reload hint (hint 4) are in the popup.
+> - **Other text changes:** the "label:" prefix is gone, so its translation entry was removed. The "Kommentaari algus" box got a placeholder text.
+> - **VS Code `package.json`:** the description and the Python command title are in Estonian.
 
 **Goal:** the panel and popup tell the lecturer how they're used together with Moodle, and every text says what to do next.
 
@@ -285,9 +304,48 @@ The extension name "Moodle Assignment Checking Helper" stays in English as a pro
 
 ---
 
+## Final test round
+
+The author tests the whole system once after step 5, then fixes in one test-fix cycle. What the steps changed and what to check:
+
+**Release and install (step 1)**
+1. `node build-release.mjs` builds `releases/1.0.1/` with the zip and the `.vsix`. Running it again asks whether to overwrite.
+2. Both releases install. Afterwards choose the definitions folder and reload once, because the extension ID changed and old stored definitions count as not loaded.
+
+**Popup (steps 3–5)**
+
+3. The popup has the panel's look: frame, colours, hints, and the status line at the bottom. The buttons glow on hover.
+4. Choosing a folder and reloading shows how many definitions are loaded in the status line. Broken files are named there too.
+5. Refusing the folder permission shows the no-permission status. Without a folder, the status says the folder isn't chosen.
+6. The status line shows the VS Code connection.
+
+**Panel (steps 2–5)**
+
+7. Opening a student leaves Moodle's grade and comment fields untouched. The preview shows the default values and the state says "Rakenda muudatused Moodle'isse".
+8. Clicking anywhere in a part's box toggles it. The part boxes, "Kommentaari algus", the apply button and the left edge glow on hover.
+9. "Rakenda Moodle'isse" fills in Moodle's fields and the state changes. Moodle's save button saves both the grade and the comment.
+10. With a long definition the feedback scrolls and the strip stays visible.
+11. Without a definition, the panel shows what to do, the status line shows the reason and the assignment ID, and there's no apply section.
+12. The connection statuses go reconnecting → connected, then "ühendus puudub" about 30 s later. VS Code's answer shows for the student. With VS Code closed, the status says "VS Code pole avatud või laiendus pole paigaldatud".
+13. Switching students quickly: the statuses belong to the current student.
+14. Resizing from the left edge still works.
+
+**VS Code (step 3)**
+
+15. The status bar item shows the connection and the latest student. Clicking it opens the Output log. Problems give it the warning background.
+16. With a second VS Code window open, its status bar says the port is taken, and the first window receives the students.
+17. No folder open, or a student's folder missing, show the status plus the Estonian warning.
+18. The Python command and terminal names are in Estonian.
+
+**Quiz (steps 4–5)**
+
+19. The quiz button has its new label, the look and the hover glow, and it still gives the maximum points and saves.
+
+---
+
 ## Appendix A: points for the end-user guide
 
-This is what the project declares as of 2026-11-11, collected for the author's guide. Nothing here is invented. The panel parts change with steps 2–5, so update them when the guide is written.
+This is what the project declares after step 5, collected for the author's guide. Nothing here is invented.
 
 **Installing (after step 1):**
 - **Chrome:** unzip the zip, open `chrome://extensions`, turn on Developer mode, then Load unpacked.
@@ -300,15 +358,20 @@ This is what the project declares as of 2026-11-11, collected for the author's g
 - The extensions talk over `ws://127.0.0.1:54321`, so that port must be free ([connection.ts](../shared/config/connection.ts)).
 
 **Popup and definitions folder:**
+- The popup opens with the hint "Abipaneel ilmub Moodle'is ülesande hindamislehele. Selleks vali siin kõigepealt definitsioonide kaust."
 - "Vali definitsioonide kaust" opens a folder picker with read-only access. The popup then shows the folder name, or "Kaust valimata" ([FolderAccessService.ts](../google-chrome-extension/src/popup/service/FolderAccessService.ts)).
 - Definitions load as soon as a folder is chosen.
-- "Lae failidest uuesti" reads the files again. The popup then shows the time of the last load, or "Pole laetud" ([PopupRenderer.ts](../google-chrome-extension/src/popup/renderer/PopupRenderer.ts)).
+- "Lae failidest uuesti" reads the files again. The popup then shows the time of the last load, or "Definitsioonid puuduvad" ([PopupRenderer.ts](../google-chrome-extension/src/popup/renderer/PopupRenderer.ts)). The hint under the button: "Pärast definitsioonifailide muutmist on vaja käsitsi vajutada värskendamise nuppu. Muudatused võetakse kasutusele Moodle'i lehe värskendamisel."
 - When reloading, Chrome may ask for permission to read the folder. If the lecturer refuses, nothing loads.
-- The whole folder is read, including subfolders. Files that aren't valid JSON are skipped.
+- The whole folder is read, including subfolders. Files that aren't valid JSON are skipped and named in the status line as broken. This includes files that aren't definitions at all, e.g. a `README.md`.
 - The extension keeps a stored copy of the definitions:
   - editing a file has no effect until the lecturer reloads in the popup;
   - the panel reads the definition when a student's page opens, so after a reload the Moodle page has to be reloaded, or the next student opened.
-- The popup lists definitions as "course code - name (ids)", grouped by course code. It shows "?" when there's no course code and "Definitsioone ei leitud" when there are none ([DefinitionListRenderer.ts](../google-chrome-extension/src/popup/renderer/DefinitionListRenderer.ts)).
+- The popup lists definitions as "course code - name (ids)", grouped by course code. It shows "?" when there's no course code and "Definitsioone ei leitud. Vali kaust või vajuta värskenda nuppu." when there are none ([DefinitionListRenderer.ts](../google-chrome-extension/src/popup/renderer/DefinitionListRenderer.ts)).
+- The status line at the bottom shows:
+  - the VS Code connection;
+  - the folder state: folder not chosen / not loaded / how many definitions are loaded / no permission to read the folder;
+  - the names of broken files.
 
 **Definition file format** ([Assignment.ts](../google-chrome-extension/src/shared/types/Assignment.ts), [Feedback.ts](../google-chrome-extension/src/shared/types/Feedback.ts), [FeedbackPart.ts](../google-chrome-extension/src/shared/types/FeedbackPart.ts)):
 - `name` is shown in the popup.
@@ -326,18 +389,36 @@ This is what the project declares as of 2026-11-11, collected for the author's g
 - The grade is the sum of the points of the parts that are on. If the sum is 0 or less, the grade is 100 ([grading-rules.ts](../google-chrome-extension/src/content-script/rules/grading-rules.ts)).
 - The comment is the "Kommentaari algus" text first, then each part's line in file order, one per line.
 
-**Grader panel** (changes with steps 2–5):
+**Grader panel:**
 - The panel appears on the assignment's grader page. Moodle's review panel and grade panel are squeezed to 20% width each ([assign-grader.css](../google-chrome-extension/src/content-script/assign-grader.css)).
 - It's rebuilt for every student, about 1.2 s after the page stops changing. Selections and "Kommentaari algus" start over for each student.
-- The thumbs-up toggles a part: glowing means on, grey means off.
-- Moodle's comment section is expanded when the page opens.
-- When no definition matches, the panel says "Hindamismaatriksit ei leitud…".
-- Dragging the left edge resizes the panel (a 10 px strip; minimum width 200 px).
+- Clicking anywhere in a part's box toggles it. The thumbs-up shows the state: glowing means on, grey means off. Everything clickable glows when the mouse is over it.
+- A part's box shows its panel-only text, then "Kommentaar valituna: …" and "Kommentaar valimata: …", and its points.
+- Text written into "Kommentaari algus" goes at the beginning of the comment (the box's placeholder says so).
+- Moodle's comment section is expanded when the page opens. Nothing is written into Moodle's fields until the lecturer applies.
+- The strip at the bottom is always visible:
+  - It shows the grade and the comment, read-only, as they're generated.
+  - The button "Rakenda Moodle'isse" writes them into Moodle's grade field and comment box.
+  - The state next to the button: "Rakenda muudatused Moodle'isse" before applying, "Rakendatud. Salvesta Moodle'i nupuga." after it, and again "Rakenda muudatused Moodle'isse" after any change.
+  - The hint below the button: "Rakendamine asendab Moodle'i hinde ja kommentaari. Kirjuta soovi korral oma tekst „Kommentaari algus“ lahtrisse."
+  - Moodle's save button saves both the grade and the comment.
+- The status line under the strip shows:
+  - the VS Code connection: disconnected / reconnecting / connected. The connection closes about 30 s after the last student, which is normal.
+  - VS Code's answer for the student: files opened / nothing opened / student's folder not found / no folder open in VS Code / VS Code not open or the extension not installed / no answer;
+  - the definition: found ("name") / no definition for this assignment ID / folder not chosen / not loaded;
+  - the names of broken definition files;
+  - Moodle page elements the extension didn't find.
+- When no definition matches, the panel says what to do: choose and load the folder in the popup, or add the assignment's ID (shown in the status line) to a definition's `moodleIds`.
+- Dragging the left edge resizes the panel (a 10 px strip that glows on hover; minimum width 200 px). A hint under the title says so.
 - The panel switches to two columns when it's at least 1000 px wide.
-- Moodle's save button also saves the comment written into Moodle's comment box.
 
 **VS Code:**
 - The extension starts in every VS Code window. Its logs are in the Output panel under "Moodle Assignment Checking Helper", with an "activated" line on start ([extension.ts](../visual-studio-code-extension/src/extension.ts)).
+- Its status bar item, "Moodle Helper", shows the same as Chrome's status line:
+  - the connection: disconnected / connected, or that the port is taken because another VS Code window receives the students;
+  - the latest student's result.
+
+  When there's a problem, the item gets a warning background. Clicking it opens the Output log.
 - Expected setup: submissions downloaded from Moodle all at once into separate folders, and that folder opened in VS Code ([README](../visual-studio-code-extension/README.md)). Only the top level of the first workspace folder is searched.
 - When a student's grader page opens, it first closes all terminals and all editors and collapses the explorer. Only then does it look for the student's folder ([StudentSubmissionService.ts](../visual-studio-code-extension/src/service/StudentSubmissionService.ts)).
 - A folder matches if its name starts with the student's name as Moodle shows it ([student-files-rules.ts](../visual-studio-code-extension/src/rules/student-files-rules.ts)).
@@ -345,14 +426,16 @@ This is what the project declares as of 2026-11-11, collected for the author's g
   - subfolders are included except `.idea` and `.venv`;
   - files alternate between two editor columns;
   - images and PDFs open as previews.
-- Right-clicking a `.py` file gives "Run Python script in a new terminal". It opens a terminal called "Python Runner" in the file's folder and runs `python "file"`.
-- **Item 7:** every VS Code window starts the extension, but there is only one port. Only the window that started first receives students, and that is the window whose editors and terminals get closed. This follows from the code: `activationEvents` and the fixed port.
+- When no folder is open, or a student's folder isn't found, VS Code also shows a warning explaining what's expected.
+- Right-clicking a `.py` file gives "Käivita Pythoni skript uues terminalis". It opens a terminal called "Pythoni käivitaja" in the file's folder and runs `python "file"`.
+- **Item 7:** every VS Code window starts the extension, but there is only one port. Only the window that started first receives students, and that is the window whose editors and terminals get closed. The other windows' status bar says the port is taken. This follows from the code: `activationEvents` and the fixed port.
 
 **Quiz:**
-- On the quiz review page, every manually graded question in the "complete" state gets an "Assign max points with no comment" button ([QuizPage.ts](../google-chrome-extension/src/content-script/pagemanager/QuizPage.ts)).
+- On the quiz review page, every manually graded question in the "complete" state gets an "Anna maksimumpunktid ilma kommentaarita (salvestab kohe)" button ([QuizPage.ts](../google-chrome-extension/src/content-script/pagemanager/QuizPage.ts)).
 - Clicking it opens the question's comment page, which fills in the maximum mark and saves on its own ([QuizCommentPresenter.ts](../google-chrome-extension/src/content-script/presenter/QuizCommentPresenter.ts)).
 
-**Troubleshooting** ([README](../README.md), "Logging"):
+**Troubleshooting** ([README](../README.md), "Reporting"):
+- First look at the status lines: the panel's, the popup's, and the VS Code status bar.
 - Every log line starts with `[Moodle Helper]`.
 - In Chrome, panel logs are in the Moodle page's console. Definition and VS Code connection logs are in the service worker's DevTools.
 - In VS Code, logs are in the Output channel.

@@ -19,7 +19,8 @@ export class CommentPrefixRenderer extends BaseRenderer {
   protected async renderContent(root: HTMLElement) {
     createAndAddChildElement(root, 'h3', null, translations.feedback.commentPrefix)
     const itemContainer = createAndAddChildElement(root, 'div', 'item-container')
-    const textarea = createAndAddChildElement(itemContainer, 'textarea', 'comment-prefix-textarea') as HTMLTextAreaElement
+    const textarea = createAndAddChildElement(itemContainer, 'textarea', ['comment-prefix-textarea', 'checking-helper-interactive']) as HTMLTextAreaElement
+    textarea.placeholder = translations.feedback.commentPrefixPlaceholder
     createAndAddChildElement(itemContainer, 'div', 'buttons-section')
     textarea.addEventListener('input', () => this.#onChange(textarea.value))
   }

@@ -27,17 +27,17 @@ export class FeedbackPartRenderer extends BaseRenderer {
   }
 
   protected async renderContent(root: HTMLElement) {
-    const container = createAndAddChildElement(root, 'div', 'item-container')
+    const container = createAndAddChildElement(root, 'div', ['item-container', 'checking-helper-interactive'])
     createAndAddChildElement(container, 'div', 'text-section', this.#getDisplayText())
     const buttonsSection = createAndAddChildElement(container, 'div', 'buttons-section')
 
     this.#addButton = createAndAddChildImage(buttonsSection, ADD_BUTTON_IMAGE_PATH, ['add-button', this.#selected ? 'active' : 'inactive'])
-    this.#addButton.addEventListener('click', this.#toggle)
+    container.addEventListener('click', this.#toggle)
   }
 
   #getDisplayText(): string | null {
     const lines: string[] = []
-    if (this.#part.labelText) lines.push(translations.feedback.partLabelText(this.#part.labelText))
+    if (this.#part.labelText) lines.push(this.#part.labelText)
     if (this.#part.selectedText) lines.push(translations.feedback.partSelectedText(this.#part.selectedText))
     if (this.#part.unselectedText) lines.push(translations.feedback.partUnselectedText(this.#part.unselectedText))
     if (this.#part.points) {

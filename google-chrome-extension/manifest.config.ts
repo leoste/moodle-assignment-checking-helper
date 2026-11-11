@@ -26,12 +26,12 @@ export default defineManifest({
     {
       matches: [`${MOODLE_ORIGIN}/mod/assign/*action=grader*`],
       js: ['src/content-script/assign-grader.ts'],
-      css: ['src/content-script/assign-grader.css'],
+      css: ['src/shared/styles/theme.css', 'src/content-script/assign-grader.css'],
     },
     {
       matches: [`${MOODLE_ORIGIN}/mod/quiz/review.php*`],
       js: ['src/content-script/quiz-review.ts'],
-      css: ['src/content-script/quiz-review.css'],
+      css: ['src/shared/styles/theme.css', 'src/content-script/quiz-review.css'],
     },
     {
       matches: [`${MOODLE_ORIGIN}/mod/quiz/comment.php*`],

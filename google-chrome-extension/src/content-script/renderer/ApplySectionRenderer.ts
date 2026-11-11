@@ -31,10 +31,17 @@ export class ApplySectionRenderer extends BaseRenderer {
     this.#commentElement = createAndAddChildElement(container, 'div', ['text-section', 'apply-comment'])
 
     const controls = createAndAddChildElement(container, 'div', 'apply-controls')
-    const button = createAndAddChildElement(controls, 'button', 'apply-button', translations.apply.button) as HTMLButtonElement
+    const button = createAndAddChildElement(
+      controls,
+      'button',
+      ['apply-button', 'checking-helper-button', 'checking-helper-interactive'],
+      translations.apply.button,
+    ) as HTMLButtonElement
     button.type = 'button'
     button.addEventListener('click', this.#callbacks.onApply)
     this.#stateElement = createAndAddChildElement(controls, 'div', 'apply-state')
+
+    createAndAddChildElement(root, 'div', 'checking-helper-hint', translations.apply.hint)
   }
 
   setPreview(grade: number, comment: string): void {

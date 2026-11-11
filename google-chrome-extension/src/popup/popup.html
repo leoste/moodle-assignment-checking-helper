@@ -2,6 +2,7 @@
 <html lang="et">
   <head>
     <meta charset="utf-8" />
+    <link rel="stylesheet" href="../shared/styles/theme.css" />
     <style>
       html, body {
         margin: 0;
@@ -10,11 +11,31 @@
         font-family: sans-serif;
         font-size: 14px;
         color: #000;
-        padding: 12px;
+        padding: 1.35em;
         width: 800px;
         height: 600px;
         box-sizing: border-box;
+      }
+      .checking-helper-popup-frame {
+        height: 100%;
+        box-sizing: border-box;
+        border: var(--checking-helper-frame);
+        box-shadow: var(--checking-helper-frame-rings);
+        background-color: var(--checking-helper-background-color);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+      .checking-helper-popup-scroll-area {
+        flex: 1;
+        min-height: 0;
         overflow-y: auto;
+        padding: 16px;
+      }
+      #status-container {
+        flex: none;
+        border-top: var(--checking-helper-frame);
+        padding: 8px 16px;
       }
       .row {
         display: flex;
@@ -28,12 +49,12 @@
       button {
         width: 240px;
         flex-shrink: 0;
-        padding: 8px;
-        cursor: pointer;
         box-sizing: border-box;
       }
       hr {
         margin: 12px 0;
+        border: none;
+        border-top: 1px solid #000;
       }
       .definition-list {
         margin: 0;
@@ -42,37 +63,27 @@
       .definition-list li {
         margin-bottom: 4px;
       }
-      #status-container {
-        position: sticky;
-        bottom: -12px;
-        margin: 12px -12px -12px;
-        padding: 8px 12px;
-        border-top: 1px solid #000;
-        background-color: #fff;
-      }
-      .status + .status::before {
-        content: ' · ';
-        font-weight: normal;
-        font-style: normal;
-      }
-      .status-progress {
-        font-style: italic;
-      }
-      .status-problem {
-        font-weight: bold;
+      .checking-helper-hint {
+        margin-bottom: 8px;
       }
     </style>
   </head>
   <body>
-    <div id="sources-container"></div>
-    <hr />
-    <div class="row">
-      <button id="refresh-btn"></button>
-      <div id="refresh-time" class="text"></div>
+    <div class="checking-helper-popup-frame">
+      <div class="checking-helper-popup-scroll-area">
+        <div id="intro-hint" class="checking-helper-hint"></div>
+        <div id="sources-container"></div>
+        <hr />
+        <div class="row">
+          <button id="refresh-btn" class="checking-helper-button checking-helper-interactive"></button>
+          <div id="refresh-time" class="text"></div>
+        </div>
+        <div id="refresh-hint" class="checking-helper-hint"></div>
+        <hr />
+        <div id="definitions-container"></div>
+      </div>
+      <div id="status-container"></div>
     </div>
-    <hr />
-    <div id="definitions-container"></div>
-    <div id="status-container"></div>
     <script type="module" src="popup.ts"></script>
   </body>
 </html>

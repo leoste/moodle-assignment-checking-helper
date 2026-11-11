@@ -37,6 +37,7 @@ Each layer uses only the layers below it:
 - **Renderers** (`renderer/`) only build the extension's own UI from the data they get and report user actions through callbacks. Each renderer owns one root element: `render()` creates it, `clear()` removes it.
 - **Objects** (`object/`) are building blocks owned by another class, e.g. `MessageHandlerMap`, `WebSocketConnection`.
 - **Utils** (`util/`) are stateless functions.
+- **Styles** (`google-chrome-extension/src/shared/styles/theme.css`) hold the colours and the looks shared by all of the Chrome extension's UIs, which all have the panel's look. The file is loaded into Moodle pages as well, so its classes and variables have the `checking-helper-` prefix. Everything the user can interact with has the `checking-helper-interactive` class and glows when hovered.
 - **Translations** (`shared/translations/translations.ts`) hold every user-facing text of both extensions, grouped by concept. Texts with values are functions, e.g. `translations.studentSubmission.noStudentFolder(studentName)`. The VS Code command title is the only exception, it stays in `package.json`.
 
 ### Messages
@@ -137,9 +138,12 @@ Every file in the definitions folder is read, so files that aren't definitions a
 
 The VS Code WebSocket server (`VsCodeMessageReceiver`, `ws://127.0.0.1:54321`) accepts connections from anywhere. Any web page can open a WebSocket to localhost and send a `student-submission` message, which closes all editors and terminals in VS Code and opens files. The server should check that the `Origin` header is `chrome-extension://<extension id>`.
 
-#### UI and CSS
+#### Panel as a separate window
 
-Colors `#FF7E2E`, `#2BFFFF` and `#FEEA9A` repeat in `assign-grader.css` and `quiz-review.css`. The panel's `left: 40%` depends on the two `20%` Moodle panel widths. Moodle selectors are repeated in `assign-grader.css` (`div[data-region="grade-panel"]`, `div.comment-area div.db textarea`), separately from the page objects. To be handled together with a UI redesign.
+The panel is injected into Moodle's grading page, because it relies on page functions being visible to the lecturer. It squeezes Moodle's own panels and ties the extension's layout to Moodle's. The panel should become a separate window. That needs a new system for controlling such a window, moving the injected UI into it and communication between the window and the Moodle page. It is a large change and is done separately, only when decided.
+Until then, two layout issues stay tied to the injection:
+- the panel's `left: 40%` depends on the two `20%` Moodle panel widths;
+- Moodle selectors are repeated in `assign-grader.css` (`div[data-region="grade-panel"]`, `div.comment-area div.db textarea`), separately from the page objects.
 
 #### Database
 

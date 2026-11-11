@@ -27,6 +27,7 @@ export class FeedbackSectionRenderer extends BaseRenderer {
 
   protected async renderContent(root: HTMLElement) {
     createAndAddChildElement(root, 'h2', null, translations.feedback.title)
+    createAndAddChildElement(root, 'div', 'checking-helper-hint', translations.feedback.resizeHint)
   }
 
   async renderFeedback(feedback: FeedbackView[]) {

@@ -1,0 +1,52 @@
+/* The look of all of the extension's UIs. Loaded into Moodle pages too, so every class has the checking-helper prefix. */
+
+:root {
+  --checking-helper-frame-color: #FF7E2E;
+  --checking-helper-glow-color: #2BFFFF;
+  --checking-helper-background-color: #FEEA9A;
+
+  --checking-helper-frame: 0.34em solid var(--checking-helper-frame-color);
+  --checking-helper-frame-rings: 0 0 0 0.67em var(--checking-helper-glow-color), 0 0 0 1.01em var(--checking-helper-frame-color);
+  --checking-helper-hover-glow: 0 0 1em 0.25em var(--checking-helper-glow-color);
+}
+
+.checking-helper-interactive {
+  transition: box-shadow 0.15s;
+}
+
+.checking-helper-interactive:hover:not(:disabled) {
+  box-shadow: var(--checking-helper-hover-glow);
+}
+
+.checking-helper-button {
+  border: 1px solid black;
+  background-color: var(--checking-helper-background-color);
+  color: black;
+  font: inherit;
+  padding: 0.67em;
+  cursor: pointer;
+}
+
+.checking-helper-button:disabled {
+  cursor: default;
+  filter: grayscale(100%);
+}
+
+.checking-helper-hint {
+  font-size: 0.9em;
+  font-style: italic;
+}
+
+.checking-helper-status + .checking-helper-status::before {
+  content: ' · ';
+  font-weight: normal;
+  font-style: normal;
+}
+
+.checking-helper-status-progress {
+  font-style: italic;
+}
+
+.checking-helper-status-problem {
+  font-weight: bold;
+}

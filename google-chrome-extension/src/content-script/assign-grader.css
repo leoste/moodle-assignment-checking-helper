@@ -2,9 +2,9 @@ div.checking-helper-panel {
   padding-top: 1.2em;
   padding-left: 2.3em;
   margin: 1.35em;
-  border: 0.34em solid #FF7E2E;
-  box-shadow: 0 0 0 0.67em #2BFFFF, 0 0 0 1.01em #FF7E2E;
-  background-color: #FEEA9A;
+  border: var(--checking-helper-frame);
+  box-shadow: var(--checking-helper-frame-rings);
+  background-color: var(--checking-helper-background-color);
 
   position: absolute;
   top: 85px;
@@ -16,6 +16,10 @@ div.checking-helper-panel {
   display: flex;
   flex-direction: column;
   container-type: inline-size;
+}
+
+div.checking-helper-panel.checking-helper-resize-edge-hover {
+  box-shadow: inset 0.67em 0 0.67em -0.34em var(--checking-helper-glow-color), var(--checking-helper-frame-rings);
 }
 
 div.checking-helper-scroll-area {
@@ -33,29 +37,15 @@ div.checking-helper-scroll-area {
 
 div.checking-helper-bottom-strip {
   flex: none;
-  border-top: 0.34em solid #FF7E2E;
+  border-top: var(--checking-helper-frame);
 }
 
 div.apply-section {
   padding: 0.67em 1.35em 0 0;
 }
 
-div.status-line {
+div.checking-helper-status-line {
   padding: 0.4em 1.35em 0.4em 0;
-}
-
-div.status-line span.status + span.status::before {
-  content: ' · ';
-  font-weight: normal;
-  font-style: normal;
-}
-
-span.status-progress {
-  font-style: italic;
-}
-
-span.status-problem {
-  font-weight: bold;
 }
 
 div.apply-section div.text-section {
@@ -80,7 +70,6 @@ div.apply-controls {
 
 button.apply-button {
   width: 100%;
-  padding: 0.67em;
 }
 
 div.apply-state.unapplied {
@@ -107,8 +96,17 @@ div[data-region="grade-panel"] {
   height: auto;
 }
 
-.feedback-subpanel > h2 {
+.feedback-subpanel > h2,
+.feedback-subpanel > div.checking-helper-hint {
   column-span: all;
+}
+
+.feedback-subpanel > div.checking-helper-hint {
+  margin-bottom: 0.67em;
+}
+
+div.apply-section > div.checking-helper-hint {
+  margin-top: 0.4em;
 }
 
 @container (min-width: 1000px) {
@@ -137,6 +135,10 @@ ul.common-answer-list {
 li.clickable-list-item {
   list-style: none;
   margin-bottom: 0.67em;
+}
+
+li.clickable-list-item > div.item-container {
+  cursor: pointer;
 }
 
 .item-container {
@@ -175,7 +177,7 @@ img.add-button {
 
 img.active {
   filter: none;
-  box-shadow: 0px 0px 3.73em 1.83em #2BFFFF;
+  box-shadow: 0px 0px 3.73em 1.83em var(--checking-helper-glow-color);
   border-radius: 50%;
 }
 

@@ -26,6 +26,8 @@ export default class PopupRenderer extends BaseRenderer {
   readonly #refreshTime: HTMLElement
   readonly #definitionsContainer: HTMLElement
   readonly #statusContainer: HTMLElement
+  readonly #introHint: HTMLElement
+  readonly #refreshHint: HTMLElement
 
   readonly #folderNameElements = new Map<FileSourceInfo, HTMLElement>()
   #definitionListRenderer: DefinitionListRenderer | undefined
@@ -40,6 +42,8 @@ export default class PopupRenderer extends BaseRenderer {
     this.#refreshTime = document.getElementById('refresh-time')!
     this.#definitionsContainer = document.getElementById('definitions-container')!
     this.#statusContainer = document.getElementById('status-container')!
+    this.#introHint = document.getElementById('intro-hint')!
+    this.#refreshHint = document.getElementById('refresh-hint')!
   }
 
   protected createRoot(): HTMLElement {
@@ -47,6 +51,8 @@ export default class PopupRenderer extends BaseRenderer {
   }
 
   protected async renderContent(root: HTMLElement): Promise<void> {
+    this.#introHint.textContent = translations.popup.intro
+    this.#refreshHint.textContent = translations.fileSource.refreshHint
     for (const source of this.#sources) {
       this.#addSourceElement(root, source)
     }
@@ -90,7 +96,12 @@ export default class PopupRenderer extends BaseRenderer {
 
   #addSourceElement(root: HTMLElement, { source, folderName }: PopupSource): void {
     const div = createAndAddChildElement(root, 'div', 'row')
-    const selectBtn = createAndAddChildElement(div, 'button', null, translations.fileSource.selectFolder(source.displayName))
+    const selectBtn = createAndAddChildElement(
+      div,
+      'button',
+      ['checking-helper-button', 'checking-helper-interactive'],
+      translations.fileSource.selectFolder(source.displayName),
+    )
     const nameEl = createAndAddChildElement(div, 'div', 'text', folderName ?? translations.fileSource.folderNotSelected)
 
     this.#folderNameElements.set(source, nameEl)

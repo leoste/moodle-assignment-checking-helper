@@ -8,6 +8,7 @@ import type { StatusSink } from '@shared/reporting/StatusSink';
 
 const RESIZE_EDGE_WIDTH = 10
 const MIN_PANEL_WIDTH = 200
+const RESIZE_EDGE_HOVER_CLASS = 'checking-helper-resize-edge-hover'
 
 export interface CheckingHelperPanelCallbacks extends FeedbackSectionCallbacks, ApplySectionCallbacks {
   onResized: (left: number) => void
@@ -59,7 +60,9 @@ export default class CheckingHelperPanelRenderer extends BaseRenderer {
 
     root.addEventListener('pointermove', event => {
       if (grabOffset === null) {
-        root.style.cursor = getEdgeDistance(event) <= RESIZE_EDGE_WIDTH ? 'ew-resize' : ''
+        const onEdge = getEdgeDistance(event) <= RESIZE_EDGE_WIDTH
+        root.style.cursor = onEdge ? 'ew-resize' : ''
+        root.classList.toggle(RESIZE_EDGE_HOVER_CLASS, onEdge)
         return
       }
       const parentRect = root.offsetParent!.getBoundingClientRect()
@@ -71,6 +74,10 @@ export default class CheckingHelperPanelRenderer extends BaseRenderer {
     root.addEventListener('pointerup', event => {
       grabOffset = null
       root.releasePointerCapture(event.pointerId)
+    })
+
+    root.addEventListener('pointerleave', () => {
+      if (grabOffset === null) root.classList.remove(RESIZE_EDGE_HOVER_CLASS)
     })
   }
 

@@ -13,7 +13,12 @@ export class AutoGradeButtonRenderer extends BaseRenderer {
   }
 
   protected createRoot(): HTMLElement {
-    const button = createAndAddChildElement(this.#parentElement, 'button', 'auto-max-button', translations.quizAutoGrade.assignMaxPoints)
+    const button = createAndAddChildElement(
+      this.#parentElement,
+      'button',
+      ['auto-max-button', 'checking-helper-button', 'checking-helper-interactive'],
+      translations.quizAutoGrade.assignMaxPoints,
+    )
     button.addEventListener('click', this.#onClick)
     return button
   }

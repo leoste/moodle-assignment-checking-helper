@@ -717,6 +717,11 @@ The VS Code `package.json` texts move to `package.nls.json`, VS Code's standard 
 5. The solver fixes them. Steps 4–5 repeat until the checks pass.
 6. Step 11 is done.
 
+**The sidebar's presenter:** the solver first made it a singleton, so that its controller could reach it. The author:
+> is the page loading only once mandating that it will have to be singleton? what happens if we dont declare it a singleton, but rather the place that loads it behaves like a singleton? that approach would seem more logical to me, the presenter itself shouldnt be aware that theres only ever one of it, cause thats already sort of application architecture and presenter shouldnt concern with this
+
+So, like the content script, a singleton page listener (`webview/pagelistener/SidebarListener`) creates the presenter and passes the controller's messages on to it, and the presenter is an ordinary class.
+
 *From the README:* `OPEN_SUB_DIRECTORIES` in the VS Code `config.ts` (used by `shouldCollectSubFolders()`) is hard-coded to `true`. So files are always collected recursively, the `false` branch (top-level files only) never runs, and changing it requires rebuilding. `MAX_AUTO_OPENED_FILES` and `BLACKLISTED_FOLDER_NAMES` could become settings too.
 
 ---

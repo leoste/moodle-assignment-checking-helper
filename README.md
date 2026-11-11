@@ -45,13 +45,13 @@ Each layer uses only the layers below it:
 - **Infrastructure** (`infrastructure/`) owns a platform resource and knows nothing about features. Message receivers (`ChromeMessageReceiver` in the service worker and the content script, `VsCodeMessageReceiver`) listen for messages and pass them to handlers, `VsCodeConnectionProvider` sends requests to VS Code, `IndexedDBProvider` owns the IndexedDB connection.
 - **Repositories** (`repository/`) store and load data.
 - **Services** (`service/`) do what the application does.
-- **Controllers** (`controller/`) register message handlers and pass the messages on to services. The content script and the sidebar's page have no services, so their controllers pass them on to the page listener and to the presenter.
+- **Controllers** (`controller/`) register message handlers and pass the messages on to services. The content script and the sidebar's page have no services, so their controllers pass them on to the page listener.
 
 ### Other building blocks
 
 - **Clients** (`client/`) send the messages of one feature, e.g. `FeedbackClient`.
 - **Generators** (`generator/`) put messages together, e.g. `QuizChromeMessageGenerator.getBeginAutoGradeMessage()`.
-- **Page listeners** (`content-script/pagelistener/`) start a content script. On every page load they create a new page and presenter.
+- **Page listeners** (`pagelistener/`) start a page: they create its presenter and pass the controllers' messages on to it. The content script's listeners create a new page and presenter on every Moodle page load, the sidebar's listener once.
 - **Presenters** (`presenter/`) run the workflow of one page load: fetch data, create renderers, react to their events, apply rules and write the results to the page. A presenter holds the state of that page load.
 - **Rules** (`rules/`) are the project's own decisions as plain functions, e.g. `calculateGrade()`, `isStudentFolder()`. In the service worker the services play this role.
 - **Pages** (`content-script/pagemanager/`) are the only place that knows Moodle's DOM, e.g. `AssignmentGraderPage.setGrade()`.
@@ -107,7 +107,6 @@ Results of one tab's request (VS Code's answer, the definition) come back in the
 
 Infrastructure, repositories, services, controllers, clients, generators and page listeners are singletons. Only the instance is exported, not the class: `export const quizService = new QuizService()`.
 A class is exported only if it is a base class, has multiple instances (renderers, pages, presenters) or is an object owned by another class.
-The sidebar page's presenter is the exception: its page loads once per run of its bundle, so it's a singleton its controller can reach.
 `static` fields are only for state shared by a whole class hierarchy.
 
 ## Releasing

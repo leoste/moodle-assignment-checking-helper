@@ -2,11 +2,10 @@ import BasePresenter from '@shared/presenter/BasePresenter'
 import type { Status } from '@shared/types/Status'
 import SidebarRenderer from '../renderer/SidebarRenderer'
 import { settingsClient } from '../client/SettingsClient'
+import { sidebarClient } from '../client/SidebarClient'
 import type { Settings } from '../../shared/types/Settings'
 
-// Unlike other presenters, this one is a singleton: the sidebar's page is loaded once per run of its bundle,
-// and the controller has to reach its presenter to pass the extension's messages on.
-class SidebarPresenter extends BasePresenter {
+export default class SidebarPresenter extends BasePresenter {
   #renderer: SidebarRenderer | undefined
 
   async start(): Promise<void> {
@@ -14,6 +13,8 @@ class SidebarPresenter extends BasePresenter {
       onOpenSubDirectoriesChanged: this.#onOpenSubDirectoriesChanged,
     })
     await this.#renderer.render()
+    // The page asks for the current settings and statuses only once it can show them.
+    sidebarClient.notifyReady()
   }
 
   showSettings(settings: Settings): void {
@@ -28,5 +29,3 @@ class SidebarPresenter extends BasePresenter {
     settingsClient.changeSettings({ openSubDirectories })
   }
 }
-
-export const sidebarPresenter = new SidebarPresenter()

@@ -1,5 +1,5 @@
-import { logger } from '@shared/logging/logger'
-import ConsoleLogSink from '@shared/logging/ConsoleLogSink'
+import { logger } from '@shared/reporting/logger'
+import ConsoleLogSink from '@shared/reporting/ConsoleLogSink'
 import { quizReviewListener } from "./pagelistener/QuizReviewListener";
 
 logger.init(new ConsoleLogSink())

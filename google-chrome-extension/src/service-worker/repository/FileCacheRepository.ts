@@ -1,5 +1,6 @@
 import type { FileSourceInfo } from '../../shared/types/FileSourceInfo'
 import type { FileCache } from '../../shared/types/FileCache'
+import type { CachedFile } from '../../shared/types/CachedFile'
 import IndexedDBRepository from '../../shared/repository/IndexedDBRepository'
 
 export default abstract class FileCacheRepository extends IndexedDBRepository {
@@ -17,19 +18,21 @@ export default abstract class FileCacheRepository extends IndexedDBRepository {
     FileCacheRepository.#registry.push(this)
   }
 
-  async getFileContents(): Promise<string[]> {
-    return (await this.#getFileCache())?.contents ?? []
+  async getFiles(): Promise<CachedFile[]> {
+    return (await this.#getFileCache())?.files ?? []
   }
 
-  async setFileContents(contents: string[]): Promise<void> {
-    await this.setValue(this.fileSourceInfo.cacheKey, { contents, updatedAt: Date.now() })
+  async setFiles(files: CachedFile[]): Promise<void> {
+    await this.setValue(this.fileSourceInfo.cacheKey, { files, updatedAt: Date.now() })
   }
 
   async getUpdatedAt(): Promise<number | null> {
     return (await this.#getFileCache())?.updatedAt ?? null
   }
 
-  #getFileCache(): Promise<FileCache | undefined> {
-    return this.getValue(this.fileSourceInfo.cacheKey)
+  async #getFileCache(): Promise<FileCache | undefined> {
+    const cache = await this.getValue(this.fileSourceInfo.cacheKey)
+    // A cache stored before file names were kept has no `files` and counts as missing until the files are loaded again.
+    return Array.isArray(cache?.files) ? cache : undefined
   }
 }

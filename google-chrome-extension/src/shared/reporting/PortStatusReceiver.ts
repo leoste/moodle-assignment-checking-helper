@@ -1,0 +1,24 @@
+import type { Status } from '@shared/types/Status'
+import { statusReporter } from '@shared/reporting/statusReporter'
+import { getDisconnectedStatus } from '@shared/rules/status-rules'
+import { STATUS_PORT_NAME } from '../constants/messages'
+
+// Receives the service worker's statuses into this context's status reporter.
+// When Chrome stops the idle service worker, its WebSocket to VS Code closes together with the port, so a closed port means disconnected.
+// The port is opened again only by the next connect(), otherwise it would keep waking the service worker up.
+class PortStatusReceiver {
+  #port: chrome.runtime.Port | undefined
+
+  connect(): void {
+    this.#port?.disconnect()
+    const port = chrome.runtime.connect({ name: STATUS_PORT_NAME })
+    port.onMessage.addListener((statuses: Status[]) => statuses.forEach(status => statusReporter.report(status)))
+    port.onDisconnect.addListener(() => {
+      if (this.#port === port) this.#port = undefined
+      statusReporter.report(getDisconnectedStatus())
+    })
+    this.#port = port
+  }
+}
+
+export const portStatusReceiver = new PortStatusReceiver()

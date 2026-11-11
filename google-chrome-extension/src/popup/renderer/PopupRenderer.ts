@@ -2,6 +2,8 @@ import type { Assignment } from '../../shared/types/Assignment'
 import type { FileSourceInfo } from '../../shared/types/FileSourceInfo'
 import BaseRenderer from '../../shared/renderer/BaseRenderer'
 import DefinitionListRenderer from './DefinitionListRenderer'
+import StatusLineRenderer from '../../shared/renderer/StatusLineRenderer'
+import type { StatusSink } from '@shared/reporting/StatusSink'
 import { createAndAddChildElement } from '../../shared/util/element-creation-helper'
 import formatDateTime from '../../shared/util/formatDateTime'
 import { translations } from '@shared/translations/translations'
@@ -23,9 +25,11 @@ export default class PopupRenderer extends BaseRenderer {
   readonly #refreshBtn: HTMLButtonElement
   readonly #refreshTime: HTMLElement
   readonly #definitionsContainer: HTMLElement
+  readonly #statusContainer: HTMLElement
 
   readonly #folderNameElements = new Map<FileSourceInfo, HTMLElement>()
   #definitionListRenderer: DefinitionListRenderer | undefined
+  #statusLineRenderer: StatusLineRenderer | undefined
 
   constructor(sources: PopupSource[], callbacks: PopupCallbacks) {
     super()
@@ -35,6 +39,7 @@ export default class PopupRenderer extends BaseRenderer {
     this.#refreshBtn = document.getElementById('refresh-btn') as HTMLButtonElement
     this.#refreshTime = document.getElementById('refresh-time')!
     this.#definitionsContainer = document.getElementById('definitions-container')!
+    this.#statusContainer = document.getElementById('status-container')!
   }
 
   protected createRoot(): HTMLElement {
@@ -47,13 +52,20 @@ export default class PopupRenderer extends BaseRenderer {
     }
     this.setRefreshing(false)
     this.#refreshBtn.addEventListener('click', this.#callbacks.onRefresh)
+    this.#statusLineRenderer = new StatusLineRenderer(this.#statusContainer)
+    await this.#statusLineRenderer.render()
   }
 
   async clear(): Promise<void> {
     this.#refreshBtn.removeEventListener('click', this.#callbacks.onRefresh)
     this.#folderNameElements.clear()
     await this.#definitionListRenderer?.clear()
+    await this.#statusLineRenderer?.clear()
     await super.clear()
+  }
+
+  get statusLine(): StatusSink {
+    return this.#statusLineRenderer!
   }
 
   setFolderName(source: FileSourceInfo, folderName: string): void {

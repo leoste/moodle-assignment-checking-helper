@@ -1,4 +1,4 @@
-import { logger } from '@shared/logging/logger'
+import { logger } from '@shared/reporting/logger'
 import QuizPage from './QuizPage'
 import type QuizQuestionBox from './QuizQuestionBox'
 

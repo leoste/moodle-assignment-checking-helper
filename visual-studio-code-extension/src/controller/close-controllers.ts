@@ -1,4 +1,4 @@
-import { logger } from '@shared/logging/logger'
+import { logger } from '@shared/reporting/logger'
 import { controllers } from './init-controllers'
 
 export default function closeControllers(): void {

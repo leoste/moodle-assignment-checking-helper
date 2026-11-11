@@ -1,9 +1,9 @@
 import BaseService from '@shared/service/BaseService'
-import type { VsCodeResponseStatus } from '@shared/types/VsCodeMessage'
+import type { VsCodeRequestStatus } from '@shared/types/VsCodeMessage'
 import { studentSubmissionClient } from '../client/StudentSubmissionClient'
 
 class StudentSubmissionService extends BaseService {
-  async openStudentSubmission(studentName: string): Promise<VsCodeResponseStatus> {
+  async openStudentSubmission(studentName: string): Promise<VsCodeRequestStatus> {
     return studentSubmissionClient.openStudentSubmission(studentName)
   }
 }

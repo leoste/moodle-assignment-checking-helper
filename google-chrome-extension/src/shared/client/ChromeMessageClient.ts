@@ -1,6 +1,6 @@
 import type { ChromeMessage } from '../types/ChromeMessage'
 import BaseClient from '@shared/client/BaseClient'
-import { logger } from '@shared/logging/logger'
+import { logger } from '@shared/reporting/logger'
 
 export default class ChromeMessageClient extends BaseClient {
 

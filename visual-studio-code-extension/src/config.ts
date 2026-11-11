@@ -14,4 +14,7 @@ export const EDITOR_COLUMN_COUNT = 2
 // Must match the command id declared in package.json (contributes.commands and menus).
 export const RUN_PYTHON_IN_TERMINAL_COMMAND = 'moodle-helper.runPythonInTerminal'
 
+// Not declared in package.json: only the status bar item runs it.
+export const SHOW_LOG_COMMAND = 'moodle-helper.showLog'
+
 export const PYTHON_COMMAND = 'python'

@@ -2,7 +2,7 @@ import BasePresenter from '../../shared/presenter/BasePresenter'
 import type QuizCommentPage from '../pagemanager/QuizCommentPage'
 import { quizClient } from '../client/QuizClient'
 import { getAutoGrade } from '../rules/quiz-rules'
-import { logger } from '@shared/logging/logger'
+import { logger } from '@shared/reporting/logger'
 
 export default class QuizCommentPresenter extends BasePresenter {
   readonly #page: QuizCommentPage

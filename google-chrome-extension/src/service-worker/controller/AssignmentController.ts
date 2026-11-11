@@ -9,7 +9,7 @@ class AssignmentController extends ChromeMessageController {
     )
 
     this.addMessageHandler(FEEDBACK_GET, async ({ assignmentId }) => {
-      return assignmentService.getFeedback(assignmentId)
+      return assignmentService.lookUpDefinition(assignmentId)
     })
   }
 }

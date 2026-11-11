@@ -1,5 +1,6 @@
 import { directoryHandleRepository } from '../../shared/repository/DirectoryHandleRepository'
 import type { FileSourceInfo } from '../../shared/types/FileSourceInfo'
+import type { CachedFile } from '../../shared/types/CachedFile'
 import { fileCacheClient } from '../client/FileCacheClient'
 import BaseService from '@shared/service/BaseService'
 
@@ -30,17 +31,17 @@ class FolderAccessService extends BaseService {
     return true
   }
 
-  async #readDirectory(dirHandle: FileSystemDirectoryHandle): Promise<string[]> {
-    const contents: string[] = []
+  async #readDirectory(dirHandle: FileSystemDirectoryHandle): Promise<CachedFile[]> {
+    const files: CachedFile[] = []
     for await (const entry of dirHandle.values()) {
       if (entry.kind === 'file') {
         const file = await (entry as FileSystemFileHandle).getFile()
-        contents.push(await file.text())
+        files.push({ name: entry.name, content: await file.text() })
       } else if (entry.kind === 'directory') {
-        contents.push(...await this.#readDirectory(entry as FileSystemDirectoryHandle))
+        files.push(...await this.#readDirectory(entry as FileSystemDirectoryHandle))
       }
     }
-    return contents
+    return files
   }
 }
 

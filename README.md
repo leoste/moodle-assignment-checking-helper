@@ -16,7 +16,7 @@ Automatically open necessary files in VSCode, run custom scripts, easily compose
 - `visual-studio-code-extension/` gets the student being graded from Chrome and opens their files.
 - `shared/` is code that has to be the same in both extensions. An extension's own `src/shared/` is code shared between its contexts.
 
-Contexts talk only through messages: content script and popup send Chrome messages to the service worker, the service worker sends VS Code messages over a WebSocket.
+Contexts talk only through messages: content script and popup send Chrome messages to the service worker, the service worker sends VS Code messages over a WebSocket. The only way back is the service worker's statuses, sent to the panel and the popup over a port (see "Status").
 
 ### Layers
 
@@ -57,14 +57,27 @@ Every stored key is in `shared/constants/storage.ts` and its value type in `Stor
 
 The entry file of a context (`service-worker.ts`, `extension.ts`, ...) initialises the layers through their `init-*` lists: infrastructure, repositories, services, controllers. VS Code closes controllers and infrastructure through `close-*` lists. Initialisation is synchronous.
 
-### Logging
+### Reporting
 
-All logging goes through `logger` (`shared/logging/`), never directly through `console`. Every line starts with `[Moodle Helper][<class name>]`, so the console can be filtered by `Moodle Helper` or by a class.
+Reporters (`shared/reporting/`, base class `BaseReporter`) pass what the code reports on to a sink chosen by the context: the logger is for developers, the status reporter for the user. Every extension bundle has its own reporters.
+
+#### Logging
+
+All logging goes through `logger`, never directly through `console`. Every line starts with `[Moodle Helper][<class name>]`, so the console can be filtered by `Moodle Helper` or by a class.
 - Chrome: content scripts log to the Moodle page's console, the service worker and the popup to their own DevTools.
 - VS Code: the Output panel, channel "Moodle Assignment Checking Helper".
 
 The entry file of a context calls `logger.init()` first. Base classes already log the lifecycle: initialisation, closing, page ready, presenters starting and stopping, renderers, sent and received messages, and Moodle elements that were not found. Features only add what the base classes can't see, e.g. the calculated grade.
 Builds are not minified, so class names in logs and the code in the debugger stay readable.
+
+#### Status
+
+Both extensions have their own status bar that shows the current state: in VS Code a status bar item (clicking it opens the log), in Chrome a status line in the panel and in the popup. They show the same things the same way.
+`statusReporter` keeps the current status of every topic (connection, VS Code result, definition, ...), a new status replaces the old one of its topic. The topics and their order are in `shared/constants/status.ts`, the texts in the translations, and which status a situation gets is decided in the `status-rules.ts` rules.
+The status line's sink is set by the presenter, so the panel's new status line shows the current statuses on every page.
+
+The service worker's statuses (the VS Code connection) reach the panel and the popup over a long-lived port: `PortStatusSink` sends them, `PortStatusReceiver` passes them on to the context's own status reporter. When Chrome stops the idle service worker, its WebSocket to VS Code and the ports close together, so a closed port means disconnected. The panel opens the port again only on the next page, otherwise it would keep waking the service worker up.
+Results of one tab's request (VS Code's answer, the definition) come back in the response to that request, not over the port, so that open tabs don't show each other's results.
 
 ## Code conventions
 
@@ -106,6 +119,11 @@ To do conceptual changes, proper debugging sessions with the browser are necessa
 #### Grade scale
 
 The grade has no scale. `calculateGrade()` sums the points of the enabled parts, the `intended_max_points` of a `Feedback` group is only displayed, and the fallback is a hard-coded 100, even for assignments graded out of 15 (`python-cafe-assignment.json`). The maximum points should be the scale of the grade and replace the hard-coded fallback. Ideally the maximum isn't written in the definition at all but read from Moodle's grading page, so the definition can't disagree with Moodle.
+
+#### Definition structure validation
+
+Only the JSON syntax of a definition file is checked. A file with valid JSON but the wrong structure, e.g. without `moodleIds`, isn't reported as broken and can break the popup's list and the lookup of every assignment. Checking the structure is a business-rule-level matter: to avoid defining it twice, the structure should ideally be declared once and everything else, the `Assignment` type and the check, derived from it.
+Every file in the definitions folder is read, so files that aren't definitions at all, e.g. a `README.md`, are reported as broken too.
 
 #### Notifying Moodle's form of applied values
 

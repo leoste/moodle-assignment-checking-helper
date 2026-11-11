@@ -1,10 +1,11 @@
-import type { Feedback } from '../../shared/types/Feedback'
+import type { DefinitionLookup } from '../../shared/types/DefinitionLookup'
 import ChromeMessageClient from '../../shared/client/ChromeMessageClient'
 import { feedbackChromeMessageGenerator } from '../../shared/generator/FeedbackChromeMessageGenerator'
 
 class FeedbackClient extends ChromeMessageClient {
-  async getData(assignmentId: string): Promise<Feedback[]> {
-    return this.send<Feedback[]>(feedbackChromeMessageGenerator.getFeedbackMessage(assignmentId))
+  // Undefined when the service worker couldn't handle the message.
+  async getData(assignmentId: string): Promise<DefinitionLookup | undefined> {
+    return this.send<DefinitionLookup | undefined>(feedbackChromeMessageGenerator.getFeedbackMessage(assignmentId))
   }
 }
 

@@ -1,10 +1,10 @@
-import type { Assignment } from '../../shared/types/Assignment'
+import type { Definitions } from '../../shared/types/Definitions'
 import ChromeMessageClient from '../../shared/client/ChromeMessageClient'
 import { assignmentChromeMessageGenerator } from '../../shared/generator/AssignmentChromeMessageGenerator'
 
 class AssignmentClient extends ChromeMessageClient {
-  async getAllAssignments(): Promise<Assignment[]> {
-    return this.send<Assignment[]>(assignmentChromeMessageGenerator.getAllAssignmentsMessage())
+  async getAllAssignments(): Promise<Definitions> {
+    return this.send<Definitions>(assignmentChromeMessageGenerator.getAllAssignmentsMessage())
   }
 }
 

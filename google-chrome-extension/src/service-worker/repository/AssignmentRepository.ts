@@ -1,8 +1,9 @@
 import type { Assignment } from '../../shared/types/Assignment'
+import type { Definitions } from '../../shared/types/Definitions'
 import type { FileSourceInfo } from '../../shared/types/FileSourceInfo'
 import FileCacheRepository from './FileCacheRepository'
 import { translations } from '@shared/translations/translations'
-import { logger } from '@shared/logging/logger'
+import { logger } from '@shared/reporting/logger'
 import { ASSIGNMENT_DIRECTORY_HANDLE_KEY, ASSIGNMENT_FILE_CACHE_KEY } from '../../shared/constants/storage'
 
 class AssignmentRepository extends FileCacheRepository {
@@ -12,17 +13,18 @@ class AssignmentRepository extends FileCacheRepository {
     cacheKey: ASSIGNMENT_FILE_CACHE_KEY,
   }
 
-  async getAllDefinitions(): Promise<Assignment[]> {
-    const fileContents = await this.getFileContents()
-    const definitions: Assignment[] = []
-    for (const content of fileContents) {
+  async getAllDefinitions(): Promise<Definitions> {
+    const assignments: Assignment[] = []
+    const brokenFiles: string[] = []
+    for (const file of await this.getFiles()) {
       try {
-        definitions.push(JSON.parse(content) as Assignment)
+        assignments.push(JSON.parse(file.content) as Assignment)
       } catch (err) {
-        logger.error(this, `skipping definition file that is not valid JSON: ${content.slice(0, 200)}`, err)
+        logger.error(this, `skipping definition file that is not valid JSON: ${file.name}`, err)
+        brokenFiles.push(file.name)
       }
     }
-    return definitions
+    return { assignments, brokenFiles }
   }
 }
 

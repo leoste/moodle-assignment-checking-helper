@@ -1,13 +1,15 @@
 import BaseInfrastructure from '@shared/infrastructure/BaseInfrastructure'
 import WebSocketConnection from '../object/WebSocketConnection'
-import type { VsCodeMessage, VsCodeRequest, VsCodeResponse, VsCodeResponseStatus } from '@shared/types/VsCodeMessage'
-import { logger } from '@shared/logging/logger'
+import type { VsCodeMessage, VsCodeRequest, VsCodeRequestStatus, VsCodeResponse, VsCodeResponseStatus } from '@shared/types/VsCodeMessage'
+import { REQUEST_STATUS_NO_ANSWER, REQUEST_STATUS_UNREACHABLE } from '@shared/constants/vscode-message'
+import { logger } from '@shared/reporting/logger'
+import { statusReporter } from '@shared/reporting/statusReporter'
+import { getConnectedStatus, getDisconnectedStatus, getReconnectingStatus } from '@shared/rules/status-rules'
 
 const REQUEST_TIMEOUT_MS = 5000
 
 interface PendingRequest {
-  resolve: (value: VsCodeResponseStatus) => void
-  reject: (reason: unknown) => void
+  resolve: (status: VsCodeRequestStatus) => void
   timer: ReturnType<typeof setTimeout>
 }
 
@@ -17,27 +19,36 @@ class VsCodeConnectionProvider extends BaseInfrastructure {
 
   constructor() {
     super()
+    this.#connection.onConnecting = () => statusReporter.report(getReconnectingStatus())
+    this.#connection.onConnect = () => statusReporter.report(getConnectedStatus())
     this.#connection.onMessage = (raw) => this.#handleMessage(raw)
-    this.#connection.onDisconnect = () => this.#cancelAll()
+    this.#connection.onDisconnect = () => {
+      statusReporter.report(getDisconnectedStatus())
+      this.#cancelAll()
+    }
   }
 
-  post(message: VsCodeMessage): Promise<VsCodeResponseStatus> {
-    return new Promise((resolve, reject) => {
+  protected override onInit(): undefined {
+    statusReporter.report(getDisconnectedStatus())
+  }
+
+  post(message: VsCodeMessage): Promise<VsCodeRequestStatus> {
+    return new Promise((resolve) => {
       const id = crypto.randomUUID()
       const timer = setTimeout(() => {
         this.#cleanup(id)
         logger.error(this, `request ${id} (${message.channel}) timed out`)
-        reject(new Error('WebSocket request timed out'))
+        resolve(REQUEST_STATUS_NO_ANSWER)
       }, REQUEST_TIMEOUT_MS)
 
-      this.#requests.set(id, { resolve, reject, timer })
+      this.#requests.set(id, { resolve, timer })
 
       const request: VsCodeRequest = { ...message, id }
       logger.info(this, `request ${id} (${message.channel}) sent`)
       this.#connection.send(JSON.stringify(request)).catch((err) => {
         this.#cleanup(id)
         logger.error(this, `request ${id} (${message.channel}) could not be sent`, err)
-        reject(err)
+        resolve(REQUEST_STATUS_UNREACHABLE)
       })
     })
   }
@@ -73,7 +84,7 @@ class VsCodeConnectionProvider extends BaseInfrastructure {
     logger.error(this, `connection lost, cancelling ${this.#requests.size} pending request(s)`)
     this.#requests.forEach((req) => {
       clearTimeout(req.timer)
-      req.reject(new Error('WebSocket connection lost'))
+      req.resolve(REQUEST_STATUS_UNREACHABLE)
     })
     this.#requests.clear()
   }

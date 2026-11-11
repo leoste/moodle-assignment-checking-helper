@@ -3,6 +3,8 @@ import { FeedbackSectionRenderer, type FeedbackSectionCallbacks } from './Feedba
 import { ApplySectionRenderer, type ApplySectionCallbacks } from './ApplySectionRenderer';
 import { createAndAddChildElement, createElementWithClasses } from '../../shared/util/element-creation-helper';
 import BaseRenderer from '../../shared/renderer/BaseRenderer';
+import StatusLineRenderer from '../../shared/renderer/StatusLineRenderer';
+import type { StatusSink } from '@shared/reporting/StatusSink';
 
 const RESIZE_EDGE_WIDTH = 10
 const MIN_PANEL_WIDTH = 200
@@ -14,9 +16,10 @@ export interface CheckingHelperPanelCallbacks extends FeedbackSectionCallbacks, 
 export default class CheckingHelperPanelRenderer extends BaseRenderer {
   readonly #callbacks: CheckingHelperPanelCallbacks
 
-  #bottomStrip: HTMLElement | undefined
+  #applyArea: HTMLElement | undefined
   #feedbackSectionRenderer: FeedbackSectionRenderer | undefined
   #applySectionRenderer: ApplySectionRenderer | undefined
+  #statusLineRenderer: StatusLineRenderer | undefined
 
   constructor(callbacks: CheckingHelperPanelCallbacks) {
     super()
@@ -30,10 +33,17 @@ export default class CheckingHelperPanelRenderer extends BaseRenderer {
   protected async renderContent(root: HTMLElement) {
     this.#addResizing(root)
     const scrollArea = createAndAddChildElement(root, 'div', 'checking-helper-scroll-area')
-    this.#bottomStrip = createAndAddChildElement(root, 'div', 'checking-helper-bottom-strip')
+    const bottomStrip = createAndAddChildElement(root, 'div', 'checking-helper-bottom-strip')
+    this.#applyArea = createAndAddChildElement(bottomStrip, 'div')
 
+    this.#statusLineRenderer = new StatusLineRenderer(bottomStrip)
+    await this.#statusLineRenderer.render()
     this.#feedbackSectionRenderer = new FeedbackSectionRenderer(scrollArea, this.#callbacks)
     await this.#feedbackSectionRenderer.render()
+  }
+
+  get statusLine(): StatusSink {
+    return this.#statusLineRenderer!
   }
 
   #addResizing(root: HTMLElement): void {
@@ -69,7 +79,7 @@ export default class CheckingHelperPanelRenderer extends BaseRenderer {
   }
 
   async renderApplySection() {
-    this.#applySectionRenderer = new ApplySectionRenderer(this.#bottomStrip!, this.#callbacks)
+    this.#applySectionRenderer = new ApplySectionRenderer(this.#applyArea!, this.#callbacks)
     await this.#applySectionRenderer.render()
   }
 

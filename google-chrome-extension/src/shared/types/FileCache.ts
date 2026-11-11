@@ -1,4 +1,6 @@
+import type { CachedFile } from './CachedFile'
+
 export interface FileCache {
-  contents: string[]
+  files: CachedFile[]
   updatedAt: number
 }

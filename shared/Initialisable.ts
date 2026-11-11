@@ -1,4 +1,4 @@
-import { logger } from './logging/logger'
+import { logger } from './reporting/logger'
 
 export default class Initialisable {
   #initialised = false

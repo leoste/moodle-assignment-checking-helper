@@ -1,5 +1,5 @@
 import type { MessageHandler } from '../types/MessageHandler'
-import { logger } from '../logging/logger'
+import { logger } from '../reporting/logger'
 
 export default class MessageHandlerMap<T extends MessageHandler> {
   readonly #handlers = new Map<string, T>()

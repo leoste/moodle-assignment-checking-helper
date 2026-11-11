@@ -1,9 +1,9 @@
-import type { VsCodeResponseStatus } from '@shared/types/VsCodeMessage'
+import type { VsCodeRequestStatus } from '@shared/types/VsCodeMessage'
 import VsCodeMessageClient from './VsCodeMessageClient'
 import { studentSubmissionVsCodeMessageGenerator } from '../generator/StudentSubmissionVsCodeMessageGenerator'
 
 class StudentSubmissionClient extends VsCodeMessageClient {
-  async openStudentSubmission(studentName: string): Promise<VsCodeResponseStatus> {
+  async openStudentSubmission(studentName: string): Promise<VsCodeRequestStatus> {
     return this.send(studentSubmissionVsCodeMessageGenerator.getOpenStudentSubmissionMessage(studentName))
   }
 }

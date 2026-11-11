@@ -1,4 +1,4 @@
-import { logger } from '@shared/logging/logger'
+import { logger } from '@shared/reporting/logger'
 
 export default abstract class BaseRenderer {
   #root: HTMLElement | undefined

@@ -1,5 +1,5 @@
 import BaseInfrastructure from '@shared/infrastructure/BaseInfrastructure'
-import { logger } from '@shared/logging/logger'
+import { logger } from '@shared/reporting/logger'
 import type { IndexedDBSchema } from '../types/StorageSchema'
 
 const DB_NAME = 'moodle-helper'

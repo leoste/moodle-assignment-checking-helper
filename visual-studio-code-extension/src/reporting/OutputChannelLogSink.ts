@@ -1,5 +1,5 @@
 import type * as vscode from 'vscode'
-import type { LogSink } from '@shared/logging/LogSink'
+import type { LogSink } from '@shared/reporting/LogSink'
 
 export default class OutputChannelLogSink implements LogSink {
   readonly #channel: vscode.OutputChannel

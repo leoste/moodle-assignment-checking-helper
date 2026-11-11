@@ -1,7 +1,10 @@
 import * as vscode from 'vscode'
-import { logger } from '@shared/logging/logger'
+import { logger } from '@shared/reporting/logger'
+import { statusReporter } from '@shared/reporting/statusReporter'
 import { translations } from '@shared/translations/translations'
-import OutputChannelLogSink from './logging/OutputChannelLogSink'
+import OutputChannelLogSink from './reporting/OutputChannelLogSink'
+import StatusBarSink from './reporting/StatusBarSink'
+import { SHOW_LOG_COMMAND } from './config'
 import initInfrastructure from './infrastructure/init-infrastructure'
 import closeInfrastructure from './infrastructure/close-infrastructure'
 import initControllers from './controller/init-controllers'
@@ -12,12 +15,17 @@ export function activate(context: vscode.ExtensionContext): void {
   const outputChannel = vscode.window.createOutputChannel(translations.extension.name)
   logger.init(new OutputChannelLogSink(outputChannel))
 
+  const statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left)
+  statusBarItem.command = SHOW_LOG_COMMAND
+  statusReporter.setSink(new StatusBarSink(statusBarItem))
+  const showLogCommand = vscode.commands.registerCommand(SHOW_LOG_COMMAND, () => outputChannel.show())
+
   initInfrastructure()
   initServices()
   initControllers()
   logger.info('extension', 'activated')
 
-  context.subscriptions.push({
+  context.subscriptions.push(showLogCommand, statusBarItem, {
     dispose: () => {
       closeControllers()
       closeInfrastructure()

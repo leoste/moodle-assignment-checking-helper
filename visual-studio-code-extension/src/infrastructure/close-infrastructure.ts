@@ -1,4 +1,4 @@
-import { logger } from '@shared/logging/logger'
+import { logger } from '@shared/reporting/logger'
 import { infrastructure } from './init-infrastructure'
 
 export default function closeInfrastructure(): void {

@@ -7,7 +7,14 @@ import { buildComment, calculateGrade } from '../rules/grading-rules'
 import { getDefaultSelection, getFeedbackView } from '../rules/feedback-rules'
 import deepCopy from '../../shared/util/deepCopy'
 import type { Feedback } from '../../shared/types/Feedback'
-import { logger } from '@shared/logging/logger'
+import type { DefinitionLookup } from '../../shared/types/DefinitionLookup'
+import { logger } from '@shared/reporting/logger'
+import { statusReporter } from '@shared/reporting/statusReporter'
+import { portStatusReceiver } from '../../shared/reporting/PortStatusReceiver'
+import { getStudentSubmissionOpeningStatus, getStudentSubmissionStatus } from '@shared/rules/status-rules'
+import { getBrokenDefinitionsStatus, getDefinitionSearchingStatus, getDefinitionStatus } from '../../shared/rules/status-rules'
+import { RESPONSE_STATUS_ERROR } from '@shared/constants/vscode-message'
+import { STATUS_TOPIC_BROKEN_DEFINITIONS, STATUS_TOPIC_MOODLE_PAGE } from '@shared/constants/status'
 
 export default class AssignmentGraderPresenter extends BasePresenter {
   readonly #page: AssignmentGraderPage
@@ -16,6 +23,8 @@ export default class AssignmentGraderPresenter extends BasePresenter {
   #selection: boolean[][] = []
   #commentPrefix = ''
   #renderer: CheckingHelperPanelRenderer | undefined
+  // A stopped presenter's late answers mustn't overwrite the next page's statuses.
+  #stopped = false
 
   constructor(page: AssignmentGraderPage) {
     super()
@@ -23,6 +32,9 @@ export default class AssignmentGraderPresenter extends BasePresenter {
   }
 
   async start(): Promise<void> {
+    statusReporter.clear(STATUS_TOPIC_MOODLE_PAGE)
+    statusReporter.clear(STATUS_TOPIC_BROKEN_DEFINITIONS)
+    portStatusReceiver.connect()
     const studentSubmissionOpened = this.#openStudentSubmission()
 
     this.#renderer = new CheckingHelperPanelRenderer({
@@ -33,9 +45,13 @@ export default class AssignmentGraderPresenter extends BasePresenter {
     })
     await this.#renderer.render()
     this.#page.insertPanel(this.#renderer.element)
+    statusReporter.setSink(this.#renderer.statusLine)
 
     const assignmentId = this.#page.getAssignmentId()
-    this.#feedback = deepCopy(await feedbackClient.getData(assignmentId) ?? [])
+    statusReporter.report(getDefinitionSearchingStatus())
+    const lookup = await feedbackClient.getData(assignmentId)
+    this.#reportDefinition(lookup, assignmentId)
+    this.#feedback = deepCopy(lookup?.definition?.feedback ?? [])
     this.#selection = getDefaultSelection(this.#feedback)
     logger.info(this, `assignment ${assignmentId}: ${this.#feedback.length} feedback group(s)`)
     await this.#renderer.renderFeedback(getFeedbackView(this.#feedback, this.#selection))
@@ -50,13 +66,24 @@ export default class AssignmentGraderPresenter extends BasePresenter {
   }
 
   async stop(): Promise<void> {
+    this.#stopped = true
     await this.#renderer?.clear()
   }
 
   async #openStudentSubmission(): Promise<void> {
     const studentName = this.#page.getStudentName()
+    statusReporter.report(getStudentSubmissionOpeningStatus(studentName))
     const response = await studentSubmissionClient.openStudentSubmission(studentName)
     logger.info(this, `student submission of "${studentName}" opened in VS Code: ${response}`)
+    if (this.#stopped) return
+    statusReporter.report(getStudentSubmissionStatus(studentName, response ?? RESPONSE_STATUS_ERROR))
+  }
+
+  #reportDefinition(lookup: DefinitionLookup | undefined, assignmentId: string): void {
+    if (this.#stopped) return
+    statusReporter.report(getDefinitionStatus(lookup, assignmentId))
+    const brokenDefinitionsStatus = getBrokenDefinitionsStatus(lookup?.brokenFiles ?? [])
+    if (brokenDefinitionsStatus) statusReporter.report(brokenDefinitionsStatus)
   }
 
   #onPartToggled = (feedbackIndex: number, partIndex: number, selected: boolean): void => {

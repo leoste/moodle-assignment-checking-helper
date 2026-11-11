@@ -6,12 +6,22 @@ import { directoryHandleRepository } from '../../shared/repository/DirectoryHand
 import { folderAccessService } from '../service/FolderAccessService'
 import type { FileSourceInfo } from '../../shared/types/FileSourceInfo'
 import type { FileSourceStatus } from '../../shared/types/FileSourceStatus'
-import { logger } from '@shared/logging/logger'
+import { logger } from '@shared/reporting/logger'
+import { statusReporter } from '@shared/reporting/statusReporter'
+import { portStatusReceiver } from '../../shared/reporting/PortStatusReceiver'
+import {
+  getBrokenDefinitionsStatus,
+  getDefinitionsFolderStatus,
+  getDefinitionsLoadingStatus,
+  getNoFolderPermissionStatus,
+} from '../../shared/rules/status-rules'
+import { STATUS_TOPIC_BROKEN_DEFINITIONS } from '@shared/constants/status'
 
 export default class PopupPresenter extends BasePresenter {
   #renderer: PopupRenderer | undefined
 
   async start(): Promise<void> {
+    portStatusReceiver.connect()
     const fileSources = await fileCacheClient.getFileSources()
     const sources: PopupSource[] = []
     for (const source of fileSources) {
@@ -25,6 +35,7 @@ export default class PopupPresenter extends BasePresenter {
       onRefresh: this.#onRefresh,
     })
     await this.#renderer.render()
+    statusReporter.setSink(this.#renderer.statusLine)
     await this.#showCacheState(fileSources)
   }
 
@@ -39,29 +50,48 @@ export default class PopupPresenter extends BasePresenter {
     this.#renderer?.setFolderName(source, handle.name)
 
     this.#renderer?.setRefreshing(true)
+    statusReporter.report(getDefinitionsLoadingStatus())
     const refreshed = await folderAccessService.refreshSource(source)
     logger.info(this, `${source.cacheKey} ${refreshed ? 'refreshed' : 'not refreshed (no permission)'} after folder selection`)
     this.#renderer?.setRefreshing(false)
     await this.#showCacheState(await fileCacheClient.getFileSources())
+    if (!refreshed) statusReporter.report(getNoFolderPermissionStatus())
   }
 
   #onRefresh = async (): Promise<void> => {
     const sources = await fileCacheClient.getFileSources()
     this.#renderer?.setRefreshing(true)
+    statusReporter.report(getDefinitionsLoadingStatus())
+    let permissionRefused = false
     for (const source of sources) {
       const refreshed = await folderAccessService.refreshSource(source)
       logger.info(this, `${source.cacheKey} ${refreshed ? 'refreshed' : 'not refreshed (no folder or no permission)'}`)
+      if (!refreshed && await directoryHandleRepository.getDirectoryHandle(source)) permissionRefused = true
     }
     this.#renderer?.setRefreshing(false)
     await this.#showCacheState(await fileCacheClient.getFileSources())
+    if (permissionRefused) statusReporter.report(getNoFolderPermissionStatus())
   }
 
   async #showCacheState(sources: FileSourceStatus[]): Promise<void> {
     const updatedAts = sources.map(s => s.updatedAt).filter(t => t !== null)
     this.#renderer?.setRefreshTime(updatedAts.length > 0 ? new Date(Math.max(...updatedAts)) : null)
 
-    const assignments = await assignmentClient.getAllAssignments()
+    const { assignments, brokenFiles } = await assignmentClient.getAllAssignments()
     logger.info(this, `${assignments.length} definition(s)`)
     await this.#renderer?.renderDefinitions(assignments)
+
+    const loaded = sources.every(s => s.updatedAt !== null)
+    statusReporter.report(getDefinitionsFolderStatus(await this.#areFoldersChosen(sources), loaded, assignments.length))
+    const brokenDefinitionsStatus = getBrokenDefinitionsStatus(brokenFiles)
+    if (brokenDefinitionsStatus) statusReporter.report(brokenDefinitionsStatus)
+    else statusReporter.clear(STATUS_TOPIC_BROKEN_DEFINITIONS)
+  }
+
+  async #areFoldersChosen(sources: FileSourceInfo[]): Promise<boolean> {
+    for (const source of sources) {
+      if (!await directoryHandleRepository.getDirectoryHandle(source)) return false
+    }
+    return true
   }
 }

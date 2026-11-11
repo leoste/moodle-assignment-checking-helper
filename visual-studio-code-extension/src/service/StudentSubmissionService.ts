@@ -1,7 +1,16 @@
 import * as vscode from 'vscode'
 import BaseService from '@shared/service/BaseService'
 import { translations } from '@shared/translations/translations'
-import { logger } from '@shared/logging/logger'
+import { logger } from '@shared/reporting/logger'
+import { statusReporter } from '@shared/reporting/statusReporter'
+import { getStudentSubmissionOpeningStatus, getStudentSubmissionStatus } from '@shared/rules/status-rules'
+import type { VsCodeResponseStatus } from '@shared/types/VsCodeMessage'
+import {
+  RESPONSE_STATUS_NO_WORKSPACE,
+  RESPONSE_STATUS_NOT_FOUND,
+  RESPONSE_STATUS_NOTHING_OPENED,
+  RESPONSE_STATUS_OK,
+} from '@shared/constants/vscode-message'
 import {
   canOpenMoreFiles,
   getEditorColumnOffset,
@@ -14,21 +23,32 @@ import {
 type FileEntry = [dirUri: vscode.Uri, fileName: string]
 
 class StudentSubmissionService extends BaseService {
-  async openStudentSubmission(studentName: string): Promise<void> {
+  async openStudentSubmission(studentName: string): Promise<VsCodeResponseStatus> {
+    statusReporter.report(getStudentSubmissionOpeningStatus(studentName))
+    const status = await this.#open(studentName)
+    statusReporter.report(getStudentSubmissionStatus(studentName, status))
+    return status
+  }
+
+  async #open(studentName: string): Promise<VsCodeResponseStatus> {
     if (!studentName) {
       logger.error(this, 'no student name given')
-      return
+      return RESPONSE_STATUS_NOT_FOUND
     }
 
     await this.#resetWorkspace()
 
-    const studentFolderUri = await this.#findStudentFolder(studentName)
-    if (!studentFolderUri) return
+    const rootUri = this.#getWorkspaceRoot()
+    if (!rootUri) return RESPONSE_STATUS_NO_WORKSPACE
+
+    const studentFolderUri = await this.#findStudentFolder(rootUri, studentName)
+    if (!studentFolderUri) return RESPONSE_STATUS_NOT_FOUND
     logger.info(this, `student folder of "${studentName}": ${studentFolderUri.fsPath}`)
 
     const files = await this.#collectSubmissionFiles(studentFolderUri)
     const openedCount = await this.#openFiles(files)
     logger.info(this, `opened ${openedCount} of ${files.length} file(s)`)
+    return openedCount > 0 ? RESPONSE_STATUS_OK : RESPONSE_STATUS_NOTHING_OPENED
   }
 
   async #resetWorkspace(): Promise<void> {
@@ -37,15 +57,17 @@ class StudentSubmissionService extends BaseService {
     await vscode.commands.executeCommand('workbench.action.closeAllEditors')
   }
 
-  async #findStudentFolder(studentName: string): Promise<vscode.Uri | undefined> {
+  #getWorkspaceRoot(): vscode.Uri | undefined {
     const folders = vscode.workspace.workspaceFolders
     if (!folders || folders.length === 0) {
       logger.error(this, 'no workspace folder open')
       vscode.window.showWarningMessage(translations.studentSubmission.noWorkspaceFolder)
       return undefined
     }
+    return folders[0].uri
+  }
 
-    const rootUri = folders[0].uri
+  async #findStudentFolder(rootUri: vscode.Uri, studentName: string): Promise<vscode.Uri | undefined> {
     const folderName = await this.#findDirectoryByName(rootUri, studentName)
 
     if (!folderName) {

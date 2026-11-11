@@ -4,6 +4,8 @@ export default class WebSocketConnection {
   readonly #address = WEBSOCKET_URL
   #socket: WebSocket | null = null
 
+  onConnecting: () => void = () => {}
+  onConnect: () => void = () => {}
   onMessage: (rawString: string) => void = () => {}
   onDisconnect: () => void = () => {}
 
@@ -29,10 +31,14 @@ export default class WebSocketConnection {
   }
 
   #connect(resolve: (s: WebSocket) => void, reject: (e: unknown) => void): void {
+    this.onConnecting()
     const socket = new WebSocket(this.#address)
     this.#socket = socket
 
-    socket.onopen = () => resolve(socket)
+    socket.onopen = () => {
+      this.onConnect()
+      resolve(socket)
+    }
     socket.onmessage = (event) => this.onMessage(event.data as string)
     socket.onclose = () => this.onDisconnect()
     socket.onerror = (err) => reject(err)

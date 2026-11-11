@@ -29,6 +29,15 @@ export const translations = {
     folderName: 'Definitsioonide kaust',
     noneFound: 'Definitsioone ei leitud',
     noCourseCode: '?',
+    searching: 'Definitsiooni otsimine...',
+    found: (name: string) => `Definitsioon: ${name}`,
+    notFound: (assignmentId: string) => `Ülesandele ${assignmentId} definitsiooni ei leitud`,
+    folderNotChosen: 'Definitsioonide kaust valimata',
+    notLoaded: 'Definitsioonid laadimata',
+    lookupFailed: 'Definitsiooni otsimine ebaõnnestus',
+    loaded: (count: number) => `Laetud definitsioone: ${count}`,
+    noPermission: 'Kausta lugemiseks puudub luba',
+    brokenFiles: (fileNames: string) => `Vigased failid: ${fileNames}`,
   },
 
   fileSource: {
@@ -42,6 +51,31 @@ export const translations = {
   studentSubmission: {
     noWorkspaceFolder: 'Moodle Helper: No workspace folder open.',
     noStudentFolder: (studentName: string) => `Moodle Helper: No folder found for "${studentName}".`,
+    opening: (studentName: string) => `${studentName}: failide avamine...`,
+    opened: (studentName: string) => `${studentName}: failid avatud`,
+    nothingOpened: (studentName: string) => `${studentName}: ühtegi faili ei avatud`,
+    notFound: (studentName: string) => `${studentName}: kausta ei leitud`,
+    noWorkspace: "VS Code'is pole kausta avatud",
+    error: (studentName: string) => `${studentName}: viga failide avamisel`,
+    unhandled: 'VS Code ei tundnud päringut ära',
+    unreachable: 'VS Code ei ole kättesaadav',
+    noAnswer: 'VS Code ei vastanud',
+  },
+
+  connection: {
+    disconnected: 'VS Code: ühendus puudub',
+    reconnecting: 'VS Code: ühendumine...',
+    connected: 'VS Code: ühendatud',
+    portInUse: (port: number) => `VS Code: port ${port} on hõivatud, õpilasi võtab vastu teine VS Code'i aken`,
+    serverError: 'VS Code: õpilaste vastuvõtmine ei käivitunud',
+  },
+
+  moodlePage: {
+    elementNotFound: (selector: string) => `Moodle'i lehelt ei leitud: ${selector}`,
+  },
+
+  statusBar: {
+    label: 'Moodle Helper',
   },
 
   pythonRunner: {

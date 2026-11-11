@@ -42,6 +42,25 @@
       .definition-list li {
         margin-bottom: 4px;
       }
+      #status-container {
+        position: sticky;
+        bottom: -12px;
+        margin: 12px -12px -12px;
+        padding: 8px 12px;
+        border-top: 1px solid #000;
+        background-color: #fff;
+      }
+      .status + .status::before {
+        content: ' · ';
+        font-weight: normal;
+        font-style: normal;
+      }
+      .status-progress {
+        font-style: italic;
+      }
+      .status-problem {
+        font-weight: bold;
+      }
     </style>
   </head>
   <body>
@@ -53,6 +72,7 @@
     </div>
     <hr />
     <div id="definitions-container"></div>
+    <div id="status-container"></div>
     <script type="module" src="popup.ts"></script>
   </body>
 </html>

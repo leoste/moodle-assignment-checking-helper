@@ -3,7 +3,7 @@ import type QuizReviewPage from '../pagemanager/QuizReviewPage'
 import type QuizQuestionBox from '../pagemanager/QuizQuestionBox'
 import { AutoGradeButtonRenderer } from '../renderer/AutoGradeButtonRenderer'
 import { quizClient } from '../client/QuizClient'
-import { logger } from '@shared/logging/logger'
+import { logger } from '@shared/reporting/logger'
 
 export default class QuizReviewPresenter extends BasePresenter {
   readonly #page: QuizReviewPage

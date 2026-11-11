@@ -2,7 +2,7 @@ import BaseInfrastructure from './BaseInfrastructure'
 import type MessageHandlerMap from '../object/MessageHandlerMap'
 import type { MessageHandler } from '../types/MessageHandler'
 import type { BasePayload } from '../types/payload/BasePayload'
-import { logger } from '../logging/logger'
+import { logger } from '../reporting/logger'
 
 export default abstract class BaseMessageReceiver<THandler extends MessageHandler, TResponder> extends BaseInfrastructure {
   readonly #handlerMap: MessageHandlerMap<THandler>

@@ -5,7 +5,7 @@ import VsCodeMessageController from './VsCodeMessageController'
 class StudentSubmissionController extends VsCodeMessageController {
   protected override onInit(): undefined {
     this.addMessageHandler(STUDENT_SUBMISSION_CHANNEL, async ({ studentName }) => {
-      await studentSubmissionService.openStudentSubmission(studentName)
+      return studentSubmissionService.openStudentSubmission(studentName)
     })
   }
 }

@@ -4,9 +4,13 @@ import type { WebSocket } from 'ws'
 import type { VsCodeRequest, VsCodeResponse, VsCodeResponseStatus } from '@shared/types/VsCodeMessage'
 import { RESPONSE_STATUS_ERROR, RESPONSE_STATUS_OK, RESPONSE_STATUS_UNHANDLED } from '@shared/constants/vscode-message'
 import { WEBSOCKET_HOST, WEBSOCKET_PORT } from '@shared/config/connection'
-import { logger } from '@shared/logging/logger'
+import { logger } from '@shared/reporting/logger'
+import { statusReporter } from '@shared/reporting/statusReporter'
+import { getConnectedStatus, getDisconnectedStatus, getPortInUseStatus, getServerErrorStatus } from '@shared/rules/status-rules'
 import VsCodeMessageHandlerMap from '../shared/object/VsCodeMessageHandlerMap'
 import type { VsCodeMessageHandler } from '../shared/types/VsCodeMessageHandler'
+
+const ADDRESS_IN_USE_ERROR_CODE = 'EADDRINUSE'
 
 export interface RequestResponder {
   ws: WebSocket
@@ -15,6 +19,7 @@ export interface RequestResponder {
 
 class VsCodeMessageReceiver extends BaseMessageReceiver<VsCodeMessageHandler, RequestResponder> {
   #server: WebSocketServer | null = null
+  #connectionCount = 0
 
   constructor() {
     super(new VsCodeMessageHandlerMap())
@@ -23,8 +28,15 @@ class VsCodeMessageReceiver extends BaseMessageReceiver<VsCodeMessageHandler, Re
   protected override onInit(): undefined {
     const server = new WebSocketServer({ port: WEBSOCKET_PORT, host: WEBSOCKET_HOST })
     this.#server = server
+    server.on('listening', () => statusReporter.report(getDisconnectedStatus()))
+    server.on('error', (err: NodeJS.ErrnoException) => {
+      logger.error(this, 'WebSocket server error', err)
+      statusReporter.report(err.code === ADDRESS_IN_USE_ERROR_CODE ? getPortInUseStatus(WEBSOCKET_PORT) : getServerErrorStatus())
+    })
     server.on('connection', (ws) => {
       logger.info(this, 'Chrome extension connected')
+      this.#connectionCount++
+      statusReporter.report(getConnectedStatus())
       ws.on('message', async (raw) => {
         let request: VsCodeRequest
         try {
@@ -35,7 +47,11 @@ class VsCodeMessageReceiver extends BaseMessageReceiver<VsCodeMessageHandler, Re
         }
         await this.dispatch(request.channel, request.content, { ws, id: request.id })
       })
-      ws.on('close', () => logger.info(this, 'Chrome extension disconnected'))
+      ws.on('close', () => {
+        logger.info(this, 'Chrome extension disconnected')
+        this.#connectionCount--
+        if (this.#connectionCount === 0) statusReporter.report(getDisconnectedStatus())
+      })
     })
   }
 
@@ -44,8 +60,9 @@ class VsCodeMessageReceiver extends BaseMessageReceiver<VsCodeMessageHandler, Re
     this.#server = null
   }
 
-  protected respondHandled(responder: RequestResponder): void {
-    this.#sendResponse(responder, RESPONSE_STATUS_OK)
+  // A handler can answer with its own status, otherwise a handled request is answered with ok.
+  protected respondHandled(responder: RequestResponder, response: unknown): void {
+    this.#sendResponse(responder, (response as VsCodeResponseStatus | undefined) ?? RESPONSE_STATUS_OK)
   }
 
   protected respondUnhandled(responder: RequestResponder): void {

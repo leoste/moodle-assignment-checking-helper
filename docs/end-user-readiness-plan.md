@@ -94,7 +94,14 @@ Follow-up answers:
 
 ---
 
-## Step 2: Safer grading
+## Step 2: Safer grading ✅
+
+> **Done:** solved as planned. Details:
+> - The new `ApplySectionRenderer` follows the existing renderer and callbacks pattern: `CheckingHelperPanelCallbacks` extends both `FeedbackSectionCallbacks` and the new `ApplySectionCallbacks`. It reuses the part rows' classes (`item-container`, `text-section`), so the strip looks like a part row.
+> - `CheckingHelperPanelRenderer` splits the panel into a scroll area (feedback) and a bottom strip. The strip holds the apply section and, from step 3, the status line. The panel frame itself no longer scrolls.
+> - The comment preview is at most 6em tall and scrolls on its own beyond that.
+> - The provisional texts are in a new `apply` group in `translations.ts`. Step 4 settles the wording.
+> - Testing is done once at the end of the plan, not per step (author's decision).
 
 **Goal:** the panel shows the grade and comment as they're generated, and writes them into Moodle only when the lecturer presses a button.
 
@@ -172,10 +179,15 @@ Follow-up answers:
 8. **VS Code WebSocket server** handles a busy port and reports it in the status bar, instead of failing with an uncaught error.
 9. **README "Conceptual changes":** a new entry about definition structure validation. Currently only JSON syntax is checked, and a file with the wrong shape (e.g. no `moodleIds`) can break the popup list and the lookups. It's a business-rule-level concern: the definition structure should ideally be declared once and everything else derived from it.
 
-**Open design point (proposed to the author at the start of the step):**
-- Showing the live connection state in the panel needs messages from the service worker to the panel. Today messages only go from the panel or popup to the service worker, as request and response.
-- This is a new message direction, so the mechanism is proposed and justified before it's built.
-- Related: Chrome's service worker closes the WebSocket about 30 s after the last message. That is when "disconnected" appears.
+**Design (proposed at the start of the step, approved by the author):**
+1. **Notification layer:** a `statusReporter` in every context, built like the `logger`. Every status belongs to a topic, and a new status replaces the old one in its topic, so the bar always shows the current state.
+2. **Service worker → panel and popup:** a long-lived port. The panel opens it on every student page and the popup when it opens. The service worker sends its connection statuses over it. When Chrome stops the idle service worker, the WebSocket and the port close together, so a closed port means "disconnected". The port isn't reopened until the next page, so it doesn't keep waking the service worker up.
+3. **Per-request results stay in responses:** VS Code's answer and the definition state come back in the response to that tab's request, so two open tabs don't show each other's results.
+
+Author's answers: "2. ok", "3. ok". About the logger and the status reporter sharing a parent class:
+> ok good answer and yes i still want that shared class, even if it is small, as even the mere existence of the class already communicates important details to future developers. it should go in shared. but here i want to make it a bit different than you say. instead of three folders in shared, lets merge them all into shared/reporting.
+
+So `BaseReporter`, the logger and the status reporter are all in `shared/reporting/`. The extensions' own reporting files are in `reporting/` folders as well, following the same naming.
 
 **Functionality changes:**
 - **3a. Approved.** VS Code answers with new statuses: student folder not found, no workspace folder, nothing opened. ("its time to add a different type of "not found" response", "yes there should be separate no workspace folder open status", "only if something was opened or no")

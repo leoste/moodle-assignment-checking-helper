@@ -80,7 +80,7 @@ export const translations = {
   },
 
   moodlePage: {
-    elementNotFound: (selector: string) => `Laiendus ei leidnud Moodle'i lehelt: ${selector} (Moodle'i leht võib olla ümber arendatud)`,
+    elementNotFound: (selector: string) => `Laiendus ei leidnud Moodle'i lehelt: ${selector} (Moodle'i leht võib olla ümber arendatud või pole tööd, mida kontrollida)`,
   },
 
   statusBar: {

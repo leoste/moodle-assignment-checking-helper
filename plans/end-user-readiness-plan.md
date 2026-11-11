@@ -15,11 +15,13 @@ On 2026-11-09 the whole project was analysed for obstacles between its current f
 | 3 | Safer grading: preview and an apply button instead of writing into Moodle immediately | Step 2 |
 | 4 | Hints that the panel is used together with Moodle's buttons; clearer texts | Step 4 |
 | 5 | Clickable things look clickable (whole box, hover glow) | Step 5 |
-| 6 | Panel as a separate window instead of injecting it into the Moodle page | **Not in this plan.** Only when the author says so. |
+| 6 | Panel as a separate window instead of injecting it into the Moodle page | Step 10: only the README, which becomes the sole owner of the idea |
 | 7 | VS Code extension is active in every window | Note in the guide (Appendix A) |
 | 8 | Status reports in both extensions | Step 3 |
 
 Order: step 1 is independent. Steps 2–4 build on each other: the status line of step 3 lives in the bottom strip of step 2, and step 4 rewrites the texts of steps 2–3. Step 5 comes after them because it styles every UI, including the new ones. Step 6 tests everything steps 1–5 changed.
+
+Steps 7–14 work through what was the README's "Future concerns" section (see "Part 2" below).
 
 ## How to read this plan
 
@@ -315,7 +317,12 @@ The extension name "Moodle Assignment Checking Helper" stays in English as a pro
 
 ---
 
-## Step 6: Testing
+## Step 6: Testing ✅
+
+> **Done:** the author tested release 1.0.1, reported ten findings (see "Findings" below), and the fixes were released as 1.0.2. The re-test of 1.0.2 passed:
+> > i fixed this stuff and i tested everything again, current version everything works pretty well.
+>
+> One more issue came up while building 1.0.2: the VS Code icon had been copied into the extension's `src/images/` instead of `images/`. The author moved it.
 
 **Goal:** test everything steps 1–5 changed, once and as a whole, then fix what the test finds. The steps weren't tested one by one, so this step is where they are verified.
 
@@ -464,6 +471,219 @@ The author sends findings during the test and the solver records them here. Noth
 10. **Noticed by the solver in img2: the grade preview box is too wide.** The grade box should be only as wide as its text, but it takes about half of the strip.
     - *Cause:* in `assign-grader.css`, `div.text-section { flex: 1 }` comes after `div.apply-grade { flex: none }` and has the same specificity, so it wins. A CSS ordering bug from step 2.
     - **Fixed:** the selector is now `div.text-section.apply-grade`, which is more specific, so it wins regardless of order.
+
+---
+
+# Part 2: Future concerns
+
+After step 6 the author went through the README's "Future concerns" one by one: each is either done or dropped.
+> now its time to solve the future concerns pile. i will either decide things need doing and we will do them or i will remove them from pile. [...] each block marks one step basically, so one block can be done all at once, but other blocks need to come one by one. [...] reorder the tasks too in a way that the ones where theres multiple ones at once, we do all of these steps first, and after that we do all the lone ones. also further rearrange the single ones so that the ones which require no input from me, are done first, and leave last the ones which i mentioned inside of that i want to decide something based on your further input before actual development. we will be developing the same way like we did with steps earlier.
+
+| README future concern | Decision | Step |
+|---|---|---|
+| Grade calculation | Dropped | 7 |
+| Grade scale | Dropped | 7 |
+| No student selected | A text addition instead of detection | 7 |
+| Notifying Moodle's form of applied values | Do it | 8 |
+| Matching students and submissions | User docs; downloading isn't the app's job | 8 |
+| WebSocket origin check | Do it | 8 |
+| Definition structure validation | Do it, with a sample definition | 9 |
+| Panel as a separate window (item 6) | Only the README, with the new requirement | 10 |
+| Opening sub-directories is a compile-time setting | A VS Code settings UI; options first | 11 |
+| Page ready detection | A manual reload as a failsafe; discussion first | 12 |
+| Switching the receiving VS Code window | Analysis and discussion first | 13 |
+| Database | Not decided yet; not in the author's breakdown | — |
+
+The author then removed the README's "Future concerns" section altogether, so this plan is now the only place for these items. Each step below keeps the README entry's technical details under "From the README".
+> as you moved these things to the plan file, you can remove them from the readme already, you can remove the entire section from readme infact as i dont want such a section in readme anymore.
+
+**Undecided: Database.** From the README: the IndexedDB database (`IndexedDBProvider`: `DB_NAME`, `STORE_NAME`, `DB_VERSION`) has no migrations. When the type of a stored value changes, its repository has to treat an old value as missing until it is stored again, e.g. by reloading the definitions folder. Likely very low priority in a project this simple.
+
+**Order:**
+- Steps 7–8 are the blocks with several items.
+- Steps 9–10 are single items that need no input from the author.
+- Steps 11–13 are single items where the author decides after the solver's input.
+- Step 14 tests steps 7–13 in one round, as step 6 did for steps 1–5.
+
+---
+
+## Step 7: Dropped concerns and the "no work" text
+
+**Goal:** remove the two future concerns the author dropped, and replace the "no student selected" idea with a text addition.
+
+**Author's decisions:**
+> grade calculation: remove from future concerns. its robust enough with the professor being able to do simple mathematics and logic in their head to understand how them clicking the visual things adds or removes points, and them themselves building the sort of system they want to use, that we cant feasibly make it better without making it annoying and it would be of no benefit. we will just drop this. if in the future it becomes a problem, then it resurfaces anyways, we dont need to keep it logged.
+
+> grade scale: this also isnt a real issue, professor already creates custom definition files for every assignment so they know what grade sum will be so its not a real issue, we will remove this entirely.
+
+> no student selected: combine this with one of the above blocks where there are multiple already, cause this is an easy one. we wont be doing the detection. instead we'll just add a bit of text to the error: "või pole tööd, mida kontrollida."
+
+**Tasks:**
+1. **README:** the three entries went away with the whole "Future concerns" section (see the start of Part 2).
+2. **Text:** "Moodle element not found" gets the addition. Proposed: "Laiendus ei leidnud Moodle'i lehelt: X (Moodle'i leht võib olla ümber arendatud või pole tööd, mida kontrollida)".
+
+**Functionality changes:**
+- **7a. Approved.** The text addition (quote above).
+
+---
+
+## Step 8: Moodle form events, preparing submissions, WebSocket origin check
+
+**Goal:**
+- Moodle's form notices the applied grade and comment.
+- The user docs say how to prepare the submissions.
+- VS Code accepts connections only from the Chrome extension.
+
+**Author's decisions:**
+> notifying moodle's form of applied values: explore how is the best and most robust way to make get the input and change events to trigger after updating the texts programmatically. ideally id want to keep my logic and functioning same, but just add one call there to cause the events to happen, after the text has been filled in.
+
+> matching students and submissions: text says to be solved with downloading, however i will drop the download requirement, this application wont deal with downloading itself. because of this, we create new docs file called user using.md. in it a section, short, which mentions that before grading an assignment, the definition file needs to be made and the student submissions need to be downloaded and extracted into a folder from their zip on the local pc. earlier i said that you will add the definition files docs in user setup.md - create a link from the section in user usage i described right now, into the definition files tutorial section in user setup.md.
+
+> websocket origin check: add the check mentioned in the text already, it should be relatively simple i think.
+
+**Tasks:**
+1. **Form events:**
+   - After `AssignmentGraderPage` sets the grade and the comment, the element dispatches bubbling `input` and `change` events, so Moodle's form scripts treat the values as typed.
+   - It's one added call in the page object; the logic stays the same.
+   - The step starts by checking which events Moodle's grader actually listens to.
+   - *From the README:* `setGrade()` and `setComment()` set the values directly, without the `input` and `change` events that Moodle's form scripts listen to. So Moodle's own change detection, e.g. its check for unsaved changes, may not notice an applied grade and comment.
+2. **Preparing submissions:**
+   - New file `docs/user using.md` with a short section: before grading an assignment, make its definition file, download the submissions from Moodle, and extract them from the zip into a folder on the computer.
+   - The section links to the definition files section of `docs/user setup.md`. That section is written in step 9, so either the link or the section heading is added in step 9.
+   - *From the README:* `isStudentFolder()` in the VS Code `student-files-rules.ts` matches the student's folder with `folderName.startsWith(studentName)`, so "Mari Maa" also matches "Mari Maasikas_…" and opens the wrong student's files. The README said this was to be solved together with downloading submissions, which the author has now dropped.
+3. **Origin check:**
+   - The VS Code server accepts connections only with the origin `chrome-extension://<extension id>`. Others are refused and logged.
+   - *From the README:* the server (`VsCodeMessageReceiver`, `ws://127.0.0.1:54321`) accepts connections from anywhere. Any web page can open a WebSocket to localhost and send a `student-submission` message, which closes all editors and terminals in VS Code and opens files.
+
+**Open questions at the start of the step:**
+- **Prefix matching:** does the problem stay recorded in this plan as a known issue, or is it dropped? `isStudentFolder()` matches by `startsWith`, so "Mari Maa" also matches "Mari Maasikas".
+- **Where VS Code gets the extension ID from:**
+  - a constant written once, read from `chrome://extensions`;
+  - or computed in VS Code from the manifest's `key`. The key would move to shared config; the ID is the first 32 hex digits of the key's SHA-256, written with the letters a–p.
+
+**Functionality changes:**
+- **8a. Approved.** The events after applying.
+- **8b. Approved.** The origin check.
+
+---
+
+## Step 9: Definition validation and the sample definition
+
+**Goal:** a definition file with a wrong structure is recognised when the definitions are loaded and reported as broken. A sample definition shows everything a definition can contain.
+
+**Author's decisions:**
+> definition structure validation: explore the repository to see how easy or hard would it be to implement a validator with clear rules. i think validator only needs to exist at one point: loading the definition files. it can then immediately alert if the definitions are wrongly made. this definition validation logic will dually serve as documentation on what is possible to put inside of a validator, so i want to implement it in two parts: first is the code, second is a dummy json file which has every possible field of the structure in it. things in array only need one entry, as the fact its in an array points to the possibility that there could be multiple of it anyways. all text fields are marked with an "example" text as its value, while all boolean fields are marked with true as their value. all optional text fields are marked with "" as their value while all optional boolean fields are marked with false as their value. the code part reference-checks the loaded definition file against this demo json and if it has wrong value type or wrong fields that arent allowed by the demo, forbids them. this file will live inside src, however in docs under user setup.md you will add a section, "create your definition files" and you will add a link to the file in "src/definitions", explaining that its the sample and how its to be interpreted. file name will be sample-definition.json.
+
+**Tasks:**
+1. **The sample:** `src/definitions/sample-definition.json` with every possible field.
+   - Arrays have one entry.
+   - Required texts are "example", required booleans `true`.
+   - Optional texts are "", optional booleans `false`.
+2. **The validator:**
+   - When the definitions are loaded, each one is checked against the sample.
+   - A field the sample doesn't have, or a value of the wrong type, makes the file broken: it's skipped and named in the status line, like a file with a JSON error today.
+   - It runs in one place, where the definition files are read as JSON.
+3. **User docs:**
+   - `docs/user setup.md` gets a section "create your definition files" that links to the sample and explains how to read it.
+   - The link from `docs/user using.md` (step 8) points there.
+4. *From the README:*
+   - Only the JSON syntax of a definition file is checked. A file with valid JSON but the wrong structure, e.g. without `moodleIds`, isn't reported as broken and can break the popup's list and the lookup of every assignment.
+   - To avoid defining the structure twice, it should ideally be declared once and everything else derived from it: the `Assignment` type and the check.
+   - Every file in the definitions folder is read, so files that aren't definitions at all, e.g. a `README.md`, are reported as broken too.
+
+**Open questions at the start of the step:**
+- **Numbers:** `intended_max_points` (required) and `points` (optional) are numbers, but the sample's rules only cover texts and booleans. Which values do numbers get in the sample?
+- **`null`:** existing definitions use `null` for an empty text (`"enabledText": null`). Is `null` allowed?
+- **Missing fields:** must every required field be present? Can an optional one be left out?
+- **`moodleIds` as numbers:** they work today, because ids are compared as strings. The sample says strings.
+- **Two declarations:** the TypeScript types (`Assignment`, `Feedback`, `FeedbackPart`) remain a second declaration of the same structure.
+
+**Functionality changes:**
+- **9a. Approved.** Wrongly built definitions are reported as broken and skipped (author's request).
+
+---
+
+## Step 10: The separate panel window ✅
+
+> **Done:** it was meant to update the README entry, but the author then removed the README's "Future concerns" section. So this step holds the idea instead, and item 6 is done with it.
+
+**Author's decision:**
+> panel as a separate window: this one we will not do right now, this is step 6 in your terms. i realise that it needs a toggle option: you can choose if you want it as separate window, or integrated like it is right now. this is complex functionality. so instead just update the readme with my new requirement, with info from step 6 if needed so that this readme section becomes the sole owner of this idea, and then consider your step 6 done.
+
+("Step 6 in your terms" means item 6 of this plan.)
+
+**The idea**, the only place where it is recorded:
+- **Today:** the panel is injected into Moodle's grading page, because it relies on page functions being visible to the lecturer. It squeezes Moodle's own panels and ties the extension's layout to Moodle's.
+- **The author's requirement:** a toggle lets the lecturer choose whether the panel is a separate window or integrated as it is now.
+- **What it needs:** a new system for controlling such a window, moving the injected UI into it, and communication between the window and the Moodle page. It's a large change, done separately and only when the author decides.
+- **Item 6 in the author's original words:**
+  > layout as a separate popup control panel. this is a massive undertaking as it involves insane refactors so id like to do it completely separately only when i say its time. it needs implementing a new system for controlling such a popup potentially, and transferring the injection into this, and implementing communication between them.
+- **Until then, two layout issues stay tied to the injection:**
+  - the panel's `left: 40%` depends on the two `20%` Moodle panel widths;
+  - Moodle selectors are repeated in `assign-grader.css` (`div[data-region="grade-panel"]`, `div.comment-area div.db textarea`), separately from the page objects.
+
+**Functionality changes:** none.
+
+---
+
+## Step 11: VS Code settings (opening sub-directories)
+
+**Goal:** the VS Code extension gets a place for its settings, like the Chrome popup. Opening sub-directories becomes a true/false setting there.
+
+**Author's decision:**
+> opening sub-directories is a compile-time setting: the vscode extension needs a panel similar to the chrome popup, where the extension settings could be toggled. sub-directories open becomes a true-false toggle in this settings popup. im not sure if vscode would allow such a separate panel, so when were at this step tell me what the standard ways in vscode are for enabling plugins such functionality, their drawbacks and good sides, suitability into my situation, and i will decide from there.
+
+**How:**
+1. The solver presents VS Code's standard ways for an extension's settings, with their strengths, drawbacks and fit for this project.
+2. The author decides.
+3. Then `OPEN_SUB_DIRECTORIES` becomes the setting.
+
+*From the README:* `OPEN_SUB_DIRECTORIES` in the VS Code `config.ts` (used by `shouldCollectSubFolders()`) is hard-coded to `true`. So files are always collected recursively, the `false` branch (top-level files only) never runs, and changing it requires rebuilding. `MAX_AUTO_OPENED_FILES` and `BLACKLISTED_FOLDER_NAMES` could become settings too.
+
+---
+
+## Step 12: Manual panel reload
+
+**Goal:** if the panel never appears, the lecturer can load it manually from the popup. The page-ready detection itself stays as it is.
+
+**Author's decision:**
+> page ready detection: this is actually robust enough right now and lets not change the detection itself, however lets add a failsafe: manual opening. in the case it never opens, the user should be able to cause it to open manually. we already have a link between popup and main panel thanks to previously implemented definitions update, lets use it or do something similar: we will have a manual button "lae sisupaneel uuesti" which will basically manually toggle the panel. this is more involved than it sounds, cause right now the mutationobserver is deeply tied to the loading of the panel, i think at least. so wed need to separate them a bit more from each other. but actually when we get to this step, you remind and explain to me how you currently implemented the automatic refresh when definitions are loaded, cause thats a similar functionality and we should ensure both of them share a mutual well-defined robust way of approaching this same goal.
+
+**How:**
+1. The solver explains how the automatic panel update after reloading definitions works (step 6, finding 5) and proposes one common approach for both.
+2. The author decides.
+3. Then the popup gets the button "Lae sisupaneel uuesti", and loading the panel is separated further from the page-ready detection.
+
+*From the README:* `executeOnPageReady` runs the callback only after at least one DOM mutation followed by 1.2 s of silence. If the page is already quiet when the content script starts, or never gets quiet (e.g. a timer), the callback never runs. The URL polling interval runs forever, and every navigation creates a new `MutationObserver`. So far it has always worked.
+
+---
+
+## Step 13: Switching the receiving VS Code window
+
+**Goal:** the VS Code window that doesn't receive students can take the reception over.
+
+*From the README:*
+- **The problem:** every VS Code window starts the extension, but only the first one gets the port and receives the students. The others show "port in use", and the only way to move the reception is to close the windows and open VS Code again in the right folder. The window without the port could offer a status bar button "switch to this window", after which the two windows swap.
+- **The proposed mechanism:** VS Code has no API for windows to talk to each other, but they can talk over the port they compete for.
+  1. The window without the port connects to the receiving window as a WebSocket client and asks it to hand over.
+  2. The receiving window closes its server.
+  3. The asking window starts its own, retrying until the port is free.
+  4. Chrome reconnects on the next student.
+- **What it needs:** a WebSocket client in the VS Code extension next to the server, a new message channel and a status bar command, built along the existing message system.
+
+**Author's decision:**
+> switching the receiving vs code window: communicating through the competing port is perhaps the best way to approach this. this maybe means creation of some additional controller and client for the vscode to vscode talking. maybe this also needs some additional service-layer tier piping. the way i want to do this is you analyse code and figure out what changes need to be done, then you present them to me together with questions if you have them, we discuss it and then you work.
+
+**How:**
+1. The solver analyses the code and presents the changes needed, with questions.
+2. The author and the solver discuss them.
+3. Then the solver implements it.
+
+---
+
+## Step 14: Testing
+
+**Goal:** test everything steps 7–13 changed, once and as a whole, then fix what the test finds. This works like step 6: the author reports findings, and nothing is fixed until the author says the testing is finished.
 
 ---
 

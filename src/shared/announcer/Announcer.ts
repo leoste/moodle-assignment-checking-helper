@@ -6,6 +6,8 @@ import {
   LOG_LEVEL_INFO,
   LOG_PREFIX,
   NEWS_TYPE_LOG,
+  NEWS_TYPE_RECEPTION,
+  NEWS_TYPE_SETTINGS_UPDATED,
   NEWS_TYPE_STATUS,
   STATUS_CHANGE_ALL_CLEARED,
   STATUS_CHANGE_CLEARED,
@@ -35,6 +37,14 @@ class Announcer extends BaseAnnouncer {
 
   announceStatusesCleared(): void {
     reporter.report({ type: NEWS_TYPE_STATUS, change: STATUS_CHANGE_ALL_CLEARED })
+  }
+
+  announceReception(receiving: boolean): void {
+    reporter.report({ type: NEWS_TYPE_RECEPTION, receiving })
+  }
+
+  announceSettingsUpdated(): void {
+    reporter.report({ type: NEWS_TYPE_SETTINGS_UPDATED })
   }
 
   #format(source: LogSource, message: string): string {

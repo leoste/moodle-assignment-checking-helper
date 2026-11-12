@@ -1,8 +1,7 @@
 import Initialisable from '@shared/Initialisable'
 import SidebarPresenter from '../presenter/SidebarPresenter'
-import type { Settings } from '../../shared/types/Settings'
 
-// Starts the sidebar's page: creates its presenter and passes the extension's messages on to it.
+// Starts the sidebar's page: creates its presenter and passes the news it has to act on to it.
 class SidebarListener extends Initialisable {
   #presenter: SidebarPresenter | undefined
 
@@ -11,12 +10,8 @@ class SidebarListener extends Initialisable {
     void this.#presenter.start()
   }
 
-  showSettings(settings: Settings): void {
-    this.#presenter?.showSettings(settings)
-  }
-
-  showReception(receiving: boolean): void {
-    this.#presenter?.showReception(receiving)
+  async refreshSettings(): Promise<void> {
+    await this.#presenter?.refreshSettings()
   }
 }
 

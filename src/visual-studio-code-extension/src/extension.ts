@@ -4,6 +4,7 @@ import { reporter } from '@shared/reporter/Reporter'
 import { translations } from '@shared/translations/translations'
 import OutputChannelWatcher from './watcher/OutputChannelWatcher'
 import StatusBarWatcher from './watcher/StatusBarWatcher'
+import { statusBarButtonWatcher } from './watcher/StatusBarButtonWatcher'
 import { newsClient } from './client/NewsClient'
 import { SHOW_LOG_COMMAND } from './config'
 import initInfrastructure from './infrastructure/init-infrastructure'
@@ -20,6 +21,7 @@ export function activate(context: vscode.ExtensionContext): void {
   const statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left)
   statusBarItem.command = SHOW_LOG_COMMAND
   reporter.addWatcher(new StatusBarWatcher(statusBarItem))
+  reporter.addWatcher(statusBarButtonWatcher)
   reporter.addClient(newsClient)
   const showLogCommand = vscode.commands.registerCommand(SHOW_LOG_COMMAND, () => outputChannel.show())
 

@@ -1,13 +1,12 @@
 import BaseService from '@shared/service/BaseService'
+import { announcer } from '@shared/announcer/Announcer'
 import { settingsRepository } from '../repository/SettingsRepository'
-import { settingsClient } from '../client/SettingsClient'
 import type { Settings } from '../shared/types/Settings'
 
 class SettingsService extends BaseService {
-  // The sidebar shows the settings, also after they were changed in VS Code's Settings editor.
+  // Whoever shows the settings asks for them again, also after they were changed in VS Code's Settings editor.
   protected override onInit(): undefined {
-    settingsRepository.onDidChange(() => void this.#showSettings())
-    void this.#showSettings()
+    settingsRepository.onDidChange(() => announcer.announceSettingsUpdated())
   }
 
   async getSettings(): Promise<Settings> {
@@ -16,10 +15,6 @@ class SettingsService extends BaseService {
 
   async updateSettings(settings: Partial<Settings>): Promise<void> {
     await settingsRepository.updateSettings(settings)
-  }
-
-  async #showSettings(): Promise<void> {
-    await settingsClient.showSettings(await settingsRepository.getSettings())
   }
 }
 

@@ -1,5 +1,7 @@
 export const NEWS_TYPE_LOG = 'log'
 export const NEWS_TYPE_STATUS = 'status'
+export const NEWS_TYPE_RECEPTION = 'reception'
+export const NEWS_TYPE_SETTINGS_UPDATED = 'settings-updated'
 
 export const LOG_LEVEL_INFO = 'info'
 export const LOG_LEVEL_ERROR = 'error'

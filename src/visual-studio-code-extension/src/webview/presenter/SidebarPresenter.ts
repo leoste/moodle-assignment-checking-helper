@@ -1,11 +1,11 @@
 import BasePresenter from '@shared/presenter/BasePresenter'
 import { statusLineWatcher } from '@shared/watcher/StatusLineWatcher'
+import { receptionWatcher } from '../watcher/ReceptionWatcher'
+import { settingsWatcher } from '../watcher/SettingsWatcher'
 import SidebarRenderer from '../renderer/SidebarRenderer'
 import { settingsClient } from '../client/SettingsClient'
-import { sidebarClient } from '../client/SidebarClient'
 import { receptionClient } from '../client/ReceptionClient'
 import { newsClient } from '../client/NewsClient'
-import type { Settings } from '../../shared/types/Settings'
 
 export default class SidebarPresenter extends BasePresenter {
   #renderer: SidebarRenderer | undefined
@@ -17,17 +17,18 @@ export default class SidebarPresenter extends BasePresenter {
     })
     await this.#renderer.render()
     statusLineWatcher.setStatusLine(this.#renderer.statusLine)
-    // The page asks for the current settings and statuses only once it can show them.
-    await sidebarClient.notifyReady()
-    await statusLineWatcher.follow(newsClient)
+    receptionWatcher.setSidebar(this.#renderer)
+    await this.refreshSettings()
+    await Promise.all([
+      statusLineWatcher.follow(newsClient),
+      receptionWatcher.follow(newsClient),
+      settingsWatcher.follow(newsClient),
+    ])
   }
 
-  showSettings(settings: Settings): void {
-    this.#renderer?.setSettings(settings)
-  }
-
-  showReception(receiving: boolean): void {
-    this.#renderer?.setReceiving(receiving)
+  async refreshSettings(): Promise<void> {
+    const settings = await settingsClient.getSettings()
+    if (settings) this.#renderer?.setSettings(settings)
   }
 
   #onOpenSubDirectoriesChanged = (openSubDirectories: boolean): void => {

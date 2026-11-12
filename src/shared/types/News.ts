@@ -2,6 +2,8 @@ import type {
   LOG_LEVEL_ERROR,
   LOG_LEVEL_INFO,
   NEWS_TYPE_LOG,
+  NEWS_TYPE_RECEPTION,
+  NEWS_TYPE_SETTINGS_UPDATED,
   NEWS_TYPE_STATUS,
   STATUS_CHANGE_ALL_CLEARED,
   STATUS_CHANGE_CLEARED,
@@ -39,4 +41,15 @@ export interface StatusesClearedNews {
 
 export type StatusNews = StatusReportedNews | StatusClearedNews | StatusesClearedNews
 
-export type News = LogNews | StatusNews
+// Whether this VS Code window receives the students.
+export interface ReceptionNews {
+  type: typeof NEWS_TYPE_RECEPTION
+  receiving: boolean
+}
+
+// The settings are stored data, so the news only says that they changed: whoever shows them asks for them again.
+export interface SettingsUpdatedNews {
+  type: typeof NEWS_TYPE_SETTINGS_UPDATED
+}
+
+export type News = LogNews | StatusNews | ReceptionNews | SettingsUpdatedNews

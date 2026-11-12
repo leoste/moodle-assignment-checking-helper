@@ -3,12 +3,8 @@ import { announcer } from '@shared/announcer/Announcer'
 import { getPortInUseStatus, getTakeOverFailedStatus } from '@shared/rules/status-rules'
 import { REQUEST_STATUS_UNREACHABLE, RESPONSE_STATUS_OK } from '@shared/constants/vscode-message'
 import { WEBSOCKET_PORT } from '@shared/config/connection'
-import { translations } from '@shared/translations/translations'
 import { vsCodeMessageReceiver } from '../infrastructure/VsCodeMessageReceiver'
-import { statusBarButtonProvider } from '../infrastructure/StatusBarButtonProvider'
 import { handOverClient } from '../client/HandOverClient'
-import { receptionClient } from '../client/ReceptionClient'
-import { TAKE_OVER_COMMAND } from '../config'
 
 // How long a window taking the reception over keeps trying to start its server while the other window frees the port.
 const LISTEN_ATTEMPTS = 25
@@ -63,9 +59,7 @@ class ReceptionService extends BaseService {
 
   #setReceiving(receiving: boolean): void {
     this.#receiving = receiving
-    if (receiving) statusBarButtonProvider.hide()
-    else statusBarButtonProvider.show(translations.connection.takeOver, TAKE_OVER_COMMAND)
-    void receptionClient.showReception(receiving)
+    announcer.announceReception(receiving)
   }
 }
 

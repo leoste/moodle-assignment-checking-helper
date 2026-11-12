@@ -20,8 +20,10 @@ import { STATUS_TOPICS } from '../constants/status'
 class Reporter extends BaseReporter {
   readonly #watchers: BaseWatcher[] = []
   readonly #clients: WatcherClient[] = []
-  // The statuses that are still true, for briefing the watchers that come later.
+  // The news that is still true, for briefing the watchers that come later: the current status of every topic,
+  // and the latest piece of news of every other kind.
   readonly #statuses = new Map<StatusTopic, StatusReportedNews>()
+  readonly #latest = new Map<News['type'], News>()
   #warnedOfNoWatchers = false
 
   addWatcher(watcher: BaseWatcher): void {
@@ -41,13 +43,18 @@ class Reporter extends BaseReporter {
   }
 
   getBriefing(): News[] {
-    return STATUS_TOPICS
+    const statuses = STATUS_TOPICS
       .map(topic => this.#statuses.get(topic))
       .filter(news => news !== undefined)
+    return [...statuses, ...this.#latest.values()]
   }
 
   #remember(news: News): void {
-    if (news.type !== NEWS_TYPE_STATUS) return
+    if (news.type === NEWS_TYPE_LOG) return
+    if (news.type !== NEWS_TYPE_STATUS) {
+      this.#latest.set(news.type, news)
+      return
+    }
     switch (news.change) {
       case STATUS_CHANGE_REPORTED:
         this.#statuses.set(news.status.topic, news)

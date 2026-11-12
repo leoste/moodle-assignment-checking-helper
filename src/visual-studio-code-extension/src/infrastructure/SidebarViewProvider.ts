@@ -7,7 +7,6 @@ import WebviewRequestTracker from '../shared/object/WebviewRequestTracker'
 import type { WebviewMessageHandler } from '../shared/types/WebviewMessageHandler'
 import type { WebviewMessage, WebviewRequest, WebviewResponse } from '../shared/types/WebviewMessage'
 import isWebviewResponse from '../shared/util/isWebviewResponse'
-import { WEBVIEW_READY } from '../shared/constants/webview-messages'
 import { SIDEBAR_VIEW_ID } from '../config'
 
 // The extension's bundle lies in dist/, the sidebar page's bundle (webview/sidebar.ts) next to it in dist/webview/.
@@ -17,7 +16,6 @@ const WEBVIEW_STYLE = 'sidebar.css'
 
 // Owns the sidebar's page: receives its messages and sends messages to it. Both ways, every request is answered.
 class SidebarViewProvider extends BaseMessageReceiver<WebviewMessageHandler, string> implements vscode.WebviewViewProvider {
-  readonly #lastMessages = new Map<string, WebviewMessage>()
   readonly #requests = new WebviewRequestTracker()
   #registration: vscode.Disposable | undefined
   #view: vscode.WebviewView | undefined
@@ -45,11 +43,9 @@ class SidebarViewProvider extends BaseMessageReceiver<WebviewMessageHandler, str
     })
   }
 
-  // The latest message of every type is kept: the page is reloaded whenever the sidebar is opened again,
-  // and when it's ready, it gets them all, so it shows the current state at once.
-  // A sidebar that isn't shown gets them then, so its answer is undefined straight away.
+  // A sidebar that isn't shown has no page to answer. Its page is loaded again when it's shown, and then asks
+  // for what it shows itself.
   post(message: WebviewMessage): Promise<unknown> {
-    this.#lastMessages.set(message.type, message)
     if (!this.#view?.visible) return Promise.resolve(undefined)
     return this.#requests.post(message, request => this.#postToView(request))
   }
@@ -69,11 +65,6 @@ class SidebarViewProvider extends BaseMessageReceiver<WebviewMessageHandler, str
   #onMessage(message: WebviewRequest | WebviewResponse): void {
     if (isWebviewResponse(message)) {
       this.#requests.handleResponse(message)
-      return
-    }
-    if (message.type === WEBVIEW_READY) {
-      this.#lastMessages.forEach(lastMessage => void this.post(lastMessage))
-      this.#respond(message.id, undefined)
       return
     }
     void this.dispatch(message.type, message.content, message.id)

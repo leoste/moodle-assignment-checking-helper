@@ -59,7 +59,26 @@ The layers are:
 - 💲Business Layer💲
 Some layers involve many concepts inside them in a specific relationship, others are just single concepts.
 
-### 3.1 ❤Communication Layer❤
+### 3.1 💞Presentation Layer💞
+Some components need to present info to the user. This also raises the necessity of accessing the page or other mediums.
+This is accomplished through following parts:
+
+Listener (presentation/listener):
+- Listens to website changes and manages lifecycle of presenter and manager. Creates then applies and connects them together at the appropriate moment.
+- owns the presenter and the manager
+
+Manager (presentation/manager):
+- Exposes functionality for interacting with the actual moodle page
+
+Presenter (presentation/presenter):
+- defines and implements system business logic for interacting with Moodle and definitions
+- coordinates renderers to draw additional ui elements
+- owns the renderer
+
+Renderer (presentation/renderer):
+- renders new ui components and manages their lifecycle
+
+### 3.2 ❤Communication Layer❤
 Components communicate with each other in two ways: messages and news.
 Basically every major part of the app talks with each other using one or the other.
 The communication layer exists to facilitate this communication between parts of the system.
@@ -82,25 +101,6 @@ Parts:
 - communication/reporter
 - communication/watcher
 
-### 3.2 💞Presentation Layer💞
-Some components need to present info to the user. This also raises the necessity of accessing the page or other mediums.
-This is accomplished through following parts:
-
-Listener (presentation/listener):
-- Listens to website changes and manages lifecycle of presenter and manager. Creates then applies and connects them together at the appropriate moment.
-- owns the presenter and the manager
-
-Manager (presentation/manager):
-- Exposes functionality for interacting with the actual moodle page
-
-Presenter (presentation/presenter):
-- defines and implements system business logic for interacting with Moodle and definitions
-- coordinates renderers to draw additional ui elements
-- owns the renderer
-
-Renderer (presentation/renderer):
-- renders new ui components and manages their lifecycle
-
 ### 3.3 💝Service layer💝
 service provides functionality to above layers. This can be storage, sending messages or something else.
 
@@ -108,13 +108,13 @@ service provides functionality to above layers. This can be storage, sending mes
 repository provides storage functionality, any sort of storage.
 
 ### 3.5 🚧Foundation Layer🚧
-foundation makes the connections to existing systems and provides abstract objects other systems use.
+foundation makes connections to external systems and provides abstract objects that other components use.
 these are:
-- foundation/infrastructure: provides connection to existing systems
+- foundation/infrastructure: provides connection to external systems
 - foundation/object: defines custom objects and concepts used throughout the system
-- foundation/util: generic helper functions usable anywhere
-- foundation/generator: they generate messages for use between clients and controllers
-- foundation/constants: same values that are used throughout the system so it makes sense to keep them together
+- foundation/util: generic helper functions without ties to a certain domain object, used everywhere
+- foundation/generator: they generate messages and news for use between clients and controllers
+- foundation/constants: common values shared throughout the system
 
 ### 3.6 💲Business Layer💲
 

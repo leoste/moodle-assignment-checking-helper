@@ -1,4 +1,4 @@
-import { logger } from './reporting/logger'
+import { announcer } from './announcer/Announcer'
 
 export default class Initialisable {
   #initialised = false
@@ -7,7 +7,7 @@ export default class Initialisable {
     if (this.#initialised) return
     this.#initialised = true
     this.onInit()
-    logger.info(this, 'initialised')
+    announcer.announceLog(this, 'initialised')
   }
 
   // Returns `undefined` instead of `void` on purpose: an async override (returning a Promise)

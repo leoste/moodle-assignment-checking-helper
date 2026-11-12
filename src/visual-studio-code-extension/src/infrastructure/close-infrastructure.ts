@@ -1,9 +1,9 @@
-import { logger } from '@shared/reporting/logger'
+import { announcer } from '@shared/announcer/Announcer'
 import { infrastructure } from './init-infrastructure'
 
 export default function closeInfrastructure(): void {
   infrastructure.forEach(item => {
     item.close()
-    logger.info(item, 'closed')
+    announcer.announceLog(item, 'closed')
   })
 }

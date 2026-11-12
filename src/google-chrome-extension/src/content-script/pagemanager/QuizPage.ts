@@ -1,4 +1,4 @@
-import { logger } from '@shared/reporting/logger'
+import { announcer } from '@shared/announcer/Announcer'
 import MoodlePage from './MoodlePage'
 import QuizQuestionBox from './QuizQuestionBox'
 
@@ -10,7 +10,7 @@ export default abstract class QuizPage extends MoodlePage {
     const attemptId = this.getUrlParam(ATTEMPT_ID_PARAM)
     const boxes = Array.from(document.querySelectorAll<HTMLElement>(MANUAL_GRADED_BOX_SELECTOR))
       .map(element => new QuizQuestionBox(element, attemptId))
-    logger.info(this, `found ${boxes.length} manual graded question(s)`)
+    announcer.announceLog(this, `found ${boxes.length} manual graded question(s)`)
     return boxes
   }
 }

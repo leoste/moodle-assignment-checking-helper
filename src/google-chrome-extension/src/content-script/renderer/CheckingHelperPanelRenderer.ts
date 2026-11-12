@@ -4,7 +4,6 @@ import { ApplySectionRenderer, type ApplySectionCallbacks } from './ApplySection
 import { createAndAddChildElement, createElementWithClasses } from '@shared/util/element-creation-helper';
 import BaseRenderer from '@shared/renderer/BaseRenderer';
 import StatusLineRenderer from '@shared/renderer/StatusLineRenderer';
-import type { StatusSink } from '@shared/reporting/StatusSink';
 
 const RESIZE_EDGE_WIDTH = 10
 const MIN_PANEL_WIDTH = 200
@@ -43,7 +42,7 @@ export default class CheckingHelperPanelRenderer extends BaseRenderer {
     await this.#feedbackSectionRenderer.render()
   }
 
-  get statusLine(): StatusSink {
+  get statusLine(): StatusLineRenderer {
     return this.#statusLineRenderer!
   }
 

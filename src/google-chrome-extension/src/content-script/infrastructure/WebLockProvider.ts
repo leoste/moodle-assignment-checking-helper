@@ -1,5 +1,5 @@
 import BaseInfrastructure from '@shared/infrastructure/BaseInfrastructure'
-import { logger } from '@shared/reporting/logger'
+import { announcer } from '@shared/announcer/Announcer'
 
 // Web Locks are shared by all tabs of the same site, and the browser frees a lock when the page holding it goes away.
 class WebLockProvider extends BaseInfrastructure {
@@ -42,7 +42,7 @@ class WebLockProvider extends BaseInfrastructure {
       // This page stealing it from itself replaced the request already, so only another page's steal counts.
       if (this.#requests.get(name) !== request) return
       this.#requests.delete(name)
-      logger.info(this, `lock ${name} was taken over by another page`)
+      announcer.announceLog(this, `lock ${name} was taken over by another page`)
       this.#lostHandlers.get(name)?.()
     })
     return request

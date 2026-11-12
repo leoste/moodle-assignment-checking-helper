@@ -3,7 +3,7 @@ import { WebSocket } from 'ws'
 import VsCodeRequestTracker from '@shared/object/VsCodeRequestTracker'
 import type { VsCodeMessage, VsCodeRequestStatus } from '@shared/types/VsCodeMessage'
 import { WEBSOCKET_URL } from '@shared/config/connection'
-import { logger } from '@shared/reporting/logger'
+import { announcer } from '@shared/announcer/Announcer'
 
 // Connects to the window that receives the students, as a client of its server.
 // A connection is opened for one request and closed once it's answered.
@@ -13,7 +13,7 @@ class VsCodeWindowConnectionProvider extends BaseInfrastructure {
     const requests = new VsCodeRequestTracker()
     socket.on('message', (raw) => requests.handleMessage(raw.toString()))
     socket.on('close', () => requests.cancelAll())
-    socket.on('error', (err) => logger.error(this, 'connection to the receiving window failed', err))
+    socket.on('error', (err) => announcer.announceLogError(this, 'connection to the receiving window failed', err))
 
     const status = await requests.post(message, (rawString) => this.#send(socket, rawString))
     socket.close()

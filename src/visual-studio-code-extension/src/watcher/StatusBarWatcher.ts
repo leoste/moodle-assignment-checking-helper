@@ -1,5 +1,5 @@
 import * as vscode from 'vscode'
-import type { StatusSink } from '@shared/reporting/StatusSink'
+import StatusListWatcher from '@shared/watcher/StatusListWatcher'
 import type { Status } from '@shared/types/Status'
 import { STATUS_LEVEL_PROBLEM } from '@shared/constants/status'
 import { translations } from '@shared/translations/translations'
@@ -7,15 +7,17 @@ import { translations } from '@shared/translations/translations'
 const STATUS_SEPARATOR = ' · '
 const PROBLEM_BACKGROUND_COLOR = 'statusBarItem.warningBackground'
 
-export default class StatusBarSink implements StatusSink {
+export default class StatusBarWatcher extends StatusListWatcher {
   readonly #item: vscode.StatusBarItem
 
   constructor(item: vscode.StatusBarItem) {
+    super()
     this.#item = item
     this.#item.show()
+    this.show(this.getStatuses())
   }
 
-  show(statuses: readonly Status[]): void {
+  protected show(statuses: readonly Status[]): void {
     const texts = statuses.map(status => status.text)
     this.#item.text = [translations.statusBar.label, ...texts].join(STATUS_SEPARATOR)
     this.#item.tooltip = texts.join('\n')

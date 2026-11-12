@@ -1,9 +1,8 @@
 import BaseRenderer from './BaseRenderer'
 import { createAndAddChildElement } from '../util/element-creation-helper'
-import type { StatusSink } from '../reporting/StatusSink'
 import type { Status } from '../types/Status'
 
-export default class StatusLineRenderer extends BaseRenderer implements StatusSink {
+export default class StatusLineRenderer extends BaseRenderer {
   readonly #parentElement: HTMLElement
 
   constructor(parentElement: HTMLElement) {

@@ -1,5 +1,4 @@
 import Initialisable from '@shared/Initialisable'
-import type { Status } from '@shared/types/Status'
 import SidebarPresenter from '../presenter/SidebarPresenter'
 import type { Settings } from '../../shared/types/Settings'
 
@@ -14,10 +13,6 @@ class SidebarListener extends Initialisable {
 
   showSettings(settings: Settings): void {
     this.#presenter?.showSettings(settings)
-  }
-
-  showStatuses(statuses: readonly Status[]): void {
-    this.#presenter?.showStatuses(statuses)
   }
 
   showReception(receiving: boolean): void {

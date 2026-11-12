@@ -1,8 +1,8 @@
-import { logger } from '@shared/reporting/logger'
-import ConsoleLogSink from '@shared/reporting/ConsoleLogSink'
+import { reporter } from '@shared/reporter/Reporter'
+import { consoleWatcher } from '@shared/watcher/ConsoleWatcher'
 import { chromeMessageProvider } from '../shared/infrastructure/ChromeMessageProvider'
 import { quizCommentListener } from "./pagelistener/QuizCommentListener";
 
-logger.init(new ConsoleLogSink())
+reporter.addWatcher(consoleWatcher)
 chromeMessageProvider.init()
 quizCommentListener.init()

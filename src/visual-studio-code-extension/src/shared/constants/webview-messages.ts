@@ -3,6 +3,7 @@ export const WEBVIEW_READY = 'webview/ready'
 
 export const SETTINGS_SHOW = 'settings/show'
 export const SETTINGS_CHANGE = 'settings/change'
-export const STATUSES_SHOW = 'statuses/show'
 export const RECEPTION_SHOW = 'reception/show'
 export const RECEPTION_TAKE_OVER = 'reception/take-over'
+export const NEWS_SUBSCRIBE = 'news/subscribe'
+export const NEWS_REPORT = 'news/report'

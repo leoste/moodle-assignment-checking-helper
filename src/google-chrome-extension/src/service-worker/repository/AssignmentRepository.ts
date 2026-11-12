@@ -6,7 +6,7 @@ import FileCacheRepository from './FileCacheRepository'
 import checkAgainstSample from '../../shared/util/checkAgainstSample'
 import sampleDefinition from '../../../../definitions/sample-definition.json'
 import { translations } from '@shared/translations/translations'
-import { logger } from '@shared/reporting/logger'
+import { announcer } from '@shared/announcer/Announcer'
 import { ASSIGNMENT_DIRECTORY_HANDLE_KEY, ASSIGNMENT_FILE_CACHE_KEY } from '../../shared/constants/storage'
 
 class AssignmentRepository extends FileCacheRepository {
@@ -24,14 +24,14 @@ class AssignmentRepository extends FileCacheRepository {
       try {
         definition = JSON.parse(file.content)
       } catch (err) {
-        logger.error(this, `skipping definition file that is not valid JSON: ${file.name}`, err)
+        announcer.announceLogError(this, `skipping definition file that is not valid JSON: ${file.name}`, err)
         brokenFiles.push({ name: file.name, mismatch: null })
         continue
       }
 
       const mismatches = checkAgainstSample(definition, sampleDefinition)
       if (mismatches.length > 0) {
-        logger.error(this, `skipping definition file that doesn't match the sample definition: ${file.name}`, mismatches)
+        announcer.announceLogError(this, `skipping definition file that doesn't match the sample definition: ${file.name}`, mismatches)
         brokenFiles.push({ name: file.name, mismatch: mismatches[0] })
         continue
       }

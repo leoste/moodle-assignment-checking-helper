@@ -1,6 +1,5 @@
 import BaseService from '@shared/service/BaseService'
-import { logger } from '@shared/reporting/logger'
-import { statusReporter } from '@shared/reporting/statusReporter'
+import { announcer } from '@shared/announcer/Announcer'
 import { getPortInUseStatus, getTakeOverFailedStatus } from '@shared/rules/status-rules'
 import { REQUEST_STATUS_UNREACHABLE, RESPONSE_STATUS_OK } from '@shared/constants/vscode-message'
 import { WEBSOCKET_PORT } from '@shared/config/connection'
@@ -29,10 +28,10 @@ class ReceptionService extends BaseService {
     if (this.#receiving || this.#takingOver) return
     this.#takingOver = true
     const status = await handOverClient.requestHandOver()
-    logger.info(this, `hand-over answered: ${status}`)
+    announcer.announceLog(this, `hand-over answered: ${status}`)
     // Unreachable: no window has the port any more, so this one can simply take it.
     if (status === RESPONSE_STATUS_OK || status === REQUEST_STATUS_UNREACHABLE) await this.#listenUntilPortFree()
-    if (!this.#receiving) statusReporter.report(getTakeOverFailedStatus())
+    if (!this.#receiving) announcer.announceStatus(getTakeOverFailedStatus())
     this.#takingOver = false
   }
 
@@ -41,8 +40,8 @@ class ReceptionService extends BaseService {
     // The receiver sends the answer once the handler returns, and setImmediate runs only after that.
     setImmediate(() => {
       vsCodeMessageReceiver.stop()
-      logger.info(this, 'handed the reception over to another window')
-      statusReporter.report(getPortInUseStatus(WEBSOCKET_PORT))
+      announcer.announceLog(this, 'handed the reception over to another window')
+      announcer.announceStatus(getPortInUseStatus(WEBSOCKET_PORT))
       this.#setReceiving(false)
     })
   }
@@ -54,7 +53,7 @@ class ReceptionService extends BaseService {
   async #listenUntilPortFree(): Promise<void> {
     for (let attempt = 1; attempt <= LISTEN_ATTEMPTS; attempt++) {
       if (await vsCodeMessageReceiver.listen()) {
-        logger.info(this, 'took the reception over')
+        announcer.announceLog(this, 'took the reception over')
         this.#setReceiving(true)
         return
       }

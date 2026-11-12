@@ -4,8 +4,7 @@ import type { WebSocket } from 'ws'
 import type { VsCodeRequest, VsCodeResponse, VsCodeResponseStatus } from '@shared/types/VsCodeMessage'
 import { RESPONSE_STATUS_ERROR, RESPONSE_STATUS_OK, RESPONSE_STATUS_UNHANDLED } from '@shared/constants/vscode-message'
 import { WEBSOCKET_HOST, WEBSOCKET_PORT } from '@shared/config/connection'
-import { logger } from '@shared/reporting/logger'
-import { statusReporter } from '@shared/reporting/statusReporter'
+import { announcer } from '@shared/announcer/Announcer'
 import { getConnectedStatus, getPortInUseStatus, getServerErrorStatus, getWaitingStatus } from '@shared/rules/status-rules'
 import { isAllowedOrigin } from '../rules/connection-rules'
 import VsCodeMessageHandlerMap from '../shared/object/VsCodeMessageHandlerMap'
@@ -37,12 +36,12 @@ class VsCodeMessageReceiver extends BaseMessageReceiver<VsCodeMessageHandler, Re
 
       server.on('listening', () => {
         listening = true
-        statusReporter.report(getWaitingStatus())
+        announcer.announceStatus(getWaitingStatus())
         resolve(true)
       })
       server.on('error', (err: NodeJS.ErrnoException) => {
-        logger.error(this, 'WebSocket server error', err)
-        statusReporter.report(err.code === ADDRESS_IN_USE_ERROR_CODE ? getPortInUseStatus(WEBSOCKET_PORT) : getServerErrorStatus())
+        announcer.announceLogError(this, 'WebSocket server error', err)
+        announcer.announceStatus(err.code === ADDRESS_IN_USE_ERROR_CODE ? getPortInUseStatus(WEBSOCKET_PORT) : getServerErrorStatus())
         if (listening) return
         if (this.#server === server) this.#server = null
         server.close()
@@ -51,28 +50,28 @@ class VsCodeMessageReceiver extends BaseMessageReceiver<VsCodeMessageHandler, Re
       server.on('connection', (ws, request) => {
         const origin = request.headers.origin
         if (!isAllowedOrigin(origin)) {
-          logger.error(this, `refused a connection from origin ${origin}`)
+          announcer.announceLogError(this, `refused a connection from origin ${origin}`)
           ws.close(POLICY_VIOLATION_CLOSE_CODE)
           return
         }
-        logger.info(this, `connected: ${origin ?? 'another VS Code window'}`)
+        announcer.announceLog(this, `connected: ${origin ?? 'another VS Code window'}`)
         connectionCount++
-        statusReporter.report(getConnectedStatus())
+        announcer.announceStatus(getConnectedStatus())
         ws.on('message', async (raw) => {
           let request: VsCodeRequest
           try {
             request = JSON.parse(raw.toString()) as VsCodeRequest
           } catch {
-            logger.error(this, 'failed to parse incoming message', raw.toString())
+            announcer.announceLogError(this, 'failed to parse incoming message', raw.toString())
             return
           }
           await this.dispatch(request.channel, request.content, { ws, id: request.id })
         })
         ws.on('close', () => {
-          logger.info(this, `disconnected: ${origin ?? 'another VS Code window'}`)
+          announcer.announceLog(this, `disconnected: ${origin ?? 'another VS Code window'}`)
           connectionCount--
           // The connections of a stopped server close without changing the status.
-          if (connectionCount === 0 && this.#server === server) statusReporter.report(getWaitingStatus())
+          if (connectionCount === 0 && this.#server === server) announcer.announceStatus(getWaitingStatus())
         })
       })
     })

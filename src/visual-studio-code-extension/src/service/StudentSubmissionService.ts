@@ -1,8 +1,7 @@
 import * as vscode from 'vscode'
 import BaseService from '@shared/service/BaseService'
 import { translations } from '@shared/translations/translations'
-import { logger } from '@shared/reporting/logger'
-import { statusReporter } from '@shared/reporting/statusReporter'
+import { announcer } from '@shared/announcer/Announcer'
 import { getStudentSubmissionOpeningStatus, getStudentSubmissionStatus } from '@shared/rules/status-rules'
 import type { VsCodeResponseStatus } from '@shared/types/VsCodeMessage'
 import {
@@ -24,15 +23,15 @@ type FileEntry = [dirUri: vscode.Uri, fileName: string]
 
 class StudentSubmissionService extends BaseService {
   async openStudentSubmission(studentName: string): Promise<VsCodeResponseStatus> {
-    statusReporter.report(getStudentSubmissionOpeningStatus(studentName))
+    announcer.announceStatus(getStudentSubmissionOpeningStatus(studentName))
     const status = await this.#open(studentName)
-    statusReporter.report(getStudentSubmissionStatus(studentName, status))
+    announcer.announceStatus(getStudentSubmissionStatus(studentName, status))
     return status
   }
 
   async #open(studentName: string): Promise<VsCodeResponseStatus> {
     if (!studentName) {
-      logger.error(this, 'no student name given')
+      announcer.announceLogError(this, 'no student name given')
       return RESPONSE_STATUS_NOT_FOUND
     }
 
@@ -43,11 +42,11 @@ class StudentSubmissionService extends BaseService {
 
     const studentFolderUri = await this.#findStudentFolder(rootUri, studentName)
     if (!studentFolderUri) return RESPONSE_STATUS_NOT_FOUND
-    logger.info(this, `student folder of "${studentName}": ${studentFolderUri.fsPath}`)
+    announcer.announceLog(this, `student folder of "${studentName}": ${studentFolderUri.fsPath}`)
 
     const files = await this.#collectSubmissionFiles(studentFolderUri)
     const openedCount = await this.#openFiles(files)
-    logger.info(this, `opened ${openedCount} of ${files.length} file(s)`)
+    announcer.announceLog(this, `opened ${openedCount} of ${files.length} file(s)`)
     return openedCount > 0 ? RESPONSE_STATUS_OK : RESPONSE_STATUS_NOTHING_OPENED
   }
 
@@ -60,7 +59,7 @@ class StudentSubmissionService extends BaseService {
   #getWorkspaceRoot(): vscode.Uri | undefined {
     const folders = vscode.workspace.workspaceFolders
     if (!folders || folders.length === 0) {
-      logger.error(this, 'no workspace folder open')
+      announcer.announceLogError(this, 'no workspace folder open')
       vscode.window.showWarningMessage(translations.studentSubmission.noWorkspaceFolder)
       return undefined
     }
@@ -71,7 +70,7 @@ class StudentSubmissionService extends BaseService {
     const folderName = await this.#findDirectoryByName(rootUri, studentName)
 
     if (!folderName) {
-      logger.error(this, `no folder found for "${studentName}"`)
+      announcer.announceLogError(this, `no folder found for "${studentName}"`)
       vscode.window.showWarningMessage(translations.studentSubmission.noStudentFolder(studentName))
       return undefined
     }
@@ -135,7 +134,7 @@ class StudentSubmissionService extends BaseService {
       }
       return true
     } catch (err) {
-      logger.error(this, `could not open ${fileUri.fsPath}`, err)
+      announcer.announceLogError(this, `could not open ${fileUri.fsPath}`, err)
       return false
     }
   }

@@ -1,7 +1,6 @@
 import BaseRenderer from '@shared/renderer/BaseRenderer'
 import StatusLineRenderer from '@shared/renderer/StatusLineRenderer'
 import { createAndAddChildElement } from '@shared/util/element-creation-helper'
-import type { StatusSink } from '@shared/reporting/StatusSink'
 import { translations } from '@shared/translations/translations'
 import SettingToggleRenderer from './SettingToggleRenderer'
 import type { Settings } from '../../shared/types/Settings'
@@ -57,7 +56,7 @@ export default class SidebarRenderer extends BaseRenderer {
     await this.#statusLineRenderer.render()
   }
 
-  get statusLine(): StatusSink {
+  get statusLine(): StatusLineRenderer {
     return this.#statusLineRenderer!
   }
 

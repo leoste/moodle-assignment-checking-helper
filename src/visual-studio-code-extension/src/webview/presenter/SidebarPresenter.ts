@@ -1,9 +1,10 @@
 import BasePresenter from '@shared/presenter/BasePresenter'
-import type { Status } from '@shared/types/Status'
+import { statusLineWatcher } from '@shared/watcher/StatusLineWatcher'
 import SidebarRenderer from '../renderer/SidebarRenderer'
 import { settingsClient } from '../client/SettingsClient'
 import { sidebarClient } from '../client/SidebarClient'
 import { receptionClient } from '../client/ReceptionClient'
+import { newsClient } from '../client/NewsClient'
 import type { Settings } from '../../shared/types/Settings'
 
 export default class SidebarPresenter extends BasePresenter {
@@ -15,16 +16,14 @@ export default class SidebarPresenter extends BasePresenter {
       onTakeOver: this.#onTakeOver,
     })
     await this.#renderer.render()
+    statusLineWatcher.setStatusLine(this.#renderer.statusLine)
     // The page asks for the current settings and statuses only once it can show them.
     await sidebarClient.notifyReady()
+    await statusLineWatcher.follow(newsClient)
   }
 
   showSettings(settings: Settings): void {
     this.#renderer?.setSettings(settings)
-  }
-
-  showStatuses(statuses: readonly Status[]): void {
-    this.#renderer?.statusLine.show(statuses)
   }
 
   showReception(receiving: boolean): void {

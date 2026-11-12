@@ -12,3 +12,6 @@ export const QUIZ_AUTO_GRADE_IS_ACTIVE = 'quiz/auto-grade/is-active'
 
 // The long-lived port over which the service worker sends its statuses to the panel and the popup.
 export const STATUS_PORT_NAME = 'status'
+
+// The long-lived port that carries Chrome messages between the service worker and the panel or the popup, both ways.
+export const MESSAGE_PORT_NAME = 'messages'

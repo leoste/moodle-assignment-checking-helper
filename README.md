@@ -99,6 +99,9 @@ For example if whole Assignment consists of 4 tasks, and each task has 3 individ
 
 You would create such a file for every assignment you want to grade using this system. As you can see, it's really not too complex.
 
+In the UI, when all is loaded, it would look something like this:
+![image](/docs/ui%20example.png)
+
 ### 1.3 Daily use
 
 #### Before grading an assignment
@@ -117,6 +120,8 @@ And finally, to save the grade, you press the "save and next" button as you do w
 On the VS Code side, if you have the submissions folder open, the submissions of current student will open automatically.
 With many files, it will be opened in 2 columns. This makes it easier to find and navigate the files.
 As you open next student in Moodle, previous submission's files will be closed and new ones opened.
+
+If you have many VS Code windows open, only one will be used to grade. There is a button either on the status bar below or in the extension settings in the left sidebar to "take over" from other open VS Code window, if this happens.
 
 ## 2. For developers
 

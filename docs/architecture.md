@@ -5,7 +5,7 @@ This document serves as the highest authority on application architecture, which
 The architecture, its concepts, the main parts, layers, the way they interact is all completely human-made, by me.
 Besides, an AI couldn't even come up with half the stuff that is implemented in this project.
 
-## Main Parts
+## 1. Main Parts
 The user interacts with the main parts, everything below is already technical.
 The main parts make use of the various layers described below to accomplish their functionality.
 
@@ -18,9 +18,14 @@ VS Code Extension
 - background
 - webview
 
-## Concepts
+Definition files
+
+Moodle website
+
+## 2. Concepts
 
 There are many concepts used by main parts, which are spread throughout main layers.
+Many concepts are implemented as singletons, that is only one instance of them exists in a live program and other components make use of the singleton, rather than re-instanciating their own.
 The concepts exist at different levels and interact in different ways, but here is a flat list of all the concepts:
 - 🚧infrastructure
 - 💘repository
@@ -36,7 +41,6 @@ The concepts exist at different levels and interact in different ways, but here 
 - 🚧object
 - 🚧util
 - 💲types
-- ❤payload
 - 🚧constants
 - 💲config
 - 💲translations
@@ -45,7 +49,7 @@ The concepts exist at different levels and interact in different ways, but here 
 - ❤reporter
 - ❤watcher
 
-## Layers
+## 3. Layers
 
 The layers form concepts together into cohesive units that interact with each other, making use of the concepts mentioned above.
 The layers are:
@@ -55,53 +59,63 @@ The layers are:
 - 💘Repository layer💘
 - 🚧Foundation Layer🚧
 - 💲Business Layer💲
+Some layers involve many concepts inside them in a specific relationship, others are just single concepts.
 
-## ❤Communication Layer❤
-Components communicate with each other in two ways.
-The communication layer exists only to facilitate communication between parts of the system.
+### 3.1 ❤Communication Layer❤
+Components communicate with each other in two ways: messages and news.
+Basically every major part of the app talks with each other using one or the other.
+The communication layer exists to facilitate this communication between parts of the system.
 
-Messages
+helpers used to accomplish this:
+- generator: this generates messages.
+
+#### Messages
+
+Client sends a message at their own chosen time and expects a response from the controller.
+A component can make use of different clients and different controllers to facilitate both asking and answering.
+Parts:
 - communication/client
 - communication/controller
 
-News
+#### News
+Announcer broadcasts news of something happening, they don't expect a response.
+Reporter picks up news and distributes them.
+Watchers see news from their chosen reporters and shows their selection somewhere.
+This structure was inspired by how people watch news in real life.
+Parts:
 - communication/announcer
 - communication/reporter
 - communication/watcher
 
-helpers used to accomplish this:
-- payload
-- generator
-
-## 💞Presentation Layer💞
+### 3.2 💞Presentation Layer💞
 Some components need to present info to the user. This also raises the necessity of accessing the page or other mediums.
 This is accomplished through following parts:
 
-presentation/listener:
+Listener (presentation/listener):
 - Listens to website changes and manages lifecycle of presenter and manager. Creates then applies and connects them together at the appropriate moment.
 - owns the presenter and the manager
 
-presentation/manager:
+Manager (presentation/manager):
 - Exposes functionality for interacting with the actual moodle page
 
-presentation/presenter:
+Presenter (presentation/presenter):
 - defines and implements system business logic for interacting with Moodle and definitions
 - coordinates renderers to draw additional ui elements
 - owns the renderer
 
-presentation/renderer:
+Renderer (presentation/renderer):
 - renders new ui components and manages their lifecycle
 
 helpers used to accomplish this:
 - styles
 
-## 💝Service layer💝
+### 3.3 💝Service layer💝
 service provides functionality to above layers. This can be storage, sending messages or something else.
 
-## 💘Repository layer💘
+### 3.4 💘Repository layer💘
 repository provides storage functionality, any sort of storage.
 
-## 🚧Foundation Layer🚧
+### 3.5 🚧Foundation Layer🚧
 foundation makes the connections to existing systems and provides abstract objects other systems use.
 these are:
 - foundation/infrastructure: provides connection to existing systems
@@ -109,7 +123,7 @@ these are:
 - foundation/util: generic helper functions usable anywhere
 - foundation/constants: same values that are used throughout the system so it makes sense to keep them together
 
-## 💲Business Layer💲
+### 3.6 💲Business Layer💲
 
 business is the ultimate source of truth for decisions and structure, it's what everything is built around of.
 it includes:

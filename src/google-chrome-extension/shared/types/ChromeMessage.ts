@@ -15,6 +15,8 @@ export interface ChromePortRequest<TPayload extends BasePayload = BasePayload> e
 export interface ChromePortResponse {
   id: string
   content: unknown
+  // Only a request has a type: that tells the two apart.
+  type?: never
 }
 
 // A request is answered over the port it came from.

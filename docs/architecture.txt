@@ -1,6 +1,6 @@
 infrastructure
-repository
-service
+💘repository
+💝service
 ❤controller
 ❤client
 ❤generator
@@ -81,3 +81,8 @@ helpers used to accomplish this:
 
 ----------------------
 
+💝Service layer💝
+service provides functionality to above layers. This can be storage, sending messages or something else.
+
+💘Repository layer💘
+repository provides storage functionality, any sort of storage.

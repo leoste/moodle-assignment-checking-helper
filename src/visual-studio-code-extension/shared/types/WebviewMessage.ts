@@ -15,4 +15,6 @@ export interface WebviewRequest<TPayload extends BasePayload = BasePayload> exte
 export interface WebviewResponse {
   id: string
   content: unknown
+  // Only a request has a type: that tells the two apart.
+  type?: never
 }

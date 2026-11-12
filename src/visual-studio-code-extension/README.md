@@ -39,4 +39,4 @@ When it starts correctly, the Output panel channel "Moodle Assignment Checking H
 npm run vscode:prepublish
 ```
 
-Builds `dist/extension.js` without source maps. Builds are not minified: the log shows the real class names and the code stays debuggable. Releases, including the `.vsix` package, are built with `build-release.mjs` in the project root (see "Building release" in [src/README.md](../README.md)).
+Builds `dist/extension.js` without source maps. Builds are not minified: the log shows the real class names and the code stays debuggable. Releases, including the `.vsix` package, are built with `build-release.mjs` in the project root (see "Building release" in `src/README.md`).

@@ -1,7 +1,7 @@
 import type * as vscode from 'vscode'
 import WritableRepository from '@shared/repository/WritableRepository'
-import type { Settings } from '../../shared/types/Settings'
-import { settingsProvider } from '../infrastructure/SettingsProvider'
+import type { Settings } from '../../shared/business/types/Settings'
+import { settingsProvider } from '../foundation/infrastructure/SettingsProvider'
 
 class SettingsRepository extends WritableRepository<Settings> {
   async getSettings(): Promise<Settings> {

@@ -62,8 +62,8 @@ Again, see the soulless AI generation for info:
 - `object/` are building blocks owned by another class, e.g. `HandlerMap`, `WebSocketConnection`, the request trackers.
 - `util/` are stateless functions.
 - `announcer/`, `reporter/` and `watcher/` carry the news, see "News".
-- `shared/styles/theme.css` hold the colours and the looks shared by all pages of both extensions, which all have the panel's look. The pages import the file in their code. It is loaded into Moodle pages as well, so its classes and variables have the `checking-helper-` prefix. Everything the user can interact with has the `checking-helper-interactive` class and glows when hovered.
-- `shared/translations/translations.ts` hold every user-facing text of both extensions, grouped by concept. Texts with values are functions, e.g. `translations.studentSubmission.noStudentFolder(studentName)`. The texts of the VS Code `package.json` (name, descriptions, command title, setting, sidebar) are in `visual-studio-code-extension/package.nls.json`, VS Code's own file for them.
+- `shared/presentation/styles/theme.css` hold the colours and the looks shared by all pages of both extensions, which all have the panel's look. The pages import the file in their code. It is loaded into Moodle pages as well, so its classes and variables have the `checking-helper-` prefix. Everything the user can interact with has the `checking-helper-interactive` class and glows when hovered.
+- `shared/business/translations/translations.ts` hold every user-facing text of both extensions, grouped by concept. Texts with values are functions, e.g. `translations.studentSubmission.noStudentFolder(studentName)`. The texts of the VS Code `package.json` (name, descriptions, command title, setting, sidebar) are in `visual-studio-code-extension/package.nls.json`, VS Code's own file for them.
 ```
 
 Many of these objects are introduced as singletons, that is they can only have one instance running ever. As more aren't needed.

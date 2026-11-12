@@ -1,22 +1,22 @@
 import * as vscode from 'vscode'
 import BaseService from '@shared/service/BaseService'
-import { translations } from '@shared/translations/translations'
-import { announcer } from '@shared/announcer/Announcer'
-import { getStudentSubmissionOpeningStatus, getStudentSubmissionStatus } from '@shared/rules/status-rules'
-import type { VsCodeResponseStatus } from '@shared/types/VsCodeMessage'
+import { translations } from '@shared/business/translations/translations'
+import { announcer } from '@shared/communication/announcer/Announcer'
+import { getStudentSubmissionOpeningStatus, getStudentSubmissionStatus } from '@shared/business/rules/status-rules'
+import type { VsCodeResponseStatus } from '@shared/business/types/VsCodeMessage'
 import {
   RESPONSE_STATUS_NO_WORKSPACE,
   RESPONSE_STATUS_NOT_FOUND,
   RESPONSE_STATUS_NOTHING_OPENED,
   RESPONSE_STATUS_OK,
-} from '@shared/constants/vscode-message'
-import { canOpenMoreFiles, getEditorColumnOffset, isBinaryFile } from '../rules/student-files-rules'
+} from '@shared/foundation/constants/vscode-message'
+import { canOpenMoreFiles, getEditorColumnOffset, isBinaryFile } from '../business/rules/student-files-rules'
 import { settingsRepository } from '../repository/SettingsRepository'
 import { studentSubmissionRepository } from '../repository/StudentSubmissionRepository'
-import { workspaceProvider } from '../infrastructure/WorkspaceProvider'
-import { editorProvider } from '../infrastructure/EditorProvider'
-import { terminalProvider } from '../infrastructure/TerminalProvider'
-import type { SubmissionFile } from '../types/SubmissionFile'
+import { workspaceProvider } from '../foundation/infrastructure/WorkspaceProvider'
+import { editorProvider } from '../foundation/infrastructure/EditorProvider'
+import { terminalProvider } from '../foundation/infrastructure/TerminalProvider'
+import type { SubmissionFile } from '../business/types/SubmissionFile'
 
 interface OpenResult {
   status: VsCodeResponseStatus

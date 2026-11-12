@@ -1,8 +1,8 @@
 import * as vscode from 'vscode'
 import BaseRepository from '@shared/repository/BaseRepository'
-import { workspaceProvider } from '../infrastructure/WorkspaceProvider'
-import { isStudentFolder, shouldEnterFolder } from '../rules/student-files-rules'
-import type { SubmissionFile } from '../types/SubmissionFile'
+import { workspaceProvider } from '../foundation/infrastructure/WorkspaceProvider'
+import { isStudentFolder, shouldEnterFolder } from '../business/rules/student-files-rules'
+import type { SubmissionFile } from '../business/types/SubmissionFile'
 
 // The students' submissions, downloaded from Moodle into the folder open in VS Code: a folder for every student.
 class StudentSubmissionRepository extends BaseRepository {

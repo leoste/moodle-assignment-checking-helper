@@ -1,8 +1,8 @@
 import * as vscode from 'vscode'
 import * as path from 'path'
 import BaseService from '@shared/service/BaseService'
-import { translations } from '@shared/translations/translations'
-import { terminalProvider } from '../infrastructure/TerminalProvider'
+import { translations } from '@shared/business/translations/translations'
+import { terminalProvider } from '../foundation/infrastructure/TerminalProvider'
 import { PYTHON_COMMAND } from '../config'
 
 class PythonRunnerService extends BaseService {

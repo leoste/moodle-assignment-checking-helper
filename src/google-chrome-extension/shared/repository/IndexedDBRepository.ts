@@ -1,6 +1,6 @@
 import WritableRepository from '@shared/repository/WritableRepository'
-import { indexedDBProvider } from '../infrastructure/IndexedDBProvider'
-import type { IndexedDBSchema } from '../types/StorageSchema'
+import { indexedDBProvider } from '../foundation/infrastructure/IndexedDBProvider'
+import type { IndexedDBSchema } from '../business/types/StorageSchema'
 
 export default abstract class IndexedDBRepository extends WritableRepository<IndexedDBSchema> {
   protected getValue<K extends keyof IndexedDBSchema>(key: K): Promise<IndexedDBSchema[K] | undefined> {

@@ -1,7 +1,7 @@
 import BaseService from '@shared/service/BaseService'
-import { announcer } from '@shared/announcer/Announcer'
+import { announcer } from '@shared/communication/announcer/Announcer'
 import { settingsRepository } from '../repository/SettingsRepository'
-import type { Settings } from '../../shared/types/Settings'
+import type { Settings } from '../../shared/business/types/Settings'
 
 class SettingsService extends BaseService {
   // Whoever shows the settings asks for them again, also after they were changed in VS Code's Settings editor.

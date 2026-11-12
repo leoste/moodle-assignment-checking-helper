@@ -1,5 +1,5 @@
 import BaseService from '@shared/service/BaseService'
-import { outputChannelProvider } from '../infrastructure/OutputChannelProvider'
+import { outputChannelProvider } from '../foundation/infrastructure/OutputChannelProvider'
 
 class LogService extends BaseService {
   showLog(): void {

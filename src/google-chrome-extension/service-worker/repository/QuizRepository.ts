@@ -1,7 +1,7 @@
 import LocalStorageRepository from '../../shared/repository/LocalStorageRepository'
-import type { AutoGradeId } from '../../shared/types/AutoGradeId'
-import type { AutoGradeKey } from '../../shared/types/StorageSchema'
-import { AUTO_GRADE_KEY_PREFIX } from '../../shared/constants/storage'
+import type { AutoGradeId } from '../../shared/business/types/AutoGradeId'
+import type { AutoGradeKey } from '../../shared/business/types/StorageSchema'
+import { AUTO_GRADE_KEY_PREFIX } from '../../shared/foundation/constants/storage'
 
 class QuizRepository extends LocalStorageRepository {
   #key(id: AutoGradeId): AutoGradeKey {

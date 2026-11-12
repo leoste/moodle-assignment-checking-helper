@@ -1,5 +1,5 @@
-import type { Definitions } from '../../shared/types/Definitions'
-import type { DefinitionLookup } from '../../shared/types/DefinitionLookup'
+import type { Definitions } from '../../shared/business/types/Definitions'
+import type { DefinitionLookup } from '../../shared/business/types/DefinitionLookup'
 import { assignmentRepository } from '../repository/AssignmentRepository'
 import { directoryHandleRepository } from '../../shared/repository/DirectoryHandleRepository'
 import BaseService from '@shared/service/BaseService'

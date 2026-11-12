@@ -24,7 +24,6 @@
     "popup/**/*",
     "service-worker/**/*",
     "shared/**/*",
-    "config.ts",
     "vite.config.ts",
     "manifest.config.ts",
     "../shared/**/*"

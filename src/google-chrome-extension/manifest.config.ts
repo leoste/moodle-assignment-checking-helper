@@ -1,7 +1,7 @@
 import { defineManifest } from '@crxjs/vite-plugin'
-import { MOODLE_ORIGIN } from './config'
-import { WEBSOCKET_HOST } from '../shared/config/connection'
-import { translations } from '../shared/translations/translations'
+import { MOODLE_ORIGIN } from './shared/business/config/config'
+import { WEBSOCKET_HOST } from '../shared/business/config/connection'
+import { translations } from '../shared/business/translations/translations'
 import packageJson from './package.json'
 
 export default defineManifest({
@@ -26,12 +26,12 @@ export default defineManifest({
     {
       matches: [`${MOODLE_ORIGIN}/mod/assign/*action=grader*`],
       js: ['content-script/assign-grader.ts'],
-      css: ['content-script/assign-grader.css'],
+      css: ['content-script/presentation/styles/assign-grader.css'],
     },
     {
       matches: [`${MOODLE_ORIGIN}/mod/quiz/review.php*`],
       js: ['content-script/quiz-review.ts'],
-      css: ['content-script/quiz-review.css'],
+      css: ['content-script/presentation/styles/quiz-review.css'],
     },
     {
       matches: [`${MOODLE_ORIGIN}/mod/quiz/comment.php*`],

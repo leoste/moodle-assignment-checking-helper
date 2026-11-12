@@ -1,5 +1,5 @@
 import IndexedDBRepository from './IndexedDBRepository'
-import type { FileSourceInfo } from '../types/FileSourceInfo'
+import type { FileSourceInfo } from '../business/types/FileSourceInfo'
 
 class DirectoryHandleRepository extends IndexedDBRepository {
   getDirectoryHandle(source: FileSourceInfo): Promise<FileSystemDirectoryHandle | undefined> {

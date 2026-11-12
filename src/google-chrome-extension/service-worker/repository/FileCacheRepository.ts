@@ -1,6 +1,6 @@
-import type { FileSourceInfo } from '../../shared/types/FileSourceInfo'
-import type { FileCache } from '../../shared/types/FileCache'
-import type { CachedFile } from '../../shared/types/CachedFile'
+import type { FileSourceInfo } from '../../shared/business/types/FileSourceInfo'
+import type { FileCache } from '../../shared/business/types/FileCache'
+import type { CachedFile } from '../../shared/business/types/CachedFile'
 import IndexedDBRepository from '../../shared/repository/IndexedDBRepository'
 
 export default abstract class FileCacheRepository extends IndexedDBRepository {

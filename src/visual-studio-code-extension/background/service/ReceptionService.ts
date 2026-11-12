@@ -1,10 +1,10 @@
 import BaseService from '@shared/service/BaseService'
-import { announcer } from '@shared/announcer/Announcer'
-import { getPortInUseStatus, getTakeOverFailedStatus } from '@shared/rules/status-rules'
-import { REQUEST_STATUS_UNREACHABLE, RESPONSE_STATUS_OK } from '@shared/constants/vscode-message'
-import { WEBSOCKET_PORT } from '@shared/config/connection'
-import { vsCodeMessageReceiver } from '../infrastructure/VsCodeMessageReceiver'
-import { handOverClient } from '../client/HandOverClient'
+import { announcer } from '@shared/communication/announcer/Announcer'
+import { getPortInUseStatus, getTakeOverFailedStatus } from '@shared/business/rules/status-rules'
+import { REQUEST_STATUS_UNREACHABLE, RESPONSE_STATUS_OK } from '@shared/foundation/constants/vscode-message'
+import { WEBSOCKET_PORT } from '@shared/business/config/connection'
+import { vsCodeMessageReceiver } from '../foundation/infrastructure/VsCodeMessageReceiver'
+import { handOverClient } from '../communication/client/HandOverClient'
 
 // How long a window taking the reception over keeps trying to start its server while the other window frees the port.
 const LISTEN_ATTEMPTS = 25

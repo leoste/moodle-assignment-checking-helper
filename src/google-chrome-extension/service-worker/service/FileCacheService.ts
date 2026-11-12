@@ -1,8 +1,8 @@
 import BaseService from '@shared/service/BaseService'
 import FileCacheRepository from '../repository/FileCacheRepository'
-import type { FileSourceStatus } from '../../shared/types/FileSourceStatus'
-import type { FileCacheKey } from '../../shared/types/StorageSchema'
-import type { CachedFile } from '../../shared/types/CachedFile'
+import type { FileSourceStatus } from '../../shared/business/types/FileSourceStatus'
+import type { FileCacheKey } from '../../shared/business/types/StorageSchema'
+import type { CachedFile } from '../../shared/business/types/CachedFile'
 
 class FileCacheService extends BaseService {
   async getFileSources(): Promise<FileSourceStatus[]> {

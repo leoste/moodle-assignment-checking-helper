@@ -1,7 +1,7 @@
 import { directoryHandleRepository } from '../../shared/repository/DirectoryHandleRepository'
-import type { FileSourceInfo } from '../../shared/types/FileSourceInfo'
-import { fileCacheClient } from '../client/FileCacheClient'
-import { fileSystemAccessProvider } from '../infrastructure/FileSystemAccessProvider'
+import type { FileSourceInfo } from '../../shared/business/types/FileSourceInfo'
+import { fileCacheClient } from '../communication/client/FileCacheClient'
+import { fileSystemAccessProvider } from '../foundation/infrastructure/FileSystemAccessProvider'
 import BaseService from '@shared/service/BaseService'
 
 /*

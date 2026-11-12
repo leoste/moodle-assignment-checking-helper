@@ -1,4 +1,4 @@
-infrastructure
+🚧infrastructure
 💘repository
 💝service
 ❤controller
@@ -6,16 +6,16 @@ infrastructure
 ❤generator
 💞pagelistener
 💞presenter
-rules
+💲rules
 💞pagemanager
 💞renderer
-object
-util
-types
+🚧object
+🚧util
+💲types
 ❤payload
-constants
-config
-translations
+🚧constants
+💲config
+💲translations
 💞styles
 ❤announcer
 ❤reporter
@@ -84,5 +84,28 @@ helpers used to accomplish this:
 💝Service layer💝
 service provides functionality to above layers. This can be storage, sending messages or something else.
 
+------------------
+
 💘Repository layer💘
 repository provides storage functionality, any sort of storage.
+
+-------------------
+
+🚧Foundation Layer🚧
+foundation makes the connections to existing systems and provides abstract objects other systems use.
+these are:
+- foundation/infrastructure: provides connection to existing systems
+- foundation/object: defines custom objects and concepts used throughout the system
+- foundation/util: generic helper functions usable anywhere
+- foundation/constants: same values that are used throughout the system so it makes sense to keep them together
+
+-------------------
+
+💲Business Layer💲
+
+business is the ultimate source of truth for decisions and structure, it's what everything is built around of.
+it includes:
+- business/rules: rules for how something works
+- business/types: types defining objects, these objects are manipulated in other layers
+- business/config: configuration of the application is technically independent of the app, but what is configurable is a decision
+- business/translations: some would argue this is presentation, but translations hold key intent on how things are intended to work

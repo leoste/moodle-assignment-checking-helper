@@ -1,8 +1,8 @@
 import ChromeMessageGenerator from './ChromeMessageGenerator'
 import { FILES_GET_SOURCES, FILES_UPDATE_CACHE } from '../constants/messages'
-import type { BasePayload } from '@shared/types/payload/BasePayload'
+import type { BasePayload } from '@shared/types/BasePayload'
 import type { ChromeMessage } from '../types/ChromeMessage'
-import type { FileCacheUpdatePayload } from '../types/payload/FileCacheUpdatePayload'
+import type { FileCacheUpdatePayload } from '../types/FileCacheUpdatePayload'
 import type { FileCacheKey } from '../types/StorageSchema'
 import type { CachedFile } from '../types/CachedFile'
 

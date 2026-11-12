@@ -1,5 +1,5 @@
-import type { BasePayload } from '@shared/types/payload/BasePayload'
-import type { NewsPayload } from '@shared/types/payload/NewsPayload'
+import type { BasePayload } from '@shared/types/BasePayload'
+import type { NewsPayload } from '@shared/types/NewsPayload'
 import type {
   NEWS_REPORT,
   NEWS_SUBSCRIBE,
@@ -7,7 +7,7 @@ import type {
   SETTINGS_CHANGE,
   SETTINGS_GET,
 } from '../constants/webview-messages'
-import type { SettingsChangePayload } from './payload/SettingsChangePayload'
+import type { SettingsChangePayload } from './SettingsChangePayload'
 
 export type WebviewMessagePayloads = {
   [SETTINGS_GET]: BasePayload

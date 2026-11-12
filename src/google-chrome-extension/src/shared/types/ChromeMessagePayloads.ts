@@ -1,6 +1,6 @@
-import type { BasePayload } from '@shared/types/payload/BasePayload'
-import type { NewsPayload } from '@shared/types/payload/NewsPayload'
-import type { StudentNamePayload } from '@shared/types/payload/StudentNamePayload'
+import type { BasePayload } from '@shared/types/BasePayload'
+import type { NewsPayload } from '@shared/types/NewsPayload'
+import type { StudentNamePayload } from '@shared/types/StudentNamePayload'
 import type {
   ASSIGNMENTS_GET_ALL,
   ASSIGNMENTS_UPDATED,
@@ -15,9 +15,9 @@ import type {
   QUIZ_AUTO_GRADE_IS_ACTIVE,
   STUDENT_SUBMISSION_OPEN,
 } from '../constants/messages'
-import type { AssignmentIdPayload } from './payload/AssignmentIdPayload'
-import type { AutoGradeIdPayload } from './payload/AutoGradeIdPayload'
-import type { FileCacheUpdatePayload } from './payload/FileCacheUpdatePayload'
+import type { AssignmentIdPayload } from './AssignmentIdPayload'
+import type { AutoGradeIdPayload } from './AutoGradeIdPayload'
+import type { FileCacheUpdatePayload } from './FileCacheUpdatePayload'
 
 export type ChromeMessagePayloads = {
   [FILES_GET_SOURCES]: BasePayload

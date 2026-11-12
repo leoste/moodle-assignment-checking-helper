@@ -43,4 +43,4 @@ The extension is now active. After code changes, reload the extension in `chrome
 npm run build
 ```
 
-Builds the extension into `dist/` once, without watching. Builds are not minified (see "Logging" in the root README). Releases are built with `build-release.mjs` in the project root (see "Releasing" in the root README).
+Builds the extension into `dist/` once, without watching. Builds are not minified: the log shows the real class names and the code stays debuggable in the browser. Releases are built with `build-release.mjs` in the project root (see "Building release" in [src/README.md](../README.md)).

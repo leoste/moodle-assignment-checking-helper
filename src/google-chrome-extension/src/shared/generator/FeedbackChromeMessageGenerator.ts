@@ -1,7 +1,7 @@
 import ChromeMessageGenerator from './ChromeMessageGenerator'
 import { FEEDBACK_GET } from '../constants/messages'
 import type { ChromeMessage } from '../types/ChromeMessage'
-import type { AssignmentIdPayload } from '../types/payload/AssignmentIdPayload'
+import type { AssignmentIdPayload } from '../types/AssignmentIdPayload'
 
 class FeedbackChromeMessageGenerator extends ChromeMessageGenerator {
   getFeedbackMessage(assignmentId: string): ChromeMessage<AssignmentIdPayload> {

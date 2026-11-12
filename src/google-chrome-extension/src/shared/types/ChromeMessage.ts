@@ -1,4 +1,4 @@
-import type { BasePayload } from '@shared/types/payload/BasePayload'
+import type { BasePayload } from '@shared/types/BasePayload'
 
 export interface ChromeMessage<TPayload extends BasePayload = BasePayload> {
   type: string

@@ -6,7 +6,7 @@ import {
 } from '../constants/messages'
 import type { AutoGradeId } from '../types/AutoGradeId'
 import type { ChromeMessage } from '../types/ChromeMessage'
-import type { AutoGradeIdPayload } from '../types/payload/AutoGradeIdPayload'
+import type { AutoGradeIdPayload } from '../types/AutoGradeIdPayload'
 
 class QuizChromeMessageGenerator extends ChromeMessageGenerator {
   getBeginAutoGradeMessage(autoGradeId: AutoGradeId): ChromeMessage<AutoGradeIdPayload> {

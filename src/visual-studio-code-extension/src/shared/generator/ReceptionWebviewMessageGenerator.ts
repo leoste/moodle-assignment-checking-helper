@@ -1,7 +1,7 @@
 import WebviewMessageGenerator from './WebviewMessageGenerator'
 import { RECEPTION_TAKE_OVER } from '../constants/webview-messages'
 import type { WebviewMessage } from '../types/WebviewMessage'
-import type { BasePayload } from '@shared/types/payload/BasePayload'
+import type { BasePayload } from '@shared/types/BasePayload'
 
 class ReceptionWebviewMessageGenerator extends WebviewMessageGenerator {
   getTakeOverMessage(): WebviewMessage<BasePayload> {

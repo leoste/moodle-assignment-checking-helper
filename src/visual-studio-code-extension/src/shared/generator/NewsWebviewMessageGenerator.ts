@@ -1,8 +1,8 @@
 import WebviewMessageGenerator from './WebviewMessageGenerator'
 import { NEWS_REPORT, NEWS_SUBSCRIBE } from '../constants/webview-messages'
 import type { WebviewMessage } from '../types/WebviewMessage'
-import type { BasePayload } from '@shared/types/payload/BasePayload'
-import type { NewsPayload } from '@shared/types/payload/NewsPayload'
+import type { BasePayload } from '@shared/types/BasePayload'
+import type { NewsPayload } from '@shared/types/NewsPayload'
 import type { News } from '@shared/types/News'
 
 class NewsWebviewMessageGenerator extends WebviewMessageGenerator {

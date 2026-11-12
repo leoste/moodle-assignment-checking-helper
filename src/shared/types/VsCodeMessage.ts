@@ -8,7 +8,7 @@ import type {
   RESPONSE_STATUS_OK,
   RESPONSE_STATUS_UNHANDLED,
 } from '../constants/vscode-message'
-import type { BasePayload } from './payload/BasePayload'
+import type { BasePayload } from './BasePayload'
 
 export interface VsCodeMessage<TPayload extends BasePayload = BasePayload> {
   channel: string

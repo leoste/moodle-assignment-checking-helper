@@ -1,7 +1,7 @@
 import BaseController from './BaseController'
 import type BaseMessageReceiver from '../infrastructure/BaseMessageReceiver'
 import type { MessageHandler } from '../types/MessageHandler'
-import type { BasePayload } from '../types/payload/BasePayload'
+import type { BasePayload } from '../types/BasePayload'
 
 export default abstract class BaseMessageController<
   THandler extends MessageHandler,

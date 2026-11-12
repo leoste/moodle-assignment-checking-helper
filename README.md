@@ -19,7 +19,7 @@ Automatically open files and run custom scripts in VSCode, easily compose typica
 
 WARNING. AI Text:
 ```
-Every assignment you grade needs a definition file: a JSON file in your definitions folder, which you choose in the extension's popup. What a definition file can contain is shown by the sample definition, [sample-definition.json](../src/definitions/sample-definition.json). When the definitions are loaded, every file is checked against it. A file that doesn't match is skipped, and the status line names it together with its first problem.
+Every assignment you grade needs a definition file: a JSON file in your definitions folder, which you choose in the extension's popup. What a definition file can contain is shown by the sample definition, [sample-definition.json](src/definitions/sample-definition.json). When the definitions are loaded, every file is checked against it. A file that doesn't match is skipped, and the status line names it together with its first problem.
 
 How to read the sample:
 - It contains every field a definition can have. Fields that aren't in it aren't allowed.
@@ -36,7 +36,7 @@ How to read the sample:
 
 ### Before grading an assignment
 
-1. Make the assignment's definition file (see [Create your definition files](user%20setup.md#create-your-definition-files));
+1. Make the assignment's definition file (see [Create your definition files](#create-your-definition-files));
 2. Download the students' submissions from Moodle;
 3. Extract them from the zip into a folder on your computer and open this folder in VSCode.
 
@@ -48,5 +48,26 @@ When you're ready, you press a button to apply these to real Moodle - so far you
 And finally, to save the grade, you press the "save and next" button as you do with Moodle normally.
 
 On the VS Code side, if you have the submissions folder open, the submissions of current student will open automatically.
-With many files, it will be opened in 2-3 columns. This makes it easier to find and navigate the files.
+With many files, it will be opened in 2 columns. This makes it easier to find and navigate the files.
 As you open next student in Moodle, previous submission's files will be closed and new ones opened.
+
+### Everything else you can do
+
+WARNING. AI Text:
+```
+In Chrome:
+- Only one Moodle tab grades at a time. In another tab, the panel says that grading happens elsewhere and offers to take the grading over.
+- Text typed into the panel's comment start box goes to the beginning of the comment.
+- Drag the panel's left edge to make it wider or narrower.
+- If the panel doesn't appear, reload it from the extension's popup.
+- After changing definition files, reload them from the popup. An open panel keeps the selections of the parts that didn't change.
+- On a quiz attempt's review page, every manually graded question gets a button that gives it full points without a comment and saves at once.
+
+In VS Code:
+- Only one VS Code window receives the students. Another window can take that over with its take-over button, in the status bar or in the extension's sidebar.
+- At most 20 of the student's files are opened. In the extension's sidebar you can choose whether the files in the student's subfolders are opened too (on by default).
+- Right-click a .py file to run it in a new terminal.
+- Click the extension's item in the status bar to see its log.
+
+The status line of the panel and of the popup, and VS Code's status bar and sidebar, show what's going on, e.g. whether Chrome and VS Code are connected and whether the student's files were opened.
+```

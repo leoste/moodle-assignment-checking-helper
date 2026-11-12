@@ -1,8 +1,8 @@
-import BaseRepository from '@shared/repository/BaseRepository'
+import WritableRepository from '@shared/repository/WritableRepository'
 import { indexedDBProvider } from '../infrastructure/IndexedDBProvider'
 import type { IndexedDBSchema } from '../types/StorageSchema'
 
-export default abstract class IndexedDBRepository extends BaseRepository<IndexedDBSchema> {
+export default abstract class IndexedDBRepository extends WritableRepository<IndexedDBSchema> {
   protected getValue<K extends keyof IndexedDBSchema>(key: K): Promise<IndexedDBSchema[K] | undefined> {
     return indexedDBProvider.get(key)
   }

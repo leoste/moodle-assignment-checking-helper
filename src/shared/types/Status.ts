@@ -11,4 +11,6 @@ export interface Status {
   topic: StatusTopic
   level: StatusLevel
   text: string
+  // A longer text that VS Code also shows as a popup, when the lecturer has to do something about it.
+  popupText?: string
 }

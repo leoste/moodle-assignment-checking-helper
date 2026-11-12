@@ -1,16 +1,9 @@
-import type * as vscode from 'vscode'
 import BaseWatcher from '@shared/watcher/BaseWatcher'
 import type { News } from '@shared/types/News'
 import { LOG_LEVEL_INFO, NEWS_TYPE_LOG } from '@shared/constants/news'
+import { outputChannelProvider } from '../infrastructure/OutputChannelProvider'
 
-export default class OutputChannelWatcher extends BaseWatcher {
-  readonly #channel: vscode.OutputChannel
-
-  constructor(channel: vscode.OutputChannel) {
-    super()
-    this.#channel = channel
-  }
-
+class OutputChannelWatcher extends BaseWatcher {
   watch(news: News): void {
     if (news.type !== NEWS_TYPE_LOG) return
     if (news.level === LOG_LEVEL_INFO) this.#writeInfo(news.line, news.details)
@@ -18,15 +11,17 @@ export default class OutputChannelWatcher extends BaseWatcher {
   }
 
   #writeInfo(line: string, data: unknown): void {
-    this.#channel.appendLine(data === undefined ? line : `${line} ${JSON.stringify(data)}`)
+    outputChannelProvider.appendLine(data === undefined ? line : `${line} ${JSON.stringify(data)}`)
   }
 
   #writeError(line: string, error: unknown): void {
     if (error === undefined) {
-      this.#channel.appendLine(line)
+      outputChannelProvider.appendLine(line)
       return
     }
     const details = error instanceof Error ? error.stack ?? error.message : String(error)
-    this.#channel.appendLine(`${line} ${details}`)
+    outputChannelProvider.appendLine(`${line} ${details}`)
   }
 }
+
+export const outputChannelWatcher = new OutputChannelWatcher()

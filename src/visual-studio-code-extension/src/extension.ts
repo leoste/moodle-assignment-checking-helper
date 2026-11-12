@@ -1,12 +1,11 @@
-import * as vscode from 'vscode'
+import type * as vscode from 'vscode'
 import { announcer } from '@shared/announcer/Announcer'
 import { reporter } from '@shared/reporter/Reporter'
-import { translations } from '@shared/translations/translations'
-import OutputChannelWatcher from './watcher/OutputChannelWatcher'
-import StatusBarWatcher from './watcher/StatusBarWatcher'
+import { outputChannelWatcher } from './watcher/OutputChannelWatcher'
+import { statusBarWatcher } from './watcher/StatusBarWatcher'
 import { statusBarButtonWatcher } from './watcher/StatusBarButtonWatcher'
+import { notificationWatcher } from './watcher/NotificationWatcher'
 import { newsClient } from './client/NewsClient'
-import { SHOW_LOG_COMMAND } from './config'
 import initInfrastructure from './infrastructure/init-infrastructure'
 import closeInfrastructure from './infrastructure/close-infrastructure'
 import initRepositories from './repository/init-repositories'
@@ -15,15 +14,11 @@ import closeControllers from './controller/close-controllers'
 import initServices from './service/init-services'
 
 export function activate(context: vscode.ExtensionContext): void {
-  const outputChannel = vscode.window.createOutputChannel(translations.extension.name)
-  reporter.addWatcher(new OutputChannelWatcher(outputChannel))
-
-  const statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left)
-  statusBarItem.command = SHOW_LOG_COMMAND
-  reporter.addWatcher(new StatusBarWatcher(statusBarItem))
+  reporter.addWatcher(outputChannelWatcher)
+  reporter.addWatcher(statusBarWatcher)
   reporter.addWatcher(statusBarButtonWatcher)
+  reporter.addWatcher(notificationWatcher)
   reporter.addClient(newsClient)
-  const showLogCommand = vscode.commands.registerCommand(SHOW_LOG_COMMAND, () => outputChannel.show())
 
   initInfrastructure()
   initRepositories()
@@ -31,11 +26,10 @@ export function activate(context: vscode.ExtensionContext): void {
   initControllers()
   announcer.announceLog('extension', 'activated')
 
-  context.subscriptions.push(showLogCommand, statusBarItem, {
+  context.subscriptions.push({
     dispose: () => {
       closeControllers()
       closeInfrastructure()
-      outputChannel.dispose()
     },
   })
 }

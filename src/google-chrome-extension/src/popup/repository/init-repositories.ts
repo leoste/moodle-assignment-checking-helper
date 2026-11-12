@@ -1,7 +1,7 @@
 import type BaseRepository from '@shared/repository/BaseRepository'
 import { directoryHandleRepository } from '../../shared/repository/DirectoryHandleRepository'
 
-export const repositories: readonly BaseRepository<unknown>[] = [
+export const repositories: readonly BaseRepository[] = [
   directoryHandleRepository,
 ]
 

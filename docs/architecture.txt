@@ -1,0 +1,80 @@
+infrastructure
+repository
+service
+❤controller
+❤client
+❤generator
+💞pagelistener
+💞presenter
+rules
+💞pagemanager
+💞renderer
+object
+util
+types
+❤payload
+constants
+config
+translations
+💞styles
+❤announcer
+❤reporter
+❤watcher
+
+-----------------
+
+Main Components
+The user interacts with the main components, everything below is already technical.
+The main components make use of the various layers described below to accomplish their functionality.
+
+Chrome Extension
+- service worker
+- content script
+- popup
+
+VS Code Extension
+- background
+- webview
+
+----------------
+
+❤Communication Layer❤
+Components communicate with each other in two ways.
+The communication layer exists only to facilitate communication between parts of the system.
+
+Messages
+- communication/client
+- communication/controller
+
+News
+- communication/announcer
+- communication/reporter
+- communication/watcher
+
+helpers used to accomplish this:
+- payload
+- generator
+
+---------------
+
+💞Presentation Layer💞
+Some components need to present info to the user. This also raises the necessity of accessing the page or other mediums.
+This is accomplished through following parts:
+
+presentation/listener:
+- Listens to website changes and manages lifecycle of presenter and manager. Creates then applies and connects them together at the appropriate moment.
+- owns the presenter and the manager
+
+presentation/manager:
+- Exposes functionality for interacting with the actual moodle page
+
+presentation/presenter:
+- defines and implements system business logic for interacting with Moodle and definitions
+- coordinates renderers to draw additional ui elements
+- owns the renderer
+
+presentation/renderer:
+- renders new ui components and manages their lifecycle
+
+helpers used to accomplish this:
+- styles

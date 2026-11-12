@@ -1,8 +1,8 @@
-import BaseRepository from '@shared/repository/BaseRepository'
+import WritableRepository from '@shared/repository/WritableRepository'
 import { chromeStorageProvider } from '../infrastructure/ChromeStorageProvider'
 import type { ChromeStorageSchema } from '../types/StorageSchema'
 
-export default abstract class LocalStorageRepository extends BaseRepository<ChromeStorageSchema> {
+export default abstract class LocalStorageRepository extends WritableRepository<ChromeStorageSchema> {
   protected getValue<K extends keyof ChromeStorageSchema>(key: K): Promise<ChromeStorageSchema[K] | undefined> {
     return chromeStorageProvider.get(key)
   }

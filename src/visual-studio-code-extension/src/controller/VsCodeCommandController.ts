@@ -1,15 +1,13 @@
-import * as vscode from 'vscode'
 import BaseController from '@shared/controller/BaseController'
+import { vsCodeCommandReceiver } from '../infrastructure/VsCodeCommandReceiver'
+import type { VsCodeCommandArguments } from '../types/VsCodeCommandArguments'
+import type { VsCodeCommandHandler } from '../types/VsCodeCommandHandler'
 
 export default class VsCodeCommandController extends BaseController {
-  #subscriptions: vscode.Disposable[] = []
-
-  registerCommand(id: string, callback: (...args: any[]) => any): void {
-    this.#subscriptions.push(vscode.commands.registerCommand(id, callback))
-  }
-
-  override close(): void {
-    this.#subscriptions.forEach(s => s.dispose())
-    this.#subscriptions = []
+  protected addCommandHandler<TCommand extends keyof VsCodeCommandArguments & string>(
+    command: TCommand,
+    handler: VsCodeCommandHandler<VsCodeCommandArguments[TCommand]>,
+  ): void {
+    vsCodeCommandReceiver.addHandler(command, handler)
   }
 }

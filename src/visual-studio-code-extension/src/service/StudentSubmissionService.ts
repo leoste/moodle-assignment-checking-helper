@@ -10,112 +10,67 @@ import {
   RESPONSE_STATUS_NOTHING_OPENED,
   RESPONSE_STATUS_OK,
 } from '@shared/constants/vscode-message'
-import {
-  canOpenMoreFiles,
-  getEditorColumnOffset,
-  isBinaryFile,
-  isStudentFolder,
-  shouldEnterFolder,
-} from '../rules/student-files-rules'
+import { canOpenMoreFiles, getEditorColumnOffset, isBinaryFile } from '../rules/student-files-rules'
 import { settingsRepository } from '../repository/SettingsRepository'
+import { studentSubmissionRepository } from '../repository/StudentSubmissionRepository'
+import { workspaceProvider } from '../infrastructure/WorkspaceProvider'
+import { editorProvider } from '../infrastructure/EditorProvider'
+import { terminalProvider } from '../infrastructure/TerminalProvider'
+import type { SubmissionFile } from '../types/SubmissionFile'
 
-type FileEntry = [dirUri: vscode.Uri, fileName: string]
+interface OpenResult {
+  status: VsCodeResponseStatus
+  // Shown as a popup when the lecturer has to do something about the result.
+  popupText?: string
+}
 
 class StudentSubmissionService extends BaseService {
   async openStudentSubmission(studentName: string): Promise<VsCodeResponseStatus> {
     announcer.announceStatus(getStudentSubmissionOpeningStatus(studentName))
-    const status = await this.#open(studentName)
-    announcer.announceStatus(getStudentSubmissionStatus(studentName, status))
+    const { status, popupText } = await this.#open(studentName)
+    announcer.announceStatus({ ...getStudentSubmissionStatus(studentName, status), popupText })
     return status
   }
 
-  async #open(studentName: string): Promise<VsCodeResponseStatus> {
+  async #open(studentName: string): Promise<OpenResult> {
     if (!studentName) {
       announcer.announceLogError(this, 'no student name given')
-      return RESPONSE_STATUS_NOT_FOUND
+      return { status: RESPONSE_STATUS_NOT_FOUND }
     }
 
     await this.#resetWorkspace()
 
-    const rootUri = this.#getWorkspaceRoot()
-    if (!rootUri) return RESPONSE_STATUS_NO_WORKSPACE
+    const submissionsFolder = studentSubmissionRepository.getSubmissionsFolder()
+    if (!submissionsFolder) {
+      announcer.announceLogError(this, 'no workspace folder open')
+      return { status: RESPONSE_STATUS_NO_WORKSPACE, popupText: translations.studentSubmission.noWorkspaceFolder }
+    }
 
-    const studentFolderUri = await this.#findStudentFolder(rootUri, studentName)
-    if (!studentFolderUri) return RESPONSE_STATUS_NOT_FOUND
-    announcer.announceLog(this, `student folder of "${studentName}": ${studentFolderUri.fsPath}`)
+    const studentFolder = await studentSubmissionRepository.findStudentFolder(submissionsFolder, studentName)
+    if (!studentFolder) {
+      announcer.announceLogError(this, `no folder found for "${studentName}"`)
+      return { status: RESPONSE_STATUS_NOT_FOUND, popupText: translations.studentSubmission.noStudentFolder(studentName) }
+    }
+    announcer.announceLog(this, `student folder of "${studentName}": ${studentFolder.fsPath}`)
 
-    const files = await this.#collectSubmissionFiles(studentFolderUri)
+    const { openSubDirectories } = await settingsRepository.getSettings()
+    const files = await studentSubmissionRepository.getFiles(studentFolder, openSubDirectories)
     const openedCount = await this.#openFiles(files)
     announcer.announceLog(this, `opened ${openedCount} of ${files.length} file(s)`)
-    return openedCount > 0 ? RESPONSE_STATUS_OK : RESPONSE_STATUS_NOTHING_OPENED
+    return { status: openedCount > 0 ? RESPONSE_STATUS_OK : RESPONSE_STATUS_NOTHING_OPENED }
   }
 
   async #resetWorkspace(): Promise<void> {
-    vscode.window.terminals.forEach(t => t.dispose())
-    await vscode.commands.executeCommand('workbench.files.action.collapseExplorerFolders')
-    await vscode.commands.executeCommand('workbench.action.closeAllEditors')
+    terminalProvider.closeAll()
+    await workspaceProvider.collapseExplorer()
+    await editorProvider.closeAll()
   }
 
-  #getWorkspaceRoot(): vscode.Uri | undefined {
-    const folders = vscode.workspace.workspaceFolders
-    if (!folders || folders.length === 0) {
-      announcer.announceLogError(this, 'no workspace folder open')
-      vscode.window.showWarningMessage(translations.studentSubmission.noWorkspaceFolder)
-      return undefined
-    }
-    return folders[0].uri
-  }
-
-  async #findStudentFolder(rootUri: vscode.Uri, studentName: string): Promise<vscode.Uri | undefined> {
-    const folderName = await this.#findDirectoryByName(rootUri, studentName)
-
-    if (!folderName) {
-      announcer.announceLogError(this, `no folder found for "${studentName}"`)
-      vscode.window.showWarningMessage(translations.studentSubmission.noStudentFolder(studentName))
-      return undefined
-    }
-
-    return vscode.Uri.joinPath(rootUri, folderName)
-  }
-
-  async #findDirectoryByName(rootUri: vscode.Uri, wantedName: string): Promise<string | undefined> {
-    const entries = await vscode.workspace.fs.readDirectory(rootUri)
-    const match = entries.find(
-      ([name, type]) => type === vscode.FileType.Directory && isStudentFolder(name, wantedName)
-    )
-    return match?.[0]
-  }
-
-  async #collectSubmissionFiles(folderUri: vscode.Uri): Promise<FileEntry[]> {
-    const { openSubDirectories } = await settingsRepository.getSettings()
-    if (openSubDirectories) {
-      return this.#collectFilesRecursively(folderUri)
-    }
-    const entries = await vscode.workspace.fs.readDirectory(folderUri)
-    return entries
-      .filter(([_, type]) => type === vscode.FileType.File)
-      .map(([fileName]): FileEntry => [folderUri, fileName])
-  }
-
-  async #collectFilesRecursively(dirUri: vscode.Uri): Promise<FileEntry[]> {
-    let result: FileEntry[] = []
-    const entries = await vscode.workspace.fs.readDirectory(dirUri)
-    for (const [name, type] of entries) {
-      if (type === vscode.FileType.File) {
-        result.push([dirUri, name])
-      } else if (type === vscode.FileType.Directory && shouldEnterFolder(name)) {
-        result = result.concat(await this.#collectFilesRecursively(vscode.Uri.joinPath(dirUri, name)))
-      }
-    }
-    return result
-  }
-
-  async #openFiles(files: FileEntry[]): Promise<number> {
+  async #openFiles(files: SubmissionFile[]): Promise<number> {
     let fileCount = 0
     for (const [dirUri, fileName] of files) {
       if (!canOpenMoreFiles(fileCount)) break
-      const column = vscode.ViewColumn.One + getEditorColumnOffset(fileCount)
-      const opened = await this.#openFile(dirUri, fileName, column)
+      const opened = await this.#openFile(dirUri, fileName, getEditorColumnOffset(fileCount))
       if (opened) fileCount++
     }
     return fileCount
@@ -123,15 +78,8 @@ class StudentSubmissionService extends BaseService {
 
   async #openFile(dirUri: vscode.Uri, fileName: string, column: number): Promise<boolean> {
     const fileUri = vscode.Uri.joinPath(dirUri, fileName)
-    const options = { preview: false, viewColumn: column, preserveFocus: false }
-
     try {
-      if (isBinaryFile(fileName)) {
-        await vscode.commands.executeCommand('vscode.open', fileUri, options)
-      } else {
-        const doc = await vscode.workspace.openTextDocument(fileUri)
-        await vscode.window.showTextDocument(doc, options)
-      }
+      await editorProvider.open(fileUri, column, isBinaryFile(fileName))
       return true
     } catch (err) {
       announcer.announceLogError(this, `could not open ${fileUri.fsPath}`, err)

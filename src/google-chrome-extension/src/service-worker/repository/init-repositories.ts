@@ -3,7 +3,7 @@ import { assignmentRepository } from './AssignmentRepository'
 import { quizRepository } from './QuizRepository'
 import { directoryHandleRepository } from '../../shared/repository/DirectoryHandleRepository'
 
-export const repositories: readonly BaseRepository<unknown>[] = [
+export const repositories: readonly BaseRepository[] = [
   assignmentRepository,
   quizRepository,
   directoryHandleRepository,

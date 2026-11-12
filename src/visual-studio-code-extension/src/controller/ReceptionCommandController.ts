@@ -5,7 +5,7 @@ import { TAKE_OVER_COMMAND } from '../config'
 // The status bar button.
 class ReceptionCommandController extends VsCodeCommandController {
   protected override onInit(): undefined {
-    this.registerCommand(TAKE_OVER_COMMAND, () => {
+    this.addCommandHandler(TAKE_OVER_COMMAND, async () => {
       void receptionService.takeOver()
     })
   }

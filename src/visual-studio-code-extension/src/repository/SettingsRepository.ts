@@ -1,9 +1,9 @@
 import type * as vscode from 'vscode'
-import BaseRepository from '@shared/repository/BaseRepository'
+import WritableRepository from '@shared/repository/WritableRepository'
 import type { Settings } from '../shared/types/Settings'
 import { settingsProvider } from '../infrastructure/SettingsProvider'
 
-class SettingsRepository extends BaseRepository<Settings> {
+class SettingsRepository extends WritableRepository<Settings> {
   async getSettings(): Promise<Settings> {
     // An unset setting has its default from package.json.
     return { openSubDirectories: (await this.getValue('openSubDirectories'))! }

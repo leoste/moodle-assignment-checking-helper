@@ -43,7 +43,6 @@ The concepts exist at different levels and interact in different ways, but here 
 - 🚧constants
 - 💲config
 - 💲translations
-- 💞styles
 - ❤announcer
 - ❤reporter
 - ❤watcher
@@ -102,9 +101,6 @@ Presenter (presentation/presenter):
 Renderer (presentation/renderer):
 - renders new ui components and manages their lifecycle
 
-helpers used to accomplish this:
-- styles
-
 ### 3.3 💝Service layer💝
 service provides functionality to above layers. This can be storage, sending messages or something else.
 
@@ -117,6 +113,7 @@ these are:
 - foundation/infrastructure: provides connection to existing systems
 - foundation/object: defines custom objects and concepts used throughout the system
 - foundation/util: generic helper functions usable anywhere
+- foundation/generator: they generate messages for use between clients and controllers
 - foundation/constants: same values that are used throughout the system so it makes sense to keep them together
 
 ### 3.6 💲Business Layer💲
@@ -127,3 +124,4 @@ it includes:
 - business/types: types defining objects, these objects are manipulated in other layers
 - business/config: configuration of the application is technically independent of the app, but what is configurable is a decision
 - business/translations: some would argue this is presentation, but translations hold key intent on how things are intended to work
+- business/styles: looks is everything, so this is business

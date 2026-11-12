@@ -1,6 +1,6 @@
 import type { VsCodeRequestStatus } from '@shared/business/types/VsCodeMessage'
 import ChromeMessageClient from '../../../shared/communication/client/ChromeMessageClient'
-import { studentSubmissionChromeMessageGenerator } from '../../../shared/foundation/object/StudentSubmissionChromeMessageGenerator'
+import { studentSubmissionChromeMessageGenerator } from '../../../shared/foundation/generator/StudentSubmissionChromeMessageGenerator'
 
 // This is the Visual Studio Code communicating client
 

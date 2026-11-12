@@ -1,6 +1,6 @@
 import type { VsCodeRequestStatus } from '@shared/business/types/VsCodeMessage'
 import VsCodeMessageClient from './VsCodeMessageClient'
-import { studentSubmissionVsCodeMessageGenerator } from '../../foundation/object/StudentSubmissionVsCodeMessageGenerator'
+import { studentSubmissionVsCodeMessageGenerator } from '../../foundation/generator/StudentSubmissionVsCodeMessageGenerator'
 
 class StudentSubmissionClient extends VsCodeMessageClient {
   async openStudentSubmission(studentName: string): Promise<VsCodeRequestStatus> {

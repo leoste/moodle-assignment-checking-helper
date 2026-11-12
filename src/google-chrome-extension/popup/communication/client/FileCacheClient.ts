@@ -1,5 +1,5 @@
 import ChromeMessageClient from '../../../shared/communication/client/ChromeMessageClient'
-import { fileCacheChromeMessageGenerator } from '../../../shared/foundation/object/FileCacheChromeMessageGenerator'
+import { fileCacheChromeMessageGenerator } from '../../../shared/foundation/generator/FileCacheChromeMessageGenerator'
 import type { FileSourceStatus } from '../../../shared/business/types/FileSourceStatus'
 import type { FileCacheKey } from '../../../shared/business/types/StorageSchema'
 import type { CachedFile } from '../../../shared/business/types/CachedFile'

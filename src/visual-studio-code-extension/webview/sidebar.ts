@@ -1,5 +1,5 @@
-import '@shared/presentation/styles/theme.css'
-import './presentation/styles/sidebar.css'
+import '@shared/business/styles/theme.css'
+import './business/styles/sidebar.css'
 import { reporter } from '@shared/communication/reporter/Reporter'
 import { consoleWatcher } from '@shared/communication/watcher/ConsoleWatcher'
 import { vsCodeApiProvider } from './foundation/infrastructure/VsCodeApiProvider'

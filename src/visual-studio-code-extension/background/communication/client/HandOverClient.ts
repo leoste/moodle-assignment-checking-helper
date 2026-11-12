@@ -1,6 +1,6 @@
 import type { VsCodeRequestStatus } from '@shared/business/types/VsCodeMessage'
 import VsCodeMessageClient from './VsCodeMessageClient'
-import { receptionVsCodeMessageGenerator } from '../../foundation/object/ReceptionVsCodeMessageGenerator'
+import { receptionVsCodeMessageGenerator } from '../../foundation/generator/ReceptionVsCodeMessageGenerator'
 
 class HandOverClient extends VsCodeMessageClient {
   async requestHandOver(): Promise<VsCodeRequestStatus> {

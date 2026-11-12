@@ -1,5 +1,5 @@
 import WebviewMessageClient from './WebviewMessageClient'
-import { settingsWebviewMessageGenerator } from '../../../shared/foundation/object/SettingsWebviewMessageGenerator'
+import { settingsWebviewMessageGenerator } from '../../../shared/foundation/generator/SettingsWebviewMessageGenerator'
 import type { Settings } from '../../../shared/business/types/Settings'
 
 class SettingsClient extends WebviewMessageClient {

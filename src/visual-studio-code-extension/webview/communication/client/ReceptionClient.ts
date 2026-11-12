@@ -1,5 +1,5 @@
 import WebviewMessageClient from './WebviewMessageClient'
-import { receptionWebviewMessageGenerator } from '../../../shared/foundation/object/ReceptionWebviewMessageGenerator'
+import { receptionWebviewMessageGenerator } from '../../../shared/foundation/generator/ReceptionWebviewMessageGenerator'
 
 class ReceptionClient extends WebviewMessageClient {
   async takeOver(): Promise<void> {

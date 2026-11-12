@@ -37,7 +37,7 @@ const commonOptions = {
 /** @type {import('esbuild').BuildOptions} */
 const extensionOptions = {
   ...commonOptions,
-  entryPoints: ['src/extension.ts'],
+  entryPoints: ['background/extension.ts'],
   format: 'cjs',
   platform: 'node',
   outfile: 'dist/extension.js',
@@ -48,7 +48,7 @@ const extensionOptions = {
 /** @type {import('esbuild').BuildOptions} */
 const webviewOptions = {
   ...commonOptions,
-  entryPoints: ['src/webview/sidebar.ts'],
+  entryPoints: ['webview/sidebar.ts'],
   format: 'iife',
   platform: 'browser',
   outdir: 'dist/webview',

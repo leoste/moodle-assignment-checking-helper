@@ -1,5 +1,5 @@
 import { defineManifest } from '@crxjs/vite-plugin'
-import { MOODLE_ORIGIN } from './src/config'
+import { MOODLE_ORIGIN } from './config'
 import { WEBSOCKET_HOST } from '../shared/config/connection'
 import { translations } from '../shared/translations/translations'
 import packageJson from './package.json'
@@ -15,27 +15,27 @@ export default defineManifest({
     128: 'images/128.png',
   },
   action: {
-    default_popup: 'src/popup/popup.html',
+    default_popup: 'popup/popup.html',
     default_title: translations.extension.name,
   },
   background: {
-    service_worker: 'src/service-worker/service-worker.ts',
+    service_worker: 'service-worker/service-worker.ts',
     type: 'module',
   },
   content_scripts: [
     {
       matches: [`${MOODLE_ORIGIN}/mod/assign/*action=grader*`],
-      js: ['src/content-script/assign-grader.ts'],
-      css: ['src/content-script/assign-grader.css'],
+      js: ['content-script/assign-grader.ts'],
+      css: ['content-script/assign-grader.css'],
     },
     {
       matches: [`${MOODLE_ORIGIN}/mod/quiz/review.php*`],
-      js: ['src/content-script/quiz-review.ts'],
-      css: ['src/content-script/quiz-review.css'],
+      js: ['content-script/quiz-review.ts'],
+      css: ['content-script/quiz-review.css'],
     },
     {
       matches: [`${MOODLE_ORIGIN}/mod/quiz/comment.php*`],
-      js: ['src/content-script/quiz-comment.ts'],
+      js: ['content-script/quiz-comment.ts'],
     },
   ],
   web_accessible_resources: [

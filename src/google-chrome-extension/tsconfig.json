@@ -19,5 +19,14 @@
       "@shared/*": ["../shared/*"]
     }
   },
-  "include": ["src/**/*", "vite.config.ts", "manifest.config.ts", "../shared/**/*"]
+  "include": [
+    "content-script/**/*",
+    "popup/**/*",
+    "service-worker/**/*",
+    "shared/**/*",
+    "config.ts",
+    "vite.config.ts",
+    "manifest.config.ts",
+    "../shared/**/*"
+  ]
 }

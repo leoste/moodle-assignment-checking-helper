@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite build --watch",
     "build": "vite build",
-    "typecheck": "tsc --noEmit && tsc --noEmit -p src/content-script && tsc --noEmit -p src/popup && tsc --noEmit -p src/service-worker"
+    "typecheck": "tsc --noEmit && tsc --noEmit -p content-script && tsc --noEmit -p popup && tsc --noEmit -p service-worker"
   },
   "devDependencies": {
     "@crxjs/vite-plugin": "^2.4.0",

@@ -15,7 +15,6 @@
       "@shared/*": ["../shared/*"]
     }
   },
-  "include": ["src/**/*"],
-  // The sidebar's page runs in a browser context and is checked with its own tsconfig.
-  "exclude": ["src/webview"]
+  // The sidebar's page (webview/) runs in a browser context and is checked with its own tsconfig.
+  "include": ["background/**/*", "shared/**/*"]
 }

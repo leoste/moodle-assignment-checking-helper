@@ -1,5 +1,7 @@
 .vscode/**
-src/**
+background/**
+webview/**
+shared/**
 node_modules/**
 esbuild.js
 tsconfig.json

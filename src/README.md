@@ -29,9 +29,9 @@ The project consists of multiple parts. Below AI-generated babble roughly explai
   - `service-worker/` runs in the background, holds the data and talks to VS Code.
   - `popup/` selects and refreshes the definitions folder, and can reload the panel in the active tab.
 - `visual-studio-code-extension/` gets the student being graded from Chrome and opens their files. It runs in two contexts:
-  - the extension's app (`src/` apart from `webview/`) runs in VS Code's background.
+  - `background/` is the extension's app, which runs in VS Code's background.
   - `webview/` is the sidebar's page: the settings and a copy of the status bar, in the panel's look.
-- `shared/` is code that has to be the same in both extensions. An extension's own `src/shared/` is code shared between its contexts.
+- `shared/` is code that has to be the same in both extensions. An extension's own `shared/` is code shared between its contexts.
 ```
 
 ## Project layers and components
@@ -40,7 +40,7 @@ The project is built around specific layers each with clear goals, sort of like 
 Refer to below AI-generated babble to know what layers exist:
 ```
 Each layer uses only the layers below it. Data goes through repositories and outgoing messages through clients; a service calls a provider directly only for what is neither, e.g. starting the server or closing the editors.
-- `infrastructure/` owns a platform resource and knows nothing about features. Every platform resource the project uses is owned by one. Used directly are only the pages' DOM (by pagemanagers and renderers), `vscode.Uri` values, language built-ins, and the console and `chrome.runtime.getURL()`, which own nothing.
+- `infrastructure/` owns a platform resource and knows nothing about features. Every platform resource the project uses is owned by one. Used directly are only the pages' DOM (by page managers and renderers), `vscode.Uri` values, language built-ins, and the console and `chrome.runtime.getURL()`, which own nothing.
   - Receivers listen for what the platform delivers and pass it on to the handler registered for its key. They all extend `BaseReceiver`: `ChromeMessageReceiver` (service worker, content script), `ChromePortReceiver` (the service worker's end of the ports), `VsCodeMessageReceiver`, `VsCodeCommandReceiver`, `SidebarViewProvider` (the VS Code app's end of the sidebar, which also sends) and `WebviewMessageReceiver` (the sidebar page's end).
   - Providers do things with their resource. `ChromeMessageProvider` and `ChromePortProvider` send to the service worker, `VsCodeConnectionProvider` sends requests to VS Code, `VsCodeWindowConnectionProvider` to the VS Code window that receives the students, `VsCodeApiProvider` from the sidebar's page to the VS Code app. `IndexedDBProvider`, `ChromeStorageProvider` and `SettingsProvider` store values, `FileSystemAccessProvider` reads the definitions folder, `WebLockProvider` holds the content script's Web Locks. `WorkspaceProvider`, `EditorProvider`, `TerminalProvider`, `NotificationProvider`, `OutputChannelProvider`, `StatusBarItemProvider` and `StatusBarButtonProvider` own VS Code's workspace folder, editors, terminals, popups, Output channel and status bar items.
 - `repository/` store and load data. `WritableRepository` is the base of the repositories that store values under keys. A repository that only reads, e.g. `StudentSubmissionRepository`, extends `BaseRepository` directly.
@@ -54,10 +54,10 @@ Again, see the soulless AI generation for info:
 ```
 - `client/` send the messages of one feature, e.g. `FeedbackClient`.
 - `generator/` put messages together, e.g. `QuizChromeMessageGenerator.getBeginAutoGradeMessage()`.
-- `pagelistener/` start a page: they create its presenter and pass on to it what the controllers and watchers got. The content script's listeners create a new page and presenter on every Moodle page load, the sidebar's listener once. A content script listener's `loadPage()` stops the previous presenter, if there is one, and starts a new one. It runs when `executeOnPageReady` finds the page ready, and when the popup's `panel/reload` skips that detection. Both take the same path.
+- `listener/` hold the listeners. A page listener (`…PageListener`) starts a page: it creates its presenter and passes on to it what the controllers and watchers got. The content script's page listeners create a new page manager and presenter on every Moodle page load, the sidebar's page listener creates its presenter once. A content script page listener's `loadPage()` stops the previous presenter, if there is one, and starts a new one. It runs when `executeOnPageReady` finds the page ready, and when the popup's `panel/reload` skips that detection. Both take the same path.
 - `presenter/` run the workflow of one page load: fetch data, create renderers, react to their events, apply rules and write the results to the page. A presenter holds the state of that page load. It hands the watchers the renderers they show news in, and decides when a watcher follows another context's reporter.
 - `rules/` are the project's own decisions as plain functions, e.g. `calculateGrade()`, `isStudentFolder()`. In the service worker the services play this role.
-- `content-script/pagemanager/` are the only place that knows Moodle's DOM, e.g. `AssignmentGraderPage.setGrade()`.
+- `manager/` hold the managers. The content script's page managers (`…PageManager`) and their helpers are the only place that knows Moodle's DOM, e.g. `AssignmentGraderPageManager.setGrade()`.
 - `renderer/` only build the extension's own UI from the data they get and report user actions through callbacks. Each renderer owns one root element: `render()` creates it, `clear()` removes it.
 - `object/` are building blocks owned by another class, e.g. `HandlerMap`, `WebSocketConnection`, the request trackers.
 - `util/` are stateless functions.
@@ -70,7 +70,7 @@ Many of these objects are introduced as singletons, that is they can only have o
 Blabla AI you know it:
 ```
 Infrastructure, repositories, services, controllers, clients, generators, page listeners, the announcer, the reporter and the watchers are singletons. Only the instance is exported, not the class: `export const quizService = new QuizService()`.
-A class is exported only if it is a base class, has multiple instances (renderers, pages, presenters) or is an object owned by another class.
+A class is exported only if it is a base class, has multiple instances (renderers, page managers, presenters) or is an object owned by another class.
 `static` fields are only for state shared by a whole class hierarchy.
 ```
 

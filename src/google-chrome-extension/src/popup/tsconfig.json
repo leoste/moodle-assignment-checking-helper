@@ -1,5 +1,0 @@
-{
-  // The popup is a page of its own: the DOM is there. It also uses the File System Access API declared in shared/types.
-  "extends": "../../tsconfig.json",
-  "include": ["./**/*", "../shared/types/file-system-access.d.ts"]
-}

@@ -4,8 +4,8 @@ import type { WebviewMessage } from '../../shared/types/WebviewMessage'
 import { vsCodeApiProvider } from '../infrastructure/VsCodeApiProvider'
 
 export default class WebviewMessageClient extends BaseClient {
-  protected send(message: WebviewMessage): void {
+  protected async send<TResponse>(message: WebviewMessage): Promise<TResponse> {
     logger.info(this, `sent ${message.type}`, message.content)
-    vsCodeApiProvider.postMessage(message)
+    return vsCodeApiProvider.post(message) as Promise<TResponse>
   }
 }

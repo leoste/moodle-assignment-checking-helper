@@ -19,7 +19,7 @@ class SettingsService extends BaseService {
   }
 
   async #showSettings(): Promise<void> {
-    settingsClient.showSettings(await settingsRepository.getSettings())
+    await settingsClient.showSettings(await settingsRepository.getSettings())
   }
 }
 

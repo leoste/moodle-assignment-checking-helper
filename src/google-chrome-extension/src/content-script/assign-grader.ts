@@ -3,6 +3,7 @@ import '@shared/styles/theme.css'
 import { logger } from '@shared/reporting/logger'
 import ConsoleLogSink from '@shared/reporting/ConsoleLogSink'
 import { chromeMessageReceiver } from '../shared/infrastructure/ChromeMessageReceiver'
+import { chromeMessageProvider } from '../shared/infrastructure/ChromeMessageProvider'
 import { webLockProvider } from './infrastructure/WebLockProvider'
 import { assignmentController } from './controller/AssignmentController'
 import { panelController } from './controller/PanelController'
@@ -11,6 +12,7 @@ import { assignmentGraderListener } from "./pagelistener/AssignmentGraderListene
 
 logger.init(new ConsoleLogSink())
 chromeMessageReceiver.init()
+chromeMessageProvider.init()
 webLockProvider.init()
 assignmentController.init()
 panelController.init()

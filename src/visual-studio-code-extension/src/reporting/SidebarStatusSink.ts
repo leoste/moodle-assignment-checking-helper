@@ -4,6 +4,6 @@ import { statusClient } from '../client/StatusClient'
 
 export default class SidebarStatusSink implements StatusSink {
   show(statuses: readonly Status[]): void {
-    statusClient.showStatuses(statuses)
+    void statusClient.showStatuses(statuses)
   }
 }

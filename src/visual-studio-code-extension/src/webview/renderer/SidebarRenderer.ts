@@ -13,21 +13,19 @@ export interface SidebarCallbacks {
 
 // Built like the Chrome popup: a frame with a scroll area and the status line in a bottom strip.
 export default class SidebarRenderer extends BaseRenderer {
-  readonly #parentElement: HTMLElement
   readonly #callbacks: SidebarCallbacks
 
   #openSubDirectoriesToggle: SettingToggleRenderer | undefined
   #takeOverButton: HTMLButtonElement | undefined
   #statusLineRenderer: StatusLineRenderer | undefined
 
-  constructor(parentElement: HTMLElement, callbacks: SidebarCallbacks) {
+  constructor(callbacks: SidebarCallbacks) {
     super()
-    this.#parentElement = parentElement
     this.#callbacks = callbacks
   }
 
   protected createRoot(): HTMLElement {
-    return createAndAddChildElement(this.#parentElement, 'div', 'checking-helper-sidebar-frame')
+    return createAndAddChildElement(document.body, 'div', 'checking-helper-sidebar-frame')
   }
 
   protected async renderContent(root: HTMLElement) {

@@ -3,8 +3,8 @@ import { statusWebviewMessageGenerator } from '../shared/generator/StatusWebview
 import type { Status } from '@shared/types/Status'
 
 class StatusClient extends WebviewMessageClient {
-  showStatuses(statuses: readonly Status[]): void {
-    this.send(statusWebviewMessageGenerator.getShowStatusesMessage(statuses))
+  async showStatuses(statuses: readonly Status[]): Promise<void> {
+    await this.send(statusWebviewMessageGenerator.getShowStatusesMessage(statuses))
   }
 }
 

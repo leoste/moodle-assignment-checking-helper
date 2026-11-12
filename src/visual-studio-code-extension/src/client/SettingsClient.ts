@@ -3,8 +3,8 @@ import { settingsWebviewMessageGenerator } from '../shared/generator/SettingsWeb
 import type { Settings } from '../shared/types/Settings'
 
 class SettingsClient extends WebviewMessageClient {
-  showSettings(settings: Settings): void {
-    this.send(settingsWebviewMessageGenerator.getShowSettingsMessage(settings))
+  async showSettings(settings: Settings): Promise<void> {
+    await this.send(settingsWebviewMessageGenerator.getShowSettingsMessage(settings))
   }
 }
 

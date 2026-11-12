@@ -4,8 +4,8 @@ import type { WebviewMessagePayloads } from '../../shared/types/WebviewMessagePa
 import type { WebviewMessageHandler } from '../../shared/types/WebviewMessageHandler'
 import { webviewMessageReceiver } from '../infrastructure/WebviewMessageReceiver'
 
-export default class WebviewMessageController extends BaseMessageController<WebviewMessageHandler, undefined, WebviewMessagePayloads> {
-  protected getReceiver(): BaseMessageReceiver<WebviewMessageHandler, undefined> {
+export default class WebviewMessageController extends BaseMessageController<WebviewMessageHandler, string, WebviewMessagePayloads> {
+  protected getReceiver(): BaseMessageReceiver<WebviewMessageHandler, string> {
     return webviewMessageReceiver
   }
 }

@@ -3,8 +3,8 @@ import { sidebarWebviewMessageGenerator } from '../../shared/generator/SidebarWe
 
 class SidebarClient extends WebviewMessageClient {
   // The extension answers by sending the current settings and statuses.
-  notifyReady(): void {
-    this.send(sidebarWebviewMessageGenerator.getReadyMessage())
+  async notifyReady(): Promise<void> {
+    await this.send(sidebarWebviewMessageGenerator.getReadyMessage())
   }
 }
 

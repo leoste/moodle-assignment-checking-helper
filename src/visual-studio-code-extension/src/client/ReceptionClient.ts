@@ -2,8 +2,8 @@ import WebviewMessageClient from './WebviewMessageClient'
 import { receptionWebviewMessageGenerator } from '../shared/generator/ReceptionWebviewMessageGenerator'
 
 class ReceptionClient extends WebviewMessageClient {
-  showReception(receiving: boolean): void {
-    this.send(receptionWebviewMessageGenerator.getShowReceptionMessage(receiving))
+  async showReception(receiving: boolean): Promise<void> {
+    await this.send(receptionWebviewMessageGenerator.getShowReceptionMessage(receiving))
   }
 }
 

@@ -10,13 +10,13 @@ export default class SidebarPresenter extends BasePresenter {
   #renderer: SidebarRenderer | undefined
 
   async start(): Promise<void> {
-    this.#renderer = new SidebarRenderer(document.body, {
+    this.#renderer = new SidebarRenderer({
       onOpenSubDirectoriesChanged: this.#onOpenSubDirectoriesChanged,
       onTakeOver: this.#onTakeOver,
     })
     await this.#renderer.render()
     // The page asks for the current settings and statuses only once it can show them.
-    sidebarClient.notifyReady()
+    await sidebarClient.notifyReady()
   }
 
   showSettings(settings: Settings): void {
@@ -32,10 +32,10 @@ export default class SidebarPresenter extends BasePresenter {
   }
 
   #onOpenSubDirectoriesChanged = (openSubDirectories: boolean): void => {
-    settingsClient.changeSettings({ openSubDirectories })
+    void settingsClient.changeSettings({ openSubDirectories })
   }
 
   #onTakeOver = (): void => {
-    receptionClient.takeOver()
+    void receptionClient.takeOver()
   }
 }

@@ -66,7 +66,7 @@ class ReceptionService extends BaseService {
     this.#receiving = receiving
     if (receiving) statusBarButtonProvider.hide()
     else statusBarButtonProvider.show(translations.connection.takeOver, TAKE_OVER_COMMAND)
-    receptionClient.showReception(receiving)
+    void receptionClient.showReception(receiving)
   }
 }
 

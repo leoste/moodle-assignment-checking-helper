@@ -1,0 +1,150 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1110" viewBox="0 0 1200 1110">
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="10" refY="5" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#1a1a1a"/>
+    </marker>
+    <style>
+      text { font-family: 'Segoe UI', Helvetica, Arial, sans-serif; fill: #1a1a1a; }
+      .title { font-size: 24px; font-weight: 700; }
+      .sub { font-size: 13px; fill: #444; }
+      .lh { font-size: 15px; font-weight: 700; text-anchor: middle; }
+      .ls { font-size: 11px; fill: #555; text-anchor: middle; }
+      .phase { font-size: 13px; font-weight: 700; fill: #B4501A; paint-order: stroke; stroke: #fff; stroke-width: 5px; stroke-linejoin: round; }
+      .s { font-size: 12.5px; }
+      .num { font-size: 12px; font-weight: 700; fill: #fff; text-anchor: middle; }
+      .n { font-size: 12px; }
+      .lane-own { fill: #FFFBEA; stroke: #FF7E2E; stroke-width: 1; }
+      .lane-ext { fill: #F7F7F7; stroke: #bbb; stroke-width: 1; }
+      .step { fill: #fff; stroke: #1a1a1a; stroke-width: 1.3; }
+      .circle { fill: #FF7E2E; }
+      .note { fill: #E3FCFC; stroke: #23B5B5; stroke-width: 1; }
+      .c { stroke: #1a1a1a; stroke-width: 1.4; fill: none; marker-end: url(#a); }
+      .pl { stroke: #B4501A; stroke-width: 1.2; stroke-dasharray: 8 4; }
+    </style>
+  </defs>
+
+  <rect width="1200" height="1110" fill="#ffffff"/>
+
+  <text x="20" y="40" class="title">Setting up the helper as a lecturer</text>
+  <text x="20" y="64" class="sub">What to do before grading, and where. Follow the arrows: every box is one step.</text>
+
+  <!-- Lanes -->
+  <rect x="20" y="84" width="290" height="1010" class="lane-own"/>
+  <rect x="310" y="84" width="290" height="1010" class="lane-ext"/>
+  <rect x="600" y="84" width="290" height="1010" class="lane-own"/>
+  <rect x="890" y="84" width="290" height="1010" class="lane-ext"/>
+  <text x="165" y="108" class="lh">VS Code</text><text x="165" y="126" class="ls">editor with the extension</text>
+  <text x="455" y="108" class="lh">Your computer</text><text x="455" y="126" class="ls">files and folders</text>
+  <text x="745" y="108" class="lh">Google Chrome</text><text x="745" y="126" class="ls">browser with the extension</text>
+  <text x="1035" y="108" class="lh">Moodle</text><text x="1035" y="126" class="ls">in Chrome</text>
+  <line x1="20" y1="138" x2="1180" y2="138" stroke="#bbb" stroke-width="1"/>
+
+  <!-- Phases -->
+  <line x1="20" y1="158" x2="1180" y2="158" class="pl"/>
+  <text x="30" y="162" class="phase">ONCE</text>
+  <line x1="20" y1="668" x2="1180" y2="668" class="pl"/>
+  <text x="30" y="672" class="phase">FOR EVERY ASSIGNMENT YOU GRADE</text>
+
+  <!-- Connectors -->
+  <path d="M455 242 V249 H165 V256" class="c"/>
+  <path d="M165 322 V329 H455 V336" class="c"/>
+  <path d="M455 402 V409 H745 V416" class="c"/>
+  <path d="M745 482 V489 H455 V496" class="c"/>
+  <path d="M455 562 V569 H745 V576" class="c"/>
+  <path d="M745 642 V690" class="c"/>
+  <path d="M745 756 V763 H1035 V770" class="c"/>
+  <path d="M1035 836 V843 H455 V850" class="c"/>
+  <path d="M455 916 V923 H165 V930" class="c"/>
+  <path d="M165 996 V1003 H1035 V1010" class="c"/>
+
+  <!-- 1 -->
+  <rect x="325" y="176" width="260" height="66" rx="6" class="step"/>
+  <circle cx="345" cy="209" r="12" class="circle"/><text x="345" y="213" class="num">1</text>
+  <text x="365" y="197" class="s">Pick a version in the releases</text>
+  <text x="365" y="213" class="s">folder: it has a .vsix for VS Code</text>
+  <text x="365" y="229" class="s">and a .zip for Chrome.</text>
+
+  <!-- 2 -->
+  <rect x="35" y="256" width="260" height="66" rx="6" class="step"/>
+  <circle cx="55" cy="289" r="12" class="circle"/><text x="55" y="293" class="num">2</text>
+  <text x="75" y="277" class="s">Extensions view → "⋯" menu →</text>
+  <text x="75" y="293" class="s">"Install from VSIX…" → choose</text>
+  <text x="75" y="309" class="s">the .vsix file.</text>
+
+  <!-- 3 -->
+  <rect x="325" y="336" width="260" height="66" rx="6" class="step"/>
+  <circle cx="345" cy="369" r="12" class="circle"/><text x="345" y="373" class="num">3</text>
+  <text x="365" y="365" class="s">Unpack the .zip into a folder</text>
+  <text x="365" y="381" class="s">that stays where it is.</text>
+
+  <!-- 4 -->
+  <rect x="615" y="416" width="260" height="66" rx="6" class="step"/>
+  <circle cx="635" cy="449" r="12" class="circle"/><text x="635" y="453" class="num">4</text>
+  <text x="655" y="437" class="s">chrome://extensions → turn on</text>
+  <text x="655" y="453" class="s">"Developer mode" → "Load</text>
+  <text x="655" y="469" class="s">unpacked" → the unpacked folder.</text>
+
+  <!-- 5 -->
+  <rect x="325" y="496" width="260" height="66" rx="6" class="step"/>
+  <circle cx="345" cy="529" r="12" class="circle"/><text x="345" y="533" class="num">5</text>
+  <text x="365" y="513" class="s">Make a definitions folder with a</text>
+  <text x="365" y="527" class="s">definition file per assignment</text>
+  <text x="365" y="541" class="s">(see the grading matrix), with its</text>
+  <text x="365" y="555" class="s">Moodle ID in moodleIds.</text>
+
+  <rect x="905" y="496" width="260" height="66" rx="6" class="note"/>
+  <text x="917" y="517" class="n">Where is the Moodle ID? In the address</text>
+  <text x="917" y="533" class="n">of the assignment's page (…?id=123).</text>
+  <text x="917" y="549" class="n">The panel's status line shows it too.</text>
+
+  <!-- 6 -->
+  <rect x="615" y="576" width="260" height="66" rx="6" class="step"/>
+  <circle cx="635" cy="609" r="12" class="circle"/><text x="635" y="613" class="num">6</text>
+  <text x="655" y="597" class="s">Extension popup → "Choose the</text>
+  <text x="655" y="613" class="s">definitions folder" → allow reading.</text>
+  <text x="655" y="629" class="s">The popup lists the definitions.</text>
+
+  <!-- 7 -->
+  <rect x="615" y="690" width="260" height="66" rx="6" class="step"/>
+  <circle cx="635" cy="723" r="12" class="circle"/><text x="635" y="727" class="num">7</text>
+  <text x="655" y="711" class="s">If you changed definitions:</text>
+  <text x="655" y="727" class="s">popup → "Reload from files" (allow</text>
+  <text x="655" y="743" class="s">reading again if asked).</text>
+
+  <!-- 8 -->
+  <rect x="905" y="770" width="260" height="66" rx="6" class="step"/>
+  <circle cx="925" cy="803" r="12" class="circle"/><text x="925" y="807" class="num">8</text>
+  <text x="945" y="791" class="s">Assignment → "View all</text>
+  <text x="945" y="807" class="s">submissions" → "Download all</text>
+  <text x="945" y="823" class="s">submissions" (one .zip).</text>
+
+  <!-- 9 -->
+  <rect x="325" y="850" width="260" height="66" rx="6" class="step"/>
+  <circle cx="345" cy="883" r="12" class="circle"/><text x="345" y="887" class="num">9</text>
+  <text x="365" y="871" class="s">Extract the .zip into a folder:</text>
+  <text x="365" y="887" class="s">one folder per student, its name</text>
+  <text x="365" y="903" class="s">starting with the student's name.</text>
+
+  <!-- 10 -->
+  <rect x="35" y="930" width="260" height="66" rx="6" class="step"/>
+  <circle cx="55" cy="963" r="12" class="circle"/><text x="55" y="967" class="num">10</text>
+  <text x="75" y="951" class="s">File → Open Folder → that folder.</text>
+  <text x="75" y="967" class="s">If another window receives the</text>
+  <text x="75" y="983" class="s">students: "Take over receiving".</text>
+
+  <rect x="325" y="930" width="260" height="66" rx="6" class="note"/>
+  <text x="337" y="951" class="n">Optional: VS Code sidebar →</text>
+  <text x="337" y="967" class="n">"Open files from subfolders too"</text>
+  <text x="337" y="983" class="n">(on by default).</text>
+
+  <!-- 11 -->
+  <rect x="905" y="1010" width="260" height="66" rx="6" class="step"/>
+  <circle cx="925" cy="1043" r="12" class="circle"/><text x="925" y="1047" class="num">11</text>
+  <text x="945" y="1031" class="s">Open the grading page. The panel</text>
+  <text x="945" y="1047" class="s">appears and VS Code opens the</text>
+  <text x="945" y="1063" class="s">student's files.</text>
+
+  <rect x="325" y="1010" width="260" height="66" rx="6" class="note"/>
+  <text x="337" y="1031" class="n">Grading itself: see the usage</text>
+  <text x="337" y="1047" class="n">workflows diagram.</text>
+</svg>

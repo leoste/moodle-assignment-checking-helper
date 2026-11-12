@@ -2,8 +2,8 @@ import WebviewMessageClient from './WebviewMessageClient'
 import { receptionWebviewMessageGenerator } from '../../shared/generator/ReceptionWebviewMessageGenerator'
 
 class ReceptionClient extends WebviewMessageClient {
-  takeOver(): void {
-    this.send(receptionWebviewMessageGenerator.getTakeOverMessage())
+  async takeOver(): Promise<void> {
+    await this.send(receptionWebviewMessageGenerator.getTakeOverMessage())
   }
 }
 

@@ -1,9 +1,8 @@
-import * as vscode from 'vscode'
+import type * as vscode from 'vscode'
 import BaseRepository from '@shared/repository/BaseRepository'
 import type { Settings } from '../shared/types/Settings'
-import { SETTINGS_SECTION } from '../config'
+import { settingsProvider } from '../infrastructure/SettingsProvider'
 
-// The settings are stored by VS Code as the user's settings, so they can be changed in VS Code's Settings editor as well.
 class SettingsRepository extends BaseRepository<Settings> {
   async getSettings(): Promise<Settings> {
     // An unset setting has its default from package.json.
@@ -17,25 +16,19 @@ class SettingsRepository extends BaseRepository<Settings> {
   }
 
   onDidChange(listener: () => void): vscode.Disposable {
-    return vscode.workspace.onDidChangeConfiguration(event => {
-      if (event.affectsConfiguration(SETTINGS_SECTION)) listener()
-    })
+    return settingsProvider.onDidChange(listener)
   }
 
   protected async getValue<K extends keyof Settings>(key: K): Promise<Settings[K] | undefined> {
-    return this.#getConfiguration().get<Settings[K]>(key)
+    return settingsProvider.get(key)
   }
 
-  protected async setValue<K extends keyof Settings>(key: K, value: Settings[K]): Promise<void> {
-    await this.#getConfiguration().update(key, value, vscode.ConfigurationTarget.Global)
+  protected setValue<K extends keyof Settings>(key: K, value: Settings[K]): Promise<void> {
+    return settingsProvider.update(key, value)
   }
 
-  protected async removeValue(key: keyof Settings): Promise<void> {
-    await this.#getConfiguration().update(key, undefined, vscode.ConfigurationTarget.Global)
-  }
-
-  #getConfiguration(): vscode.WorkspaceConfiguration {
-    return vscode.workspace.getConfiguration(SETTINGS_SECTION)
+  protected removeValue(key: keyof Settings): Promise<void> {
+    return settingsProvider.remove(key)
   }
 }
 

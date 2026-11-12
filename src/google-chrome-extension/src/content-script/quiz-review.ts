@@ -2,7 +2,9 @@
 import '@shared/styles/theme.css'
 import { logger } from '@shared/reporting/logger'
 import ConsoleLogSink from '@shared/reporting/ConsoleLogSink'
+import { chromeMessageProvider } from '../shared/infrastructure/ChromeMessageProvider'
 import { quizReviewListener } from "./pagelistener/QuizReviewListener";
 
 logger.init(new ConsoleLogSink())
+chromeMessageProvider.init()
 quizReviewListener.init()

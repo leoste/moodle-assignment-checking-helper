@@ -5,8 +5,9 @@ import { RECEPTION_TAKE_OVER } from '../shared/constants/webview-messages'
 // The sidebar's button.
 class ReceptionWebviewController extends WebviewMessageController {
   protected override onInit(): undefined {
+    // Not awaited: taking over can take longer than the sidebar waits for its answer.
     this.addMessageHandler(RECEPTION_TAKE_OVER, async () => {
-      await receptionService.takeOver()
+      void receptionService.takeOver()
     })
   }
 }

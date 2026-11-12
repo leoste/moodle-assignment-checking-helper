@@ -14,8 +14,8 @@ The architecture, the UI, the "business requirements", everything, I drew it up 
 Besides, an AI couldn't even come up with half the stuff that is implemented in this project.
 
 I 100% hand-wrote every part of code leading up to a functional working prototype until end of 2025.
-Regretfully I must report that since, AI has been used as a code refactoring or generation tool as I really didn't have time.
-I have specially indicated AI-generated text throughout the documentation so you know to cover your eyes if you must.
+All of the documentation and translations are hand-written.
+Regretfully I must report that since 2026, AI has been used as a code refactoring or generation tool as I really didn't have time. However, architecture is still 100% mine.
 
 ## 2. How to use
 
@@ -129,23 +129,6 @@ On the VS Code side, if you have the submissions folder open, the submissions of
 With many files, it will be opened in 2 columns. This makes it easier to find and navigate the files.
 As you open next student in Moodle, previous submission's files will be closed and new ones opened.
 
-#### Everything else you can do
+## 3. For developers
 
-WARNING. AI Text:
-```
-In Chrome:
-- Only one Moodle tab grades at a time. In another tab, the panel says that grading happens elsewhere and offers to take the grading over.
-- Text typed into the panel's comment start box goes to the beginning of the comment.
-- Drag the panel's left edge to make it wider or narrower.
-- If the panel doesn't appear, reload it from the extension's popup.
-- After changing definition files, reload them from the popup. An open panel keeps the selections of the parts that didn't change.
-- On a quiz attempt's review page, every manually graded question gets a button that gives it full points without a comment and saves at once.
-
-In VS Code:
-- Only one VS Code window receives the students. Another window can take that over with its take-over button, in the status bar or in the extension's sidebar.
-- At most 20 of the student's files are opened. In the extension's sidebar you can choose whether the files in the student's subfolders are opened too (on by default).
-- Right-click a .py file to run it in a new terminal.
-- Click the extension's item in the status bar to see its log.
-
-The status line of the panel and of the popup, and VS Code's status bar and sidebar, show what's going on, e.g. whether Chrome and VS Code are connected and whether the student's files were opened.
-```
+Check the readme in `src`: [`/src/README.md`](/src/README.md)

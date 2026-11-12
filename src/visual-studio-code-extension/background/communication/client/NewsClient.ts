@@ -1,5 +1,5 @@
 import WebviewMessageClient from './WebviewMessageClient'
-import { newsWebviewMessageGenerator } from '../../../shared/communication/generator/NewsWebviewMessageGenerator'
+import { newsWebviewMessageGenerator } from '../../../shared/foundation/object/NewsWebviewMessageGenerator'
 import type { News } from '@shared/business/types/News'
 import type { WatcherClient } from '@shared/business/types/WatcherClient'
 

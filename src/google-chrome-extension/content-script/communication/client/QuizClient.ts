@@ -1,6 +1,6 @@
 import type { AutoGradeId } from '../../../shared/business/types/AutoGradeId'
 import ChromeMessageClient from '../../../shared/communication/client/ChromeMessageClient'
-import { quizChromeMessageGenerator } from '../../../shared/communication/generator/QuizChromeMessageGenerator'
+import { quizChromeMessageGenerator } from '../../../shared/foundation/object/QuizChromeMessageGenerator'
 
 class QuizClient extends ChromeMessageClient {
   async beginAutoGrade(id: AutoGradeId): Promise<void> {

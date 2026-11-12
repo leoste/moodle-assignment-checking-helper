@@ -1,5 +1,5 @@
 import ChromePortClient from './ChromePortClient'
-import { newsChromeMessageGenerator } from '../../../shared/communication/generator/NewsChromeMessageGenerator'
+import { newsChromeMessageGenerator } from '../../../shared/foundation/object/NewsChromeMessageGenerator'
 import type { News } from '@shared/business/types/News'
 import type { WatcherClient } from '@shared/business/types/WatcherClient'
 

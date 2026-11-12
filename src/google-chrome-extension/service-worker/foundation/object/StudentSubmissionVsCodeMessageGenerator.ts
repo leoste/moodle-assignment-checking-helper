@@ -1,4 +1,4 @@
-import VsCodeMessageGenerator from '@shared/communication/generator/VsCodeMessageGenerator'
+import VsCodeMessageGenerator from '@shared/foundation/object/VsCodeMessageGenerator'
 import { STUDENT_SUBMISSION_CHANNEL } from '@shared/foundation/constants/vscode-message'
 import type { VsCodeMessage } from '@shared/business/types/VsCodeMessage'
 import type { StudentNamePayload } from '@shared/business/types/StudentNamePayload'

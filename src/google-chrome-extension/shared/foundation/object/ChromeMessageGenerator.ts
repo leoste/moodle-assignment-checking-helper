@@ -1,4 +1,4 @@
-import BaseMessageGenerator from '@shared/communication/generator/BaseMessageGenerator'
+import BaseMessageGenerator from '@shared/foundation/object/BaseMessageGenerator'
 import type { ChromeMessage } from '../../business/types/ChromeMessage'
 import type { ChromeMessagePayloads } from '../../business/types/ChromeMessagePayloads'
 

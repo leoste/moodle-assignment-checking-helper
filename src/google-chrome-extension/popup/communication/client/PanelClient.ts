@@ -1,5 +1,5 @@
 import ChromeMessageClient from '../../../shared/communication/client/ChromeMessageClient'
-import { panelChromeMessageGenerator } from '../../../shared/communication/generator/PanelChromeMessageGenerator'
+import { panelChromeMessageGenerator } from '../../../shared/foundation/object/PanelChromeMessageGenerator'
 
 class PanelClient extends ChromeMessageClient {
   // False when the active tab has no panel's content script to reload it.

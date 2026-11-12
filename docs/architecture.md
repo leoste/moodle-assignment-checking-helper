@@ -32,7 +32,6 @@ The concepts exist at different levels and interact in different ways, but here 
 - 💝service
 - ❤controller
 - ❤client
-- ❤generator
 - 💞pagelistener
 - 💞presenter
 - 💲rules
@@ -65,9 +64,6 @@ Some layers involve many concepts inside them in a specific relationship, others
 Components communicate with each other in two ways: messages and news.
 Basically every major part of the app talks with each other using one or the other.
 The communication layer exists to facilitate this communication between parts of the system.
-
-helpers used to accomplish this:
-- generator: this generates messages.
 
 #### Messages
 

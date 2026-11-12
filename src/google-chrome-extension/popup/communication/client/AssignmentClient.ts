@@ -1,6 +1,6 @@
 import type { Definitions } from '../../../shared/business/types/Definitions'
 import ChromeMessageClient from '../../../shared/communication/client/ChromeMessageClient'
-import { assignmentChromeMessageGenerator } from '../../../shared/communication/generator/AssignmentChromeMessageGenerator'
+import { assignmentChromeMessageGenerator } from '../../../shared/foundation/object/AssignmentChromeMessageGenerator'
 
 class AssignmentClient extends ChromeMessageClient {
   async getAllAssignments(): Promise<Definitions> {

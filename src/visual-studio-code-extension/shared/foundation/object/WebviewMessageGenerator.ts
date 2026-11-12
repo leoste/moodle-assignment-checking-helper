@@ -1,4 +1,4 @@
-import BaseMessageGenerator from '@shared/communication/generator/BaseMessageGenerator'
+import BaseMessageGenerator from '@shared/foundation/object/BaseMessageGenerator'
 import type { WebviewMessage } from '../../business/types/WebviewMessage'
 import type { WebviewMessagePayloads } from '../../business/types/WebviewMessagePayloads'
 

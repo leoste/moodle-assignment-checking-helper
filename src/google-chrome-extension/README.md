@@ -4,14 +4,14 @@ The Google Chrome Extension is the main extension and can operate as a stand-alo
 
 It can be paired with the Visual Studio Code extension to automatically open the assignment files as well.
 
-## Setup
-
-### Prerequisites
+## 1. Prerequisites
 
 - Node.js 18 or later
 - npm 9 or later
 
-### Steps
+## 2. Local Dev
+
+This section is AI-generated.
 
 **1. Install dependencies**
 
@@ -44,3 +44,7 @@ npm run build
 ```
 
 Builds the extension into `dist/` once, without watching. Builds are not minified: the log shows the real class names and the code stays debuggable in the browser. Releases are built with `build-release.mjs` in the project root (see "Building release" in [src/README.md](../README.md)).
+
+## 3. Release
+
+See main `/src/README.md`: [`src/README.md`](/src/README.md)

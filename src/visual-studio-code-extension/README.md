@@ -6,15 +6,15 @@ The files must already be downloaded from Moodle all at once into separate folde
 
 Also adds a right-click menu shortcut to run python files in terminal.
 
-## Setup
-
-### Prerequisites
+## 1. Prerequisites
 
 - Node.js 18 or later
 - npm 9 or later
 - VS Code
 
-### Steps
+## 2. Steps
+
+This section is AI-generated.
 
 **1. Install the recommended VS Code extension**
 
@@ -40,3 +40,7 @@ npm run vscode:prepublish
 ```
 
 Builds `dist/extension.js` without source maps. Builds are not minified: the log shows the real class names and the code stays debuggable. Releases, including the `.vsix` package, are built with `build-release.mjs` in the project root (see "Building release" in `src/README.md`).
+
+## 3. Release
+
+See main `/src/README.md`: [`src/README.md`](/src/README.md)

@@ -1,31 +1,13 @@
-🚧infrastructure
-💘repository
-💝service
-❤controller
-❤client
-❤generator
-💞pagelistener
-💞presenter
-💲rules
-💞pagemanager
-💞renderer
-🚧object
-🚧util
-💲types
-❤payload
-🚧constants
-💲config
-💲translations
-💞styles
-❤announcer
-❤reporter
-❤watcher
+# System Architecture
 
------------------
+I carefully thought up this concise system architecture over 1 and a half years to arrive at its current form.
+This document serves as the highest authority on application architecture, which all implementation must follow.
+The architecture, its concepts, the main parts, layers, the way they interact is all completely human-made, by me.
+Besides, an AI couldn't even come up with half the stuff that is implemented in this project.
 
-Main Components
-The user interacts with the main components, everything below is already technical.
-The main components make use of the various layers described below to accomplish their functionality.
+## Main Parts
+The user interacts with the main parts, everything below is already technical.
+The main parts make use of the various layers described below to accomplish their functionality.
 
 Chrome Extension
 - service worker
@@ -36,9 +18,45 @@ VS Code Extension
 - background
 - webview
 
-----------------
+## Concepts
 
-❤Communication Layer❤
+There are many concepts used by main parts, which are spread throughout main layers.
+The concepts exist at different levels and interact in different ways, but here is a flat list of all the concepts:
+- 🚧infrastructure
+- 💘repository
+- 💝service
+- ❤controller
+- ❤client
+- ❤generator
+- 💞pagelistener
+- 💞presenter
+- 💲rules
+- 💞pagemanager
+- 💞renderer
+- 🚧object
+- 🚧util
+- 💲types
+- ❤payload
+- 🚧constants
+- 💲config
+- 💲translations
+- 💞styles
+- ❤announcer
+- ❤reporter
+- ❤watcher
+
+## Layers
+
+The layers form concepts together into cohesive units that interact with each other, making use of the concepts mentioned above.
+The layers are:
+- ❤Communication Layer❤
+- 💞Presentation Layer💞
+- 💝Service layer💝
+- 💘Repository layer💘
+- 🚧Foundation Layer🚧
+- 💲Business Layer💲
+
+## ❤Communication Layer❤
 Components communicate with each other in two ways.
 The communication layer exists only to facilitate communication between parts of the system.
 
@@ -55,9 +73,7 @@ helpers used to accomplish this:
 - payload
 - generator
 
----------------
-
-💞Presentation Layer💞
+## 💞Presentation Layer💞
 Some components need to present info to the user. This also raises the necessity of accessing the page or other mediums.
 This is accomplished through following parts:
 
@@ -79,19 +95,13 @@ presentation/renderer:
 helpers used to accomplish this:
 - styles
 
-----------------------
-
-💝Service layer💝
+## 💝Service layer💝
 service provides functionality to above layers. This can be storage, sending messages or something else.
 
-------------------
-
-💘Repository layer💘
+## 💘Repository layer💘
 repository provides storage functionality, any sort of storage.
 
--------------------
-
-🚧Foundation Layer🚧
+## 🚧Foundation Layer🚧
 foundation makes the connections to existing systems and provides abstract objects other systems use.
 these are:
 - foundation/infrastructure: provides connection to existing systems
@@ -99,9 +109,7 @@ these are:
 - foundation/util: generic helper functions usable anywhere
 - foundation/constants: same values that are used throughout the system so it makes sense to keep them together
 
--------------------
-
-💲Business Layer💲
+## 💲Business Layer💲
 
 business is the ultimate source of truth for decisions and structure, it's what everything is built around of.
 it includes:

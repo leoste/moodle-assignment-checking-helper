@@ -3,5 +3,5 @@ export interface FeedbackPart {
   enabledText?: string
   disabledText?: string
   points?: number
-  enabled: boolean
+  enabled?: boolean
 }

@@ -10,8 +10,12 @@ export function getPartCommentText(part: FeedbackPart, selected: boolean): strin
   return (selected ? part.enabledText : part.disabledText) || null
 }
 
+export function getPartDefaultSelection(part: FeedbackPart): boolean {
+  return part.enabled ?? false
+}
+
 export function getDefaultSelection(feedback: Feedback[]): boolean[][] {
-  return feedback.map(group => group.parts.map(part => part.enabled))
+  return feedback.map(group => group.parts.map(getPartDefaultSelection))
 }
 
 export function getFeedbackView(feedback: Feedback[], selection: boolean[][]): FeedbackView[] {

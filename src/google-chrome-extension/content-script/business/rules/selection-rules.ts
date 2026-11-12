@@ -1,5 +1,6 @@
 import type { Feedback } from '../../../shared/business/types/Feedback'
 import type { FeedbackPart } from '../../../shared/business/types/FeedbackPart'
+import { getPartDefaultSelection } from './feedback-rules'
 
 // When the definition is reloaded, a part keeps its selection if the new definition has a part with the same group title and texts.
 // New parts, and parts whose texts were edited, get their default selection.
@@ -10,7 +11,7 @@ export function carryOverSelection(oldFeedback: Feedback[], oldSelection: boolea
       selections.set(getPartKey(group, part), oldSelection[groupIndex][partIndex])
     }
   }
-  return newFeedback.map(group => group.parts.map(part => selections.get(getPartKey(group, part)) ?? part.enabled))
+  return newFeedback.map(group => group.parts.map(part => selections.get(getPartKey(group, part)) ?? getPartDefaultSelection(part)))
 }
 
 function getPartKey(group: Feedback, part: FeedbackPart): string {

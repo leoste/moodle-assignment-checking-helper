@@ -1,59 +1,59 @@
 <mxfile host="app.diagrams.net">
   <diagram name="Page-1" id="IUbS4PapWz1jxhgytVjj">
-    <mxGraphModel dx="2054" dy="1121" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="1426" dy="778" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="_9CwhJN1yaCqQ-_2WR2m-1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="" vertex="1">
+        <mxCell id="_9CwhJN1yaCqQ-_2WR2m-81" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="" vertex="1">
           <mxGeometry height="250" width="180" x="240" y="40" as="geometry" />
         </mxCell>
-        <mxCell id="_9CwhJN1yaCqQ-_2WR2m-3" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;div&gt;&lt;b&gt;Service Worker&lt;/b&gt;&lt;/div&gt;&lt;div&gt;- Background operations&lt;/div&gt;" vertex="1">
+        <mxCell id="_9CwhJN1yaCqQ-_2WR2m-82" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;div&gt;&lt;b&gt;Service Worker&lt;/b&gt;&lt;/div&gt;&lt;div&gt;- Background operations&lt;/div&gt;" vertex="1">
           <mxGeometry height="60" width="160" x="250" y="80" as="geometry" />
         </mxCell>
-        <mxCell id="_9CwhJN1yaCqQ-_2WR2m-5" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="&lt;b&gt;Chrome Extension&lt;/b&gt;" vertex="1">
+        <mxCell id="_9CwhJN1yaCqQ-_2WR2m-83" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="&lt;b&gt;Chrome Extension&lt;/b&gt;" vertex="1">
           <mxGeometry height="30" width="160" x="250" y="50" as="geometry" />
         </mxCell>
-        <mxCell id="_9CwhJN1yaCqQ-_2WR2m-7" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;div&gt;&lt;b&gt;Content Script&lt;/b&gt;&lt;/div&gt;&lt;div&gt;- Interaction with Moodle&lt;/div&gt;" vertex="1">
+        <mxCell id="_9CwhJN1yaCqQ-_2WR2m-84" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;div&gt;&lt;b&gt;Content Script&lt;/b&gt;&lt;/div&gt;&lt;div&gt;- Interaction with Moodle&lt;/div&gt;" vertex="1">
           <mxGeometry height="60" width="160" x="250" y="150" as="geometry" />
         </mxCell>
-        <mxCell id="_9CwhJN1yaCqQ-_2WR2m-8" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;div&gt;&lt;b&gt;Popup&lt;/b&gt;&lt;/div&gt;&lt;div&gt;- User settings&lt;/div&gt;" vertex="1">
+        <mxCell id="_9CwhJN1yaCqQ-_2WR2m-85" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;div&gt;&lt;b&gt;Popup&lt;/b&gt;&lt;/div&gt;&lt;div&gt;- User settings&lt;/div&gt;" vertex="1">
           <mxGeometry height="60" width="160" x="250" y="220" as="geometry" />
         </mxCell>
-        <mxCell id="_9CwhJN1yaCqQ-_2WR2m-10" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="" vertex="1">
-          <mxGeometry height="180" width="180" x="440" y="40" as="geometry" />
+        <mxCell id="_9CwhJN1yaCqQ-_2WR2m-86" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="" vertex="1">
+          <mxGeometry height="250" width="180" x="440" y="40" as="geometry" />
         </mxCell>
-        <mxCell id="_9CwhJN1yaCqQ-_2WR2m-11" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;div&gt;&lt;b&gt;Background Script&lt;/b&gt;&lt;/div&gt;&lt;div&gt;- Background operations&lt;/div&gt;" vertex="1">
-          <mxGeometry height="60" width="160" x="450" y="80" as="geometry" />
+        <mxCell id="_9CwhJN1yaCqQ-_2WR2m-87" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;div&gt;&lt;b&gt;Background Script&lt;/b&gt;&lt;/div&gt;&lt;div&gt;- Background operations&lt;/div&gt;" vertex="1">
+          <mxGeometry height="130" width="160" x="450" y="80" as="geometry" />
         </mxCell>
-        <mxCell id="_9CwhJN1yaCqQ-_2WR2m-12" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="&lt;b&gt;VS Code Extension&lt;/b&gt;" vertex="1">
+        <mxCell id="_9CwhJN1yaCqQ-_2WR2m-88" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="&lt;b&gt;VS Code Extension&lt;/b&gt;" vertex="1">
           <mxGeometry height="30" width="160" x="450" y="50" as="geometry" />
         </mxCell>
-        <mxCell id="_9CwhJN1yaCqQ-_2WR2m-13" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;div&gt;&lt;b&gt;Webview&lt;/b&gt;&lt;/div&gt;&lt;div&gt;- User settings&lt;/div&gt;" vertex="1">
-          <mxGeometry height="60" width="160" x="450" y="150" as="geometry" />
+        <mxCell id="_9CwhJN1yaCqQ-_2WR2m-89" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;div&gt;&lt;b&gt;Webview&lt;/b&gt;&lt;/div&gt;&lt;div&gt;- User settings&lt;/div&gt;" vertex="1">
+          <mxGeometry height="60" width="160" x="450" y="220" as="geometry" />
         </mxCell>
-        <mxCell id="_9CwhJN1yaCqQ-_2WR2m-16" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="" vertex="1">
-          <mxGeometry height="180" width="180" x="640" y="40" as="geometry" />
+        <mxCell id="_9CwhJN1yaCqQ-_2WR2m-90" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="" vertex="1">
+          <mxGeometry height="250" width="180" x="640" y="40" as="geometry" />
         </mxCell>
-        <mxCell id="_9CwhJN1yaCqQ-_2WR2m-17" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;div&gt;&lt;b&gt;Definitions Folder&lt;/b&gt;&lt;/div&gt;&lt;div&gt;- Grading matrix files&lt;/div&gt;" vertex="1">
-          <mxGeometry height="60" width="160" x="650" y="80" as="geometry" />
+        <mxCell id="_9CwhJN1yaCqQ-_2WR2m-91" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;div&gt;&lt;b&gt;Definitions Folder&lt;/b&gt;&lt;/div&gt;&lt;div&gt;- Grading matrix files&lt;/div&gt;" vertex="1">
+          <mxGeometry height="130" width="160" x="650" y="80" as="geometry" />
         </mxCell>
-        <mxCell id="_9CwhJN1yaCqQ-_2WR2m-18" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="&lt;b&gt;Local PC&lt;/b&gt;" vertex="1">
+        <mxCell id="_9CwhJN1yaCqQ-_2WR2m-92" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="&lt;b&gt;Local PC&lt;/b&gt;" vertex="1">
           <mxGeometry height="30" width="160" x="650" y="50" as="geometry" />
         </mxCell>
-        <mxCell id="_9CwhJN1yaCqQ-_2WR2m-19" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;div&gt;&lt;b&gt;Submissions Folder&lt;/b&gt;&lt;/div&gt;&lt;div&gt;- Student submission files&lt;/div&gt;" vertex="1">
-          <mxGeometry height="60" width="160" x="650" y="150" as="geometry" />
+        <mxCell id="_9CwhJN1yaCqQ-_2WR2m-93" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;div&gt;&lt;b&gt;Submissions Folder&lt;/b&gt;&lt;/div&gt;&lt;div&gt;- Student submission files&lt;/div&gt;" vertex="1">
+          <mxGeometry height="60" width="160" x="650" y="220" as="geometry" />
         </mxCell>
-        <mxCell id="_9CwhJN1yaCqQ-_2WR2m-20" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="" vertex="1">
-          <mxGeometry height="180" width="180" x="40" y="40" as="geometry" />
+        <mxCell id="_9CwhJN1yaCqQ-_2WR2m-94" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="" vertex="1">
+          <mxGeometry height="250" width="180" x="40" y="40" as="geometry" />
         </mxCell>
-        <mxCell id="_9CwhJN1yaCqQ-_2WR2m-21" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;div&gt;&lt;b&gt;Assignment&lt;/b&gt;&lt;/div&gt;&lt;div&gt;- Submissions downloadable&lt;/div&gt;" vertex="1">
+        <mxCell id="_9CwhJN1yaCqQ-_2WR2m-95" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;div&gt;&lt;b&gt;Assignment&lt;/b&gt;&lt;/div&gt;&lt;div&gt;- Submissions downloadable&lt;/div&gt;" vertex="1">
           <mxGeometry height="60" width="160" x="50" y="80" as="geometry" />
         </mxCell>
-        <mxCell id="_9CwhJN1yaCqQ-_2WR2m-22" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="&lt;b&gt;Moodle in Web Browser&lt;/b&gt;" vertex="1">
+        <mxCell id="_9CwhJN1yaCqQ-_2WR2m-96" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="&lt;b&gt;Moodle in Web Browser&lt;/b&gt;" vertex="1">
           <mxGeometry height="30" width="160" x="50" y="50" as="geometry" />
         </mxCell>
-        <mxCell id="_9CwhJN1yaCqQ-_2WR2m-24" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;div&gt;&lt;b&gt;Grading page&lt;/b&gt;&lt;/div&gt;&lt;div&gt;- Grading given submission&lt;/div&gt;" vertex="1">
-          <mxGeometry height="60" width="160" x="50" y="150" as="geometry" />
+        <mxCell id="_9CwhJN1yaCqQ-_2WR2m-97" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;div&gt;&lt;b&gt;Grading page&lt;/b&gt;&lt;/div&gt;&lt;div&gt;- Grading given submission&lt;/div&gt;" vertex="1">
+          <mxGeometry height="130" width="160" x="50" y="150" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>

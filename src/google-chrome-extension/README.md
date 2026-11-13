@@ -47,4 +47,4 @@ Builds the extension into `dist/` once, without watching. Builds are not minifie
 
 ## 3. Release
 
-See main `/src/README.md`: [`src/README.md`](/src/README.md)
+Build release with other extension using build script in the project root.

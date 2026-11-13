@@ -1,4 +1,4 @@
-import { announcer } from '@shared/communication/announcer/Announcer'
+import { logAnnouncer } from '@shared/communication/announcer/LogAnnouncer'
 import QuizPageManager from './QuizPageManager'
 import type QuizQuestionBox from './QuizQuestionBox'
 
@@ -9,7 +9,7 @@ const SUBMIT_BUTTON_SELECTOR = 'input#id_submitbutton'
 export default class QuizCommentPageManager extends QuizPageManager {
   getQuestion(): QuizQuestionBox {
     const question = this.getManualGradedBoxes()[0]
-    if (!question) announcer.announceLogError(this, 'no manual graded question on the page')
+    if (!question) logAnnouncer.announceLogError(this, 'no manual graded question on the page')
     return question
   }
 

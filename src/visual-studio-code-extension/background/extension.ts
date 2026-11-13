@@ -1,11 +1,9 @@
 import type * as vscode from 'vscode'
-import { announcer } from '@shared/communication/announcer/Announcer'
-import { reporter } from '@shared/communication/reporter/Reporter'
-import { outputChannelWatcher } from './communication/watcher/OutputChannelWatcher'
-import { statusBarWatcher } from './communication/watcher/StatusBarWatcher'
-import { statusBarButtonWatcher } from './communication/watcher/StatusBarButtonWatcher'
-import { notificationWatcher } from './communication/watcher/NotificationWatcher'
-import { newsClient } from './communication/client/NewsClient'
+import { logAnnouncer } from '@shared/communication/announcer/LogAnnouncer'
+import { outputChannelTyper } from './presentation/typer/OutputChannelTyper'
+import { statusBarTyper } from './presentation/typer/StatusBarTyper'
+import { statusBarButtonTyper } from './presentation/typer/StatusBarButtonTyper'
+import { notificationTyper } from './presentation/typer/NotificationTyper'
 import initInfrastructure from './foundation/infrastructure/init-infrastructure'
 import closeInfrastructure from './foundation/infrastructure/close-infrastructure'
 import initRepositories from './repository/init-repositories'
@@ -14,17 +12,17 @@ import closeControllers from './communication/controller/close-controllers'
 import initServices from './service/init-services'
 
 export function activate(context: vscode.ExtensionContext): void {
-  reporter.addWatcher(outputChannelWatcher)
-  reporter.addWatcher(statusBarWatcher)
-  reporter.addWatcher(statusBarButtonWatcher)
-  reporter.addWatcher(notificationWatcher)
-  reporter.addClient(newsClient)
-
+  // The output channel typer starts before the infrastructure so that it writes the infrastructure's log too.
+  // Its own first line comes before the output channel exists and is lost.
+  outputChannelTyper.init()
   initInfrastructure()
+  statusBarTyper.init()
+  statusBarButtonTyper.init()
+  notificationTyper.init()
   initRepositories()
   initServices()
   initControllers()
-  announcer.announceLog('extension', 'activated')
+  logAnnouncer.announceLog('extension', 'activated')
 
   context.subscriptions.push({
     dispose: () => {

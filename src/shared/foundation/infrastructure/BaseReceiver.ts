@@ -1,7 +1,7 @@
 import BaseInfrastructure from './BaseInfrastructure'
 import type HandlerMap from '../object/HandlerMap'
 import type { Handler } from '../../business/types/Handler'
-import { announcer } from '../../communication/announcer/Announcer'
+import { logAnnouncer } from '../../communication/announcer/LogAnnouncer'
 
 // Receives what the platform delivers for a key (a message, a command) and passes it on to the handler registered
 // for that key. Every receiver of the project works this way.
@@ -23,19 +23,19 @@ export default abstract class BaseReceiver<TContent, THandler extends Handler<TC
   }
 
   protected async dispatch(key: string, content: TContent, responder: TResponder): Promise<void> {
-    announcer.announceLog(this, `received ${key}`, content)
+    logAnnouncer.announceLog(this, `received ${key}`, content)
     const handler = this.#handlerMap.get(key)
     if (!handler) {
-      announcer.announceLogError(this, `no handler registered for ${key}`)
+      logAnnouncer.announceLogError(this, `no handler registered for ${key}`)
       this.respondUnhandled(responder)
       return
     }
     try {
       const response = await handler(content)
-      announcer.announceLog(this, `handled ${key}`)
+      logAnnouncer.announceLog(this, `handled ${key}`)
       this.respondHandled(responder, response)
     } catch (err) {
-      announcer.announceLogError(this, `handler error for ${key}`, err)
+      logAnnouncer.announceLogError(this, `handler error for ${key}`, err)
       this.respondError(responder)
     }
   }

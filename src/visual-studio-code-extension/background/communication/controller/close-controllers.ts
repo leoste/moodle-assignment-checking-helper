@@ -1,9 +1,9 @@
-import { announcer } from '@shared/communication/announcer/Announcer'
+import { logAnnouncer } from '@shared/communication/announcer/LogAnnouncer'
 import { controllers } from './init-controllers'
 
 export default function closeControllers(): void {
   controllers.forEach(controller => {
     controller.close()
-    announcer.announceLog(controller, 'closed')
+    logAnnouncer.announceLog(controller, 'closed')
   })
 }

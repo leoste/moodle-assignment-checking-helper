@@ -1,5 +1,6 @@
 import type { BasePayload } from '@shared/business/types/BasePayload'
 import type { NewsPayload } from '@shared/business/types/NewsPayload'
+import type { NewsSubscribePayload } from '@shared/business/types/NewsSubscribePayload'
 import type {
   NEWS_REPORT,
   NEWS_SUBSCRIBE,
@@ -13,6 +14,6 @@ export type WebviewMessagePayloads = {
   [SETTINGS_GET]: BasePayload
   [SETTINGS_CHANGE]: SettingsChangePayload
   [RECEPTION_TAKE_OVER]: BasePayload
-  [NEWS_SUBSCRIBE]: BasePayload
+  [NEWS_SUBSCRIBE]: NewsSubscribePayload
   [NEWS_REPORT]: NewsPayload
 }

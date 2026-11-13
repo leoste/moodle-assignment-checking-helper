@@ -1,14 +1,15 @@
 import '@shared/business/styles/theme.css'
 import './business/styles/sidebar.css'
-import { reporter } from '@shared/communication/reporter/Reporter'
-import { consoleWatcher } from '@shared/communication/watcher/ConsoleWatcher'
+import { consoleTyper } from '@shared/presentation/typer/ConsoleTyper'
+import { consoleProvider } from '@shared/foundation/infrastructure/ConsoleProvider'
 import { vsCodeApiProvider } from './foundation/infrastructure/VsCodeApiProvider'
 import { webviewMessageReceiver } from './foundation/infrastructure/WebviewMessageReceiver'
-import { newsController } from './communication/controller/NewsController'
+import { backgroundNewsLink } from './foundation/infrastructure/BackgroundNewsLink'
 import { sidebarPageListener } from './presentation/listener/SidebarPageListener'
 
-reporter.addWatcher(consoleWatcher)
+consoleTyper.init()
+consoleProvider.init()
 vsCodeApiProvider.init()
 webviewMessageReceiver.init()
-newsController.init()
+backgroundNewsLink.init()
 sidebarPageListener.init()

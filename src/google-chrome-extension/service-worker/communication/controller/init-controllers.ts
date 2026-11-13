@@ -3,14 +3,12 @@ import { assignmentController } from './AssignmentController'
 import { fileCacheController } from './FileCacheController'
 import { studentSubmissionController } from './StudentSubmissionController'
 import { quizController } from './QuizController'
-import { newsController } from './NewsController'
 
 export const controllers: readonly BaseController[] = [
   fileCacheController,
   assignmentController,
   studentSubmissionController,
   quizController,
-  newsController,
 ]
 
 export default function initControllers(): void {

@@ -1,17 +1,17 @@
 import ChromeMessageGenerator from './ChromeMessageGenerator'
 import { NEWS_REPORT, NEWS_SUBSCRIBE } from '../../foundation/constants/messages'
-import type { BasePayload } from '@shared/business/types/BasePayload'
 import type { NewsPayload } from '@shared/business/types/NewsPayload'
-import type { News } from '@shared/business/types/News'
+import type { NewsSubscribePayload } from '@shared/business/types/NewsSubscribePayload'
+import type { AnnouncedNews } from '@shared/business/types/AnnouncedNews'
 import type { ChromeMessage } from '../../business/types/ChromeMessage'
 
 class NewsChromeMessageGenerator extends ChromeMessageGenerator {
-  getSubscribeMessage(): ChromeMessage<BasePayload> {
-    return this.makeMessage(NEWS_SUBSCRIBE, {})
+  getSubscribeMessage(announcers: readonly string[]): ChromeMessage<NewsSubscribePayload> {
+    return this.makeMessage(NEWS_SUBSCRIBE, { announcers })
   }
 
-  getReportMessage(news: News): ChromeMessage<NewsPayload> {
-    return this.makeMessage(NEWS_REPORT, { news })
+  getReportMessage({ announcer, news }: AnnouncedNews): ChromeMessage<NewsPayload> {
+    return this.makeMessage(NEWS_REPORT, { announcer, news })
   }
 }
 

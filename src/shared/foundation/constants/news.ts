@@ -1,3 +1,11 @@
+export const ANNOUNCER_LOG = 'log'
+export const ANNOUNCER_CONNECTION = 'connection'
+export const ANNOUNCER_GRADING = 'grading'
+export const ANNOUNCER_DEFINITIONS = 'definitions'
+export const ANNOUNCER_STUDENT_SUBMISSION = 'student-submission'
+export const ANNOUNCER_RECEPTION = 'reception'
+export const ANNOUNCER_SETTINGS = 'settings'
+
 export const NEWS_TYPE_LOG = 'log'
 export const NEWS_TYPE_STATUS = 'status'
 export const NEWS_TYPE_RECEPTION = 'reception'

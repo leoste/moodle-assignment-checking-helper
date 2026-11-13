@@ -1,4 +1,4 @@
-import { announcer } from '../../communication/announcer/Announcer'
+import { logAnnouncer } from '../../communication/announcer/LogAnnouncer'
 
 // This doesn't really belong in "object" due to it being used to create objects of other layers, not simply being
 // used by them, but i didn't have a better idea.
@@ -9,7 +9,7 @@ export default class Initialisable {
     if (this.#initialised) return
     this.#initialised = true
     this.onInit()
-    announcer.announceLog(this, 'initialised')
+    logAnnouncer.announceLog(this, 'initialised')
   }
 
   // Returns `undefined` instead of `void` on purpose: an async override (returning a Promise)

@@ -2,7 +2,7 @@ import BaseInfrastructure from '@shared/foundation/infrastructure/BaseInfrastruc
 import WebSocketConnection from '../object/WebSocketConnection'
 import VsCodeRequestTracker from '@shared/foundation/object/VsCodeRequestTracker'
 import type { VsCodeMessage, VsCodeRequestStatus } from '@shared/business/types/VsCodeMessage'
-import { announcer } from '@shared/communication/announcer/Announcer'
+import { connectionAnnouncer } from '@shared/communication/announcer/ConnectionAnnouncer'
 import { getConnectedStatus, getDisconnectedStatus, getReconnectingStatus, getWaitingStatus } from '@shared/business/rules/status-rules'
 
 class VsCodeConnectionProvider extends BaseInfrastructure {
@@ -11,17 +11,17 @@ class VsCodeConnectionProvider extends BaseInfrastructure {
 
   constructor() {
     super()
-    this.#connection.onConnecting = () => announcer.announceStatus(getReconnectingStatus())
-    this.#connection.onConnect = () => announcer.announceStatus(getConnectedStatus())
+    this.#connection.onConnecting = () => connectionAnnouncer.announceStatus(getReconnectingStatus())
+    this.#connection.onConnect = () => connectionAnnouncer.announceStatus(getConnectedStatus())
     this.#connection.onMessage = (raw) => this.#requests.handleMessage(raw)
     this.#connection.onDisconnect = (wasConnected) => {
-      announcer.announceStatus(wasConnected ? getWaitingStatus() : getDisconnectedStatus())
+      connectionAnnouncer.announceStatus(wasConnected ? getWaitingStatus() : getDisconnectedStatus())
       this.#requests.cancelAll()
     }
   }
 
   protected override onInit(): undefined {
-    announcer.announceStatus(getWaitingStatus())
+    connectionAnnouncer.announceStatus(getWaitingStatus())
   }
 
   post(message: VsCodeMessage): Promise<VsCodeRequestStatus> {

@@ -3,15 +3,16 @@ import type AssignmentGraderPageManager from '../manager/AssignmentGraderPageMan
 import CheckingHelperPanelRenderer from '../renderer/CheckingHelperPanelRenderer'
 import { feedbackClient } from '../../communication/client/FeedbackClient'
 import { studentSubmissionClient } from '../../communication/client/StudentSubmissionClient'
-import { newsClient } from '../../../shared/communication/client/NewsClient'
 import { buildComment, calculateGrade } from '../../business/rules/grading-rules'
 import { getDefaultSelection, getFeedbackView } from '../../business/rules/feedback-rules'
 import { carryOverSelection } from '../../business/rules/selection-rules'
 import deepCopy from '../../../shared/foundation/util/deepCopy'
 import type { Feedback } from '../../../shared/business/types/Feedback'
 import type { DefinitionLookup } from '../../../shared/business/types/DefinitionLookup'
-import { announcer } from '@shared/communication/announcer/Announcer'
-import { statusLineWatcher } from '@shared/communication/watcher/StatusLineWatcher'
+import type { Status } from '@shared/business/types/Status'
+import { logAnnouncer } from '@shared/communication/announcer/LogAnnouncer'
+import { gradingAnnouncer } from '@shared/communication/announcer/GradingAnnouncer'
+import { statusWatcher } from '@shared/communication/watcher/StatusWatcher'
 import { getStudentSubmissionOpeningStatus, getStudentSubmissionStatus } from '@shared/business/rules/status-rules'
 import {
   getAppliedStatus,
@@ -43,7 +44,7 @@ export default class AssignmentGraderPresenter extends BasePresenter {
 
   async start(): Promise<void> {
     const isGradingTab = await webLockProvider.acquire(GRADING_TAB_LOCK_NAME)
-    announcer.announceLog(this, isGradingTab ? 'grading in this tab' : 'another tab is grading')
+    logAnnouncer.announceLog(this, isGradingTab ? 'grading in this tab' : 'another tab is grading')
     if (this.#stopped) return
     if (isGradingTab) await this.#startGrading()
     else await this.#showGradingElsewhere()
@@ -51,32 +52,33 @@ export default class AssignmentGraderPresenter extends BasePresenter {
 
   async stop(): Promise<void> {
     this.#stopped = true
+    statusWatcher.unsubscribe(this.#showStatuses)
     await this.#renderer?.clear()
   }
 
   // The statuses belong to the grading tab, also when this tab's grading was just taken over.
   async #showGradingElsewhere(): Promise<void> {
-    statusLineWatcher.unfollow(newsClient)
-    announcer.announceStatusesCleared()
+    statusWatcher.unsubscribe(this.#showStatuses)
+    gradingAnnouncer.announceStatusesCleared()
     const renderer = await this.#insertPanel()
     await renderer.renderGradingElsewhere()
   }
 
   async #startGrading(): Promise<void> {
-    announcer.announceStatusCleared(STATUS_TOPIC_MOODLE_PAGE)
-    announcer.announceStatusCleared(STATUS_TOPIC_BROKEN_DEFINITIONS)
-    announcer.announceStatusCleared(STATUS_TOPIC_APPLY)
-    void statusLineWatcher.follow(newsClient)
+    gradingAnnouncer.announceStatusCleared(STATUS_TOPIC_MOODLE_PAGE)
+    gradingAnnouncer.announceStatusCleared(STATUS_TOPIC_BROKEN_DEFINITIONS)
+    gradingAnnouncer.announceStatusCleared(STATUS_TOPIC_APPLY)
     const studentSubmissionOpened = this.#openStudentSubmission()
     const renderer = await this.#insertPanel()
+    statusWatcher.subscribe(this.#showStatuses)
 
     const assignmentId = this.#pageManager.getAssignmentId()
-    announcer.announceStatus(getDefinitionSearchingStatus())
+    gradingAnnouncer.announceStatus(getDefinitionSearchingStatus())
     const lookup = await feedbackClient.getData(assignmentId)
     this.#reportDefinition(lookup, assignmentId)
     this.#feedback = deepCopy(lookup?.definition?.feedback ?? [])
     this.#selection = getDefaultSelection(this.#feedback)
-    announcer.announceLog(this, `assignment ${assignmentId}: ${this.#feedback.length} feedback group(s)`)
+    logAnnouncer.announceLog(this, `assignment ${assignmentId}: ${this.#feedback.length} feedback group(s)`)
     await renderer.renderFeedback(getFeedbackView(this.#feedback, this.#selection), this.#commentPrefix)
     this.#feedbackShown = true
 
@@ -90,8 +92,8 @@ export default class AssignmentGraderPresenter extends BasePresenter {
   async refreshDefinition(): Promise<void> {
     if (!this.#feedbackShown || this.#stopped) return
     const assignmentId = this.#pageManager.getAssignmentId()
-    announcer.announceStatusCleared(STATUS_TOPIC_BROKEN_DEFINITIONS)
-    announcer.announceStatus(getDefinitionSearchingStatus())
+    gradingAnnouncer.announceStatusCleared(STATUS_TOPIC_BROKEN_DEFINITIONS)
+    gradingAnnouncer.announceStatus(getDefinitionSearchingStatus())
     const lookup = await feedbackClient.getData(assignmentId)
     this.#reportDefinition(lookup, assignmentId)
     if (this.#stopped) return
@@ -99,7 +101,7 @@ export default class AssignmentGraderPresenter extends BasePresenter {
     const feedback = deepCopy(lookup?.definition?.feedback ?? [])
     this.#selection = carryOverSelection(this.#feedback, this.#selection, feedback)
     this.#feedback = feedback
-    announcer.announceLog(this, `assignment ${assignmentId} reloaded: ${this.#feedback.length} feedback group(s)`)
+    logAnnouncer.announceLog(this, `assignment ${assignmentId} reloaded: ${this.#feedback.length} feedback group(s)`)
     await this.#renderer!.renderFeedback(getFeedbackView(this.#feedback, this.#selection), this.#commentPrefix)
     await this.#renderApplySection()
   }
@@ -115,8 +117,11 @@ export default class AssignmentGraderPresenter extends BasePresenter {
     this.#renderer = renderer
     await renderer.render()
     this.#pageManager.insertPanel(renderer.element)
-    statusLineWatcher.setStatusLine(renderer.statusLine)
     return renderer
+  }
+
+  #showStatuses = (statuses: readonly Status[]): void => {
+    this.#renderer?.statusLine.show(statuses)
   }
 
   async #renderApplySection(): Promise<void> {
@@ -130,18 +135,18 @@ export default class AssignmentGraderPresenter extends BasePresenter {
 
   async #openStudentSubmission(): Promise<void> {
     const studentName = this.#pageManager.getStudentName()
-    announcer.announceStatus(getStudentSubmissionOpeningStatus(studentName))
+    gradingAnnouncer.announceStatus(getStudentSubmissionOpeningStatus(studentName))
     const response = await studentSubmissionClient.openStudentSubmission(studentName)
-    announcer.announceLog(this, `student submission of "${studentName}" opened in VS Code: ${response}`)
+    logAnnouncer.announceLog(this, `student submission of "${studentName}" opened in VS Code: ${response}`)
     if (this.#stopped) return
-    announcer.announceStatus(getStudentSubmissionStatus(studentName, response ?? RESPONSE_STATUS_ERROR))
+    gradingAnnouncer.announceStatus(getStudentSubmissionStatus(studentName, response ?? RESPONSE_STATUS_ERROR))
   }
 
   #reportDefinition(lookup: DefinitionLookup | undefined, assignmentId: string): void {
     if (this.#stopped) return
-    announcer.announceStatus(getDefinitionStatus(lookup, assignmentId))
+    gradingAnnouncer.announceStatus(getDefinitionStatus(lookup, assignmentId))
     const brokenDefinitionsStatus = getBrokenDefinitionsStatus(lookup?.brokenFiles ?? [])
-    if (brokenDefinitionsStatus) announcer.announceStatus(brokenDefinitionsStatus)
+    if (brokenDefinitionsStatus) gradingAnnouncer.announceStatus(brokenDefinitionsStatus)
   }
 
   #onPartToggled = (feedbackIndex: number, partIndex: number, selected: boolean): void => {
@@ -159,7 +164,7 @@ export default class AssignmentGraderPresenter extends BasePresenter {
     if (this.#takingOver) return
     this.#takingOver = true
     await webLockProvider.steal(GRADING_TAB_LOCK_NAME)
-    announcer.announceLog(this, 'took the grading over from another tab')
+    logAnnouncer.announceLog(this, 'took the grading over from another tab')
     if (this.#stopped) return
     await this.#renderer?.clear()
     await this.#startGrading()
@@ -173,16 +178,16 @@ export default class AssignmentGraderPresenter extends BasePresenter {
     const grade = this.#getGrade()
     this.#pageManager.setGrade(String(grade))
     this.#pageManager.setComment(this.#getComment())
-    announcer.announceLog(this, `applied grade ${grade} and comment`)
-    announcer.announceStatus(getAppliedStatus())
+    logAnnouncer.announceLog(this, `applied grade ${grade} and comment`)
+    gradingAnnouncer.announceStatus(getAppliedStatus())
   }
 
   // A change after applying hasn't reached Moodle yet.
   #updatePreview(): void {
     const grade = this.#getGrade()
-    announcer.announceLog(this, `grade: ${grade}`)
+    logAnnouncer.announceLog(this, `grade: ${grade}`)
     this.#renderer?.setPreview(grade, this.#getComment())
-    announcer.announceStatusCleared(STATUS_TOPIC_APPLY)
+    gradingAnnouncer.announceStatusCleared(STATUS_TOPIC_APPLY)
   }
 
   #getGrade(): number {

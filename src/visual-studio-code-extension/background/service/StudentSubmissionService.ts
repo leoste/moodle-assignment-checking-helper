@@ -1,7 +1,8 @@
 import * as vscode from 'vscode'
 import BaseService from '@shared/service/BaseService'
 import { translations } from '@shared/business/translations/translations'
-import { announcer } from '@shared/communication/announcer/Announcer'
+import { logAnnouncer } from '@shared/communication/announcer/LogAnnouncer'
+import { studentSubmissionAnnouncer } from '@shared/communication/announcer/StudentSubmissionAnnouncer'
 import { getStudentSubmissionOpeningStatus, getStudentSubmissionStatus } from '@shared/business/rules/status-rules'
 import type { VsCodeResponseStatus } from '@shared/business/types/VsCodeMessage'
 import {
@@ -26,15 +27,15 @@ interface OpenResult {
 
 class StudentSubmissionService extends BaseService {
   async openStudentSubmission(studentName: string): Promise<VsCodeResponseStatus> {
-    announcer.announceStatus(getStudentSubmissionOpeningStatus(studentName))
+    studentSubmissionAnnouncer.announceStatus(getStudentSubmissionOpeningStatus(studentName))
     const { status, popupText } = await this.#open(studentName)
-    announcer.announceStatus({ ...getStudentSubmissionStatus(studentName, status), popupText })
+    studentSubmissionAnnouncer.announceStatus({ ...getStudentSubmissionStatus(studentName, status), popupText })
     return status
   }
 
   async #open(studentName: string): Promise<OpenResult> {
     if (!studentName) {
-      announcer.announceLogError(this, 'no student name given')
+      logAnnouncer.announceLogError(this, 'no student name given')
       return { status: RESPONSE_STATUS_NOT_FOUND }
     }
 
@@ -42,21 +43,21 @@ class StudentSubmissionService extends BaseService {
 
     const submissionsFolder = studentSubmissionRepository.getSubmissionsFolder()
     if (!submissionsFolder) {
-      announcer.announceLogError(this, 'no workspace folder open')
+      logAnnouncer.announceLogError(this, 'no workspace folder open')
       return { status: RESPONSE_STATUS_NO_WORKSPACE, popupText: translations.studentSubmission.noWorkspaceFolder }
     }
 
     const studentFolder = await studentSubmissionRepository.findStudentFolder(submissionsFolder, studentName)
     if (!studentFolder) {
-      announcer.announceLogError(this, `no folder found for "${studentName}"`)
+      logAnnouncer.announceLogError(this, `no folder found for "${studentName}"`)
       return { status: RESPONSE_STATUS_NOT_FOUND, popupText: translations.studentSubmission.noStudentFolder(studentName) }
     }
-    announcer.announceLog(this, `student folder of "${studentName}": ${studentFolder.fsPath}`)
+    logAnnouncer.announceLog(this, `student folder of "${studentName}": ${studentFolder.fsPath}`)
 
     const { openSubDirectories } = await settingsRepository.getSettings()
     const files = await studentSubmissionRepository.getFiles(studentFolder, openSubDirectories)
     const openedCount = await this.#openFiles(files)
-    announcer.announceLog(this, `opened ${openedCount} of ${files.length} file(s)`)
+    logAnnouncer.announceLog(this, `opened ${openedCount} of ${files.length} file(s)`)
     return { status: openedCount > 0 ? RESPONSE_STATUS_OK : RESPONSE_STATUS_NOTHING_OPENED }
   }
 
@@ -82,7 +83,7 @@ class StudentSubmissionService extends BaseService {
       await editorProvider.open(fileUri, column, isBinaryFile(fileName))
       return true
     } catch (err) {
-      announcer.announceLogError(this, `could not open ${fileUri.fsPath}`, err)
+      logAnnouncer.announceLogError(this, `could not open ${fileUri.fsPath}`, err)
       return false
     }
   }

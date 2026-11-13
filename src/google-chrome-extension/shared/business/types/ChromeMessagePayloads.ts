@@ -1,5 +1,6 @@
 import type { BasePayload } from '@shared/business/types/BasePayload'
 import type { NewsPayload } from '@shared/business/types/NewsPayload'
+import type { NewsSubscribePayload } from '@shared/business/types/NewsSubscribePayload'
 import type { StudentNamePayload } from '@shared/business/types/StudentNamePayload'
 import type {
   ASSIGNMENTS_GET_ALL,
@@ -30,6 +31,6 @@ export type ChromeMessagePayloads = {
   [QUIZ_AUTO_GRADE_BEGIN]: AutoGradeIdPayload
   [QUIZ_AUTO_GRADE_END]: AutoGradeIdPayload
   [QUIZ_AUTO_GRADE_IS_ACTIVE]: AutoGradeIdPayload
-  [NEWS_SUBSCRIBE]: BasePayload
+  [NEWS_SUBSCRIBE]: NewsSubscribePayload
   [NEWS_REPORT]: NewsPayload
 }

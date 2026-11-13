@@ -1,4 +1,4 @@
-import { announcer } from '../../communication/announcer/Announcer'
+import { logAnnouncer } from '../../communication/announcer/LogAnnouncer'
 
 export default abstract class BaseRenderer {
   #root: HTMLElement | undefined
@@ -10,13 +10,13 @@ export default abstract class BaseRenderer {
   async render(): Promise<void> {
     this.#root = this.createRoot()
     await this.renderContent(this.#root)
-    announcer.announceLog(this, 'rendered')
+    logAnnouncer.announceLog(this, 'rendered')
   }
 
   async clear(): Promise<void> {
     this.#root?.remove()
     this.#root = undefined
-    announcer.announceLog(this, 'cleared')
+    logAnnouncer.announceLog(this, 'cleared')
   }
 
   protected abstract createRoot(): HTMLElement

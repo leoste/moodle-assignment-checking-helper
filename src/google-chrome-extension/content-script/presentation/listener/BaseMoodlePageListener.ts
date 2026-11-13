@@ -1,5 +1,5 @@
 import Initialisable from '@shared/foundation/object/Initialisable'
-import { announcer } from '@shared/communication/announcer/Announcer'
+import { logAnnouncer } from '@shared/communication/announcer/LogAnnouncer'
 import executeOnPageReady from '../manager/executeOnPageReady'
 import type MoodlePageManager from '../manager/MoodlePageManager'
 import type BasePresenter from '@shared/presentation/presenter/BasePresenter'
@@ -9,7 +9,7 @@ export default abstract class BaseMoodlePageListener<TPageManager extends Moodle
 
   protected override onInit(): undefined {
     executeOnPageReady(() => {
-      announcer.announceLog(this, `page ready: ${location.href}`)
+      logAnnouncer.announceLog(this, `page ready: ${location.href}`)
       void this.loadPage()
     })
   }
@@ -19,13 +19,13 @@ export default abstract class BaseMoodlePageListener<TPageManager extends Moodle
   async loadPage(): Promise<void> {
     if (this.#presenter) {
       await this.#presenter.stop()
-      announcer.announceLog(this.#presenter, 'stopped')
+      logAnnouncer.announceLog(this.#presenter, 'stopped')
     }
 
     this.#presenter = this.createPresenter(this.createPageManager())
-    announcer.announceLog(this.#presenter, 'starting')
+    logAnnouncer.announceLog(this.#presenter, 'starting')
     await this.#presenter.start()
-    announcer.announceLog(this.#presenter, 'started')
+    logAnnouncer.announceLog(this.#presenter, 'started')
   }
 
   protected abstract createPageManager(): TPageManager

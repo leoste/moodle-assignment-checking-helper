@@ -1,18 +1,37 @@
+import type BaseReporter from '../reporter/BaseReporter'
 import type { News } from '../../business/types/News'
-import type { ReporterClient } from '../../business/types/ReporterClient'
+import type { WatcherHook } from '../../business/types/WatcherHook'
 
-// Shows news to the lecturer, or to whoever reads the log. A watcher gets all the news of the reporters it follows
-// and decides itself which kinds it watches.
-export default abstract class BaseWatcher {
+// Watches the reporters it chose and gives what it saw to whoever subscribed to its hooks. Watches only while
+// something is subscribed.
+export default abstract class BaseWatcher<T> {
+  readonly #hooks = new Set<WatcherHook<T>>()
+
+  protected abstract getReporters(): readonly BaseReporter[]
+
   abstract watch(news: News): void
 
-  // Follows another context's reporter too.
-  async follow(reporter: ReporterClient): Promise<void> {
-    const briefing = await reporter.subscribe()
-    briefing.forEach(news => this.watch(news))
+  abstract brief(briefing: readonly News[]): void
+
+  subscribe(hook: WatcherHook<T>): void {
+    const watching = this.isWatching()
+    this.#hooks.add(hook)
+    if (!watching) this.getReporters().forEach(reporter => reporter.subscribe(this))
   }
 
-  unfollow(reporter: ReporterClient): void {
-    reporter.unsubscribe()
+  unsubscribe(hook: WatcherHook<T>): void {
+    if (!this.#hooks.delete(hook) || this.isWatching()) return
+    this.getReporters().forEach(reporter => reporter.unsubscribe(this))
+    this.onStopped()
+  }
+
+  protected isWatching(): boolean {
+    return this.#hooks.size > 0
+  }
+
+  protected onStopped(): void {}
+
+  protected callHooks(value: T): void {
+    [...this.#hooks].forEach(hook => hook(value))
   }
 }

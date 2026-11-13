@@ -3,7 +3,7 @@ import type QuizReviewPageManager from '../manager/QuizReviewPageManager'
 import type QuizQuestionBox from '../manager/QuizQuestionBox'
 import { AutoGradeButtonRenderer } from '../renderer/AutoGradeButtonRenderer'
 import { quizClient } from '../../communication/client/QuizClient'
-import { announcer } from '@shared/communication/announcer/Announcer'
+import { logAnnouncer } from '@shared/communication/announcer/LogAnnouncer'
 
 export default class QuizReviewPresenter extends BasePresenter {
   readonly #pageManager: QuizReviewPageManager
@@ -32,10 +32,10 @@ export default class QuizReviewPresenter extends BasePresenter {
 
   async #onAutoGradeClick(question: QuizQuestionBox): Promise<void> {
     const autoGradeId = question.getAutoGradeId()
-    announcer.announceLog(this, 'beginning auto grade', autoGradeId)
+    logAnnouncer.announceLog(this, 'beginning auto grade', autoGradeId)
 
     await quizClient.beginAutoGrade(autoGradeId)
-    announcer.announceLog(this, 'auto grade begun, opening comment page')
+    logAnnouncer.announceLog(this, 'auto grade begun, opening comment page')
 
     question.openCommentPage()
   }

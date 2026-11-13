@@ -1,6 +1,4 @@
 import type { BasePayload } from './BasePayload'
-import type { News } from './News'
+import type { AnnouncedNews } from './AnnouncedNews'
 
-export interface NewsPayload extends BasePayload {
-  news: News
-}
+export interface NewsPayload extends BasePayload, AnnouncedNews {}

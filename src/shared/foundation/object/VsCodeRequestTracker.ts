@@ -1,7 +1,7 @@
 import BaseRequestTracker from './BaseRequestTracker'
 import type { VsCodeMessage, VsCodeRequestStatus, VsCodeResponse } from '../../business/types/VsCodeMessage'
 import { REQUEST_STATUS_NO_ANSWER, REQUEST_STATUS_UNREACHABLE } from '../constants/vscode-message'
-import { announcer } from '../../communication/announcer/Announcer'
+import { logAnnouncer } from '../../communication/announcer/LogAnnouncer'
 
 // Pairs the requests sent over a WebSocket with their answers. Used by the Chrome extension, and by a VS Code window
 // asking the receiving window to hand the reception over.
@@ -16,7 +16,7 @@ export default class VsCodeRequestTracker extends BaseRequestTracker<VsCodeMessa
     try {
       parsed = JSON.parse(raw) as VsCodeResponse
     } catch {
-      announcer.announceLogError(this, 'failed to parse incoming message', raw)
+      logAnnouncer.announceLogError(this, 'failed to parse incoming message', raw)
       return
     }
     this.complete(parsed.id, parsed.content)

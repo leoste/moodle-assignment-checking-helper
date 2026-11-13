@@ -1,4 +1,4 @@
-import { announcer } from '../../communication/announcer/Announcer'
+import { logAnnouncer } from '../../communication/announcer/LogAnnouncer'
 
 const REQUEST_TIMEOUT_MS = 5000
 
@@ -14,7 +14,7 @@ export default abstract class BaseRequestTracker<TMessage extends object, TAnswe
 
   // The connection closed, so no answers will come.
   cancelAll(): void {
-    announcer.announceLogError(this, `connection lost, cancelling ${this.#requests.size} pending request(s)`)
+    logAnnouncer.announceLogError(this, `connection lost, cancelling ${this.#requests.size} pending request(s)`)
     this.#requests.forEach((req) => {
       clearTimeout(req.timer)
       req.resolve(this.getUnreachableAnswer())
@@ -29,16 +29,16 @@ export default abstract class BaseRequestTracker<TMessage extends object, TAnswe
       const key = this.getKey(message)
       const timer = setTimeout(() => {
         this.#cleanup(id)
-        announcer.announceLogError(this, `request ${id} (${key}) timed out`)
+        logAnnouncer.announceLogError(this, `request ${id} (${key}) timed out`)
         resolve(this.getNoAnswer())
       }, REQUEST_TIMEOUT_MS)
 
       this.#requests.set(id, { resolve, timer })
 
-      announcer.announceLog(this, `request ${id} (${key}) sent`)
+      logAnnouncer.announceLog(this, `request ${id} (${key}) sent`)
       send({ ...message, id }).catch((err) => {
         this.#cleanup(id)
-        announcer.announceLogError(this, `request ${id} (${key}) could not be sent`, err)
+        logAnnouncer.announceLogError(this, `request ${id} (${key}) could not be sent`, err)
         resolve(this.getUnreachableAnswer())
       })
     })
@@ -47,7 +47,7 @@ export default abstract class BaseRequestTracker<TMessage extends object, TAnswe
   protected complete(id: string, answer: TAnswer): void {
     const req = this.#requests.get(id)
     if (!req) return
-    announcer.announceLog(this, `request ${id} answered: ${answer}`)
+    logAnnouncer.announceLog(this, `request ${id} answered: ${answer}`)
     clearTimeout(req.timer)
     req.resolve(answer)
     this.#requests.delete(id)

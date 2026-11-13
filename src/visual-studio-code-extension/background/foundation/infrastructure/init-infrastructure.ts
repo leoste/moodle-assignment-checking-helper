@@ -5,6 +5,7 @@ import { vsCodeMessageReceiver } from './VsCodeMessageReceiver'
 import { vsCodeWindowConnectionProvider } from './VsCodeWindowConnectionProvider'
 import { vsCodeCommandReceiver } from './VsCodeCommandReceiver'
 import { sidebarViewProvider } from './SidebarViewProvider'
+import { sidebarNewsLink } from './SidebarNewsLink'
 import { statusBarButtonProvider } from './StatusBarButtonProvider'
 import { settingsProvider } from './SettingsProvider'
 import { workspaceProvider } from './WorkspaceProvider'
@@ -21,6 +22,7 @@ export const infrastructure: readonly BaseInfrastructure[] = [
   vsCodeWindowConnectionProvider,
   vsCodeCommandReceiver,
   sidebarViewProvider,
+  sidebarNewsLink,
   statusBarButtonProvider,
   settingsProvider,
   workspaceProvider,

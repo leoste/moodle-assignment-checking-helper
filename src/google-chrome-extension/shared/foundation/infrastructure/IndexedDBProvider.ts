@@ -1,5 +1,5 @@
 import BaseInfrastructure from '@shared/foundation/infrastructure/BaseInfrastructure'
-import { announcer } from '@shared/communication/announcer/Announcer'
+import { logAnnouncer } from '@shared/communication/announcer/LogAnnouncer'
 import type { IndexedDBSchema } from '../../business/types/StorageSchema'
 
 const DB_NAME = 'moodle-helper'
@@ -29,7 +29,7 @@ class IndexedDBProvider extends BaseInfrastructure {
     // A connection that failed to open was already logged in #open.
     connection.then(db => {
       db.close()
-      announcer.announceLog(this, 'connection closed')
+      logAnnouncer.announceLog(this, 'connection closed')
     }, () => {})
   }
 
@@ -54,11 +54,11 @@ class IndexedDBProvider extends BaseInfrastructure {
         const db = request.result
         // Another context wants to upgrade the database: let it, the next call reopens.
         db.onversionchange = () => this.close()
-        announcer.announceLog(this, 'connection opened')
+        logAnnouncer.announceLog(this, 'connection opened')
         resolve(db)
       }
       request.onerror = () => {
-        announcer.announceLogError(this, 'connection could not be opened', request.error)
+        logAnnouncer.announceLogError(this, 'connection could not be opened', request.error)
         this.#connection = null
         reject(request.error)
       }

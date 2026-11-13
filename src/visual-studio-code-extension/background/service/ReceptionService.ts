@@ -1,5 +1,7 @@
 import BaseService from '@shared/service/BaseService'
-import { announcer } from '@shared/communication/announcer/Announcer'
+import { logAnnouncer } from '@shared/communication/announcer/LogAnnouncer'
+import { connectionAnnouncer } from '@shared/communication/announcer/ConnectionAnnouncer'
+import { receptionAnnouncer } from '@shared/communication/announcer/ReceptionAnnouncer'
 import { getPortInUseStatus, getTakeOverFailedStatus } from '@shared/business/rules/status-rules'
 import { REQUEST_STATUS_UNREACHABLE, RESPONSE_STATUS_OK } from '@shared/foundation/constants/vscode-message'
 import { WEBSOCKET_PORT } from '@shared/business/config/connection'
@@ -24,10 +26,10 @@ class ReceptionService extends BaseService {
     if (this.#receiving || this.#takingOver) return
     this.#takingOver = true
     const status = await handOverClient.requestHandOver()
-    announcer.announceLog(this, `hand-over answered: ${status}`)
+    logAnnouncer.announceLog(this, `hand-over answered: ${status}`)
     // Unreachable: no window has the port any more, so this one can simply take it.
     if (status === RESPONSE_STATUS_OK || status === REQUEST_STATUS_UNREACHABLE) await this.#listenUntilPortFree()
-    if (!this.#receiving) announcer.announceStatus(getTakeOverFailedStatus())
+    if (!this.#receiving) connectionAnnouncer.announceStatus(getTakeOverFailedStatus())
     this.#takingOver = false
   }
 
@@ -36,8 +38,8 @@ class ReceptionService extends BaseService {
     // The receiver sends the answer once the handler returns, and setImmediate runs only after that.
     setImmediate(() => {
       vsCodeMessageReceiver.stop()
-      announcer.announceLog(this, 'handed the reception over to another window')
-      announcer.announceStatus(getPortInUseStatus(WEBSOCKET_PORT))
+      logAnnouncer.announceLog(this, 'handed the reception over to another window')
+      connectionAnnouncer.announceStatus(getPortInUseStatus(WEBSOCKET_PORT))
       this.#setReceiving(false)
     })
   }
@@ -49,7 +51,7 @@ class ReceptionService extends BaseService {
   async #listenUntilPortFree(): Promise<void> {
     for (let attempt = 1; attempt <= LISTEN_ATTEMPTS; attempt++) {
       if (await vsCodeMessageReceiver.listen()) {
-        announcer.announceLog(this, 'took the reception over')
+        logAnnouncer.announceLog(this, 'took the reception over')
         this.#setReceiving(true)
         return
       }
@@ -59,7 +61,7 @@ class ReceptionService extends BaseService {
 
   #setReceiving(receiving: boolean): void {
     this.#receiving = receiving
-    announcer.announceReception(receiving)
+    receptionAnnouncer.announceReception(receiving)
   }
 }
 

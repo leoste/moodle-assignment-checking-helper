@@ -48,30 +48,26 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="p3CQqrPQedQ-AUx41cyJ-14" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.75;exitDx=0;exitDy=0;defaultLabelBackgroundColor=page;labelPadding=0 4;">
+        <mxCell id="o_J1gUzuoImiTU3sP2jg-1" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.75;exitDx=0;exitDy=0;entryX=0;entryY=0.75;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;labelPadding=0 4;">
           <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="430" y="202.5" />
-              <mxPoint x="430" y="170" />
-            </Array>
-            <mxPoint x="210" y="202.5" as="sourcePoint" />
-            <mxPoint x="450" y="170" as="targetPoint" />
+            <mxPoint x="170" y="200" as="sourcePoint" />
+            <mxPoint x="370" y="200" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="p3CQqrPQedQ-AUx41cyJ-15" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;div&gt;&lt;b&gt;Listener&lt;/b&gt;&lt;/div&gt;&lt;div&gt;- Listens to website changes and manages the lifecycle of presenter and manager. Creates then applies and connects them at the appropriate moment.&lt;/div&gt;&lt;div&gt;- Owns the presenter and the manager&lt;/div&gt;" vertex="1">
-          <mxGeometry height="130" width="160" x="50" y="80" as="geometry" />
+        <mxCell id="p3CQqrPQedQ-AUx41cyJ-15" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;div&gt;&lt;b&gt;Listener&lt;/b&gt;&lt;/div&gt;&lt;div&gt;- Listens to website changes and manages the lifecycle of presenter and manager.&lt;/div&gt;&lt;div&gt;- Owns the presenter and the manager&lt;/div&gt;" vertex="1">
+          <mxGeometry height="130" width="120" x="50" y="80" as="geometry" />
         </mxCell>
-        <mxCell id="p3CQqrPQedQ-AUx41cyJ-16" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;div&gt;&lt;b&gt;Manager&lt;/b&gt;&lt;/div&gt;&lt;div&gt;- Exposes functionality for interacting with the actual Moodle page&lt;/div&gt;&lt;div&gt;- Is owned by the listener&lt;/div&gt;" vertex="1">
-          <mxGeometry height="100" width="160" x="250" y="80" as="geometry" />
+        <mxCell id="p3CQqrPQedQ-AUx41cyJ-16" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;div&gt;&lt;b&gt;Manager&lt;/b&gt;&lt;/div&gt;&lt;div&gt;- Exposes functionality for interacting with the actual Moodle page&lt;/div&gt;&lt;div&gt;- Owned by listener&lt;/div&gt;" vertex="1">
+          <mxGeometry height="100" width="120" x="210" y="80" as="geometry" />
         </mxCell>
         <mxCell id="p3CQqrPQedQ-AUx41cyJ-17" edge="1" parent="1" source="p3CQqrPQedQ-AUx41cyJ-18" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.25;exitDx=0;exitDy=0;entryX=0;entryY=0.25;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;labelPadding=0 4;" target="p3CQqrPQedQ-AUx41cyJ-19">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="p3CQqrPQedQ-AUx41cyJ-18" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;div&gt;&lt;b&gt;Presenter&lt;/b&gt;&lt;/div&gt;&lt;div&gt;- Defines and implements business logic for interacting with Moodle and definitions&lt;/div&gt;&lt;div&gt;- Coordinates renderers to draw additional UI elements&lt;/div&gt;&lt;div&gt;- Owns the renderer&lt;/div&gt;&lt;div&gt;- Is owned by the manager&lt;/div&gt;" vertex="1">
-          <mxGeometry height="130" width="160" x="450" y="80" as="geometry" />
+        <mxCell id="p3CQqrPQedQ-AUx41cyJ-18" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;div&gt;&lt;b&gt;Presenter&lt;/b&gt;&lt;/div&gt;&lt;div&gt;- Defines and implements business logic&lt;/div&gt;&lt;div&gt;- Coordinates renderers&lt;/div&gt;&lt;div&gt;- Owns the renderer&lt;/div&gt;&lt;div&gt;- Owned by listener&lt;/div&gt;" vertex="1">
+          <mxGeometry height="130" width="120" x="370" y="80" as="geometry" />
         </mxCell>
-        <mxCell id="p3CQqrPQedQ-AUx41cyJ-19" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;div&gt;&lt;b&gt;Renderer&lt;/b&gt;&lt;/div&gt;&lt;div&gt;- Renders new UI components and manages their lifecycle&lt;/div&gt;&lt;div&gt;- Is owned by the presenter&lt;/div&gt;" vertex="1">
-          <mxGeometry height="130" width="160" x="650" y="80" as="geometry" />
+        <mxCell id="p3CQqrPQedQ-AUx41cyJ-19" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;div&gt;&lt;b&gt;Renderer&lt;/b&gt;&lt;/div&gt;&lt;div&gt;- Renders new UI components and manages their lifecycle&lt;/div&gt;&lt;div&gt;- Owned by presenter&lt;/div&gt;" vertex="1">
+          <mxGeometry height="130" width="120" x="530" y="80" as="geometry" />
         </mxCell>
         <mxCell id="p3CQqrPQedQ-AUx41cyJ-20" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="" vertex="1">
           <mxGeometry height="60" width="780" x="40" y="440" as="geometry" />
@@ -126,6 +122,9 @@
         </mxCell>
         <mxCell id="p3CQqrPQedQ-AUx41cyJ-37" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;div&gt;&lt;b&gt;Styles&lt;/b&gt;&lt;/div&gt;&lt;div&gt;Looks is everything in business, so styles are positioned here.&lt;/div&gt;" vertex="1">
           <mxGeometry height="130" width="120" x="690" y="840" as="geometry" />
+        </mxCell>
+        <mxCell id="o_J1gUzuoImiTU3sP2jg-2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;div&gt;&lt;b&gt;Typer&lt;/b&gt;&lt;/div&gt;&lt;div&gt;- Types into consoles, statusbars etc&lt;/div&gt;&lt;div&gt;- Combines listener, manager and presenter as consoles don&#39;t need half their concepts&lt;/div&gt;" vertex="1">
+          <mxGeometry height="130" width="120" x="690" y="80" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>

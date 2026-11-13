@@ -61,7 +61,10 @@ Some layers involve many concepts inside them in a specific relationship, others
 
 ### 3.1 💞Presentation Layer💞
 Some components need to present info to the user. This also raises the necessity of accessing the page or other mediums.
-This is accomplished through following parts:
+This is done in two ways, one way for UI and other for text.
+
+#### UI Presentation
+UI presentation is accomplished through the following parts:
 
 Listener (presentation/listener):
 - Listens to website changes and manages lifecycle of presenter and manager. Creates then applies and connects them together at the appropriate moment.
@@ -77,6 +80,16 @@ Presenter (presentation/presenter):
 
 Renderer (presentation/renderer):
 - renders new ui components and manages their lifecycle
+
+#### Text Presentation
+
+Consoles, statusbars etc don't need a lot of what UI needs.
+They're immediately acceptable and don't need listening, there's really no overhead functionality to manage a simple console write call either. There's no need for a renderer either.
+Because of this, all of text presentation is handled with a single component:
+
+Typer
+- Types into consoles, statusbars etc
+- Combines listener, manager and presenter as consoles don't need half their concepts
 
 ### 3.2 ❤Communication Layer❤
 Components communicate with each other in two ways: messages and news.

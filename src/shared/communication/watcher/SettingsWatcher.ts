@@ -1,10 +1,10 @@
-import FireAndForgetWatcher from './FireAndForgetWatcher'
+import ForgettingWatcher from './ForgettingWatcher'
 import type BaseReporter from '../reporter/BaseReporter'
 import { settingsReporter } from '../reporter/SettingsReporter'
 import type { News, SettingsUpdatedNews } from '../../business/types/News'
 import { NEWS_TYPE_SETTINGS_UPDATED } from '../../foundation/constants/news'
 
-class SettingsWatcher extends FireAndForgetWatcher<SettingsUpdatedNews> {
+class SettingsWatcher extends ForgettingWatcher<SettingsUpdatedNews> {
   protected getReporters(): readonly BaseReporter[] {
     return [settingsReporter]
   }

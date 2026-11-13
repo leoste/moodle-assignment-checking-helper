@@ -1,11 +1,11 @@
-import FireAndForgetWatcher from './FireAndForgetWatcher'
+import ForgettingWatcher from './ForgettingWatcher'
 import type BaseReporter from '../reporter/BaseReporter'
 import { statusReporter } from '../reporter/StatusReporter'
 import type { News } from '../../business/types/News'
 import { NEWS_TYPE_STATUS, STATUS_CHANGE_REPORTED } from '../../foundation/constants/news'
 
 // Notices every status that carries a popup text.
-class PopupTextWatcher extends FireAndForgetWatcher<string> {
+class PopupTextWatcher extends ForgettingWatcher<string> {
   protected getReporters(): readonly BaseReporter[] {
     return [statusReporter]
   }

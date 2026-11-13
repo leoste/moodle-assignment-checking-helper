@@ -1,10 +1,10 @@
-import FireAndForgetWatcher from './FireAndForgetWatcher'
+import ForgettingWatcher from './ForgettingWatcher'
 import type BaseReporter from '../reporter/BaseReporter'
 import { logReporter } from '../reporter/LogReporter'
 import type { LogNews, News } from '../../business/types/News'
 import { NEWS_TYPE_LOG } from '../../foundation/constants/news'
 
-class LogWatcher extends FireAndForgetWatcher<LogNews> {
+class LogWatcher extends ForgettingWatcher<LogNews> {
   protected getReporters(): readonly BaseReporter[] {
     return [logReporter]
   }

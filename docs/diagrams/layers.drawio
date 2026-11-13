@@ -1,46 +1,46 @@
 <mxfile host="app.diagrams.net">
-  <diagram name="Page-1" id="IUbS4PapWz1jxhgytVjj">
+  <diagram name="Page-1" id="-GTqkGw9frAoGSb8U8X4">
     <mxGraphModel dx="1712" dy="934" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="_9CwhJN1yaCqQ-_2WR2m-26" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="" vertex="1">
+        <mxCell id="p3CQqrPQedQ-AUx41cyJ-1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="" vertex="1">
           <mxGeometry height="180" width="780" x="40" y="240" as="geometry" />
         </mxCell>
-        <mxCell id="_9CwhJN1yaCqQ-_2WR2m-27" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="&lt;div&gt;&lt;b&gt;Communication Layer&lt;/b&gt;&lt;/div&gt;&lt;div&gt;Components communicate in two ways: messages and news, every major component does this. They are swapped between two groups.&lt;/div&gt;" vertex="1">
+        <mxCell id="p3CQqrPQedQ-AUx41cyJ-2" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="&lt;div&gt;&lt;b&gt;Communication Layer&lt;/b&gt;&lt;/div&gt;&lt;div&gt;Components communicate in two ways: messages and news, every major component does this. They are swapped between two groups.&lt;/div&gt;" vertex="1">
           <mxGeometry height="30" width="760" x="50" y="250" as="geometry" />
         </mxCell>
-        <mxCell id="_9CwhJN1yaCqQ-_2WR2m-78" edge="1" parent="1" source="_9CwhJN1yaCqQ-_2WR2m-33" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;labelPadding=0 4;startArrow=classic;startFill=1;" target="_9CwhJN1yaCqQ-_2WR2m-35">
+        <mxCell id="p3CQqrPQedQ-AUx41cyJ-3" edge="1" parent="1" source="p3CQqrPQedQ-AUx41cyJ-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;labelPadding=0 4;startArrow=classic;startFill=1;" target="p3CQqrPQedQ-AUx41cyJ-5">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="_9CwhJN1yaCqQ-_2WR2m-33" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;div&gt;&lt;b&gt;Client&lt;/b&gt;&lt;/div&gt;&lt;div&gt;- sends a message to and expects a response from a controller&lt;/div&gt;" vertex="1">
+        <mxCell id="p3CQqrPQedQ-AUx41cyJ-4" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;div&gt;&lt;b&gt;Client&lt;/b&gt;&lt;/div&gt;&lt;div&gt;- sends a message to and expects a response from a controller&lt;/div&gt;" vertex="1">
           <mxGeometry height="130" width="120" x="50" y="280" as="geometry" />
         </mxCell>
-        <mxCell id="_9CwhJN1yaCqQ-_2WR2m-35" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;div&gt;&lt;b&gt;Controller&lt;/b&gt;&lt;/div&gt;&lt;div&gt;- awaits messages from clients and response to them&lt;/div&gt;" vertex="1">
+        <mxCell id="p3CQqrPQedQ-AUx41cyJ-5" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;div&gt;&lt;b&gt;Controller&lt;/b&gt;&lt;/div&gt;&lt;div&gt;- awaits messages from clients and response to them&lt;/div&gt;" vertex="1">
           <mxGeometry height="130" width="120" x="210" y="280" as="geometry" />
         </mxCell>
-        <mxCell id="_9CwhJN1yaCqQ-_2WR2m-79" edge="1" parent="1" source="_9CwhJN1yaCqQ-_2WR2m-36" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;labelPadding=0 4;" target="_9CwhJN1yaCqQ-_2WR2m-37">
+        <mxCell id="p3CQqrPQedQ-AUx41cyJ-6" edge="1" parent="1" source="p3CQqrPQedQ-AUx41cyJ-7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;labelPadding=0 4;" target="p3CQqrPQedQ-AUx41cyJ-9">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="_9CwhJN1yaCqQ-_2WR2m-36" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;div&gt;&lt;b&gt;Announcer&lt;/b&gt;&lt;/div&gt;&lt;div&gt;- Broadcasts news of happenings without expecting a response&lt;/div&gt;" vertex="1">
+        <mxCell id="p3CQqrPQedQ-AUx41cyJ-7" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;div&gt;&lt;b&gt;Announcer&lt;/b&gt;&lt;/div&gt;&lt;div&gt;- Broadcasts news of happenings without expecting a response&lt;/div&gt;" vertex="1">
           <mxGeometry height="130" width="120" x="370" y="280" as="geometry" />
         </mxCell>
-        <mxCell id="_9CwhJN1yaCqQ-_2WR2m-80" edge="1" parent="1" source="_9CwhJN1yaCqQ-_2WR2m-37" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;labelPadding=0 4;" target="_9CwhJN1yaCqQ-_2WR2m-38">
+        <mxCell id="p3CQqrPQedQ-AUx41cyJ-8" edge="1" parent="1" source="p3CQqrPQedQ-AUx41cyJ-9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;labelPadding=0 4;" target="p3CQqrPQedQ-AUx41cyJ-10">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="_9CwhJN1yaCqQ-_2WR2m-37" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;div&gt;&lt;b&gt;Reporter&lt;/b&gt;&lt;/div&gt;&lt;div&gt;- Listens to announcers and broadcasts news to other reporters or watchers&lt;/div&gt;" vertex="1">
+        <mxCell id="p3CQqrPQedQ-AUx41cyJ-9" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;div&gt;&lt;b&gt;Reporter&lt;/b&gt;&lt;/div&gt;&lt;div&gt;- Listens to announcers and broadcasts news to other reporters or watchers&lt;/div&gt;" vertex="1">
           <mxGeometry height="130" width="120" x="530" y="280" as="geometry" />
         </mxCell>
-        <mxCell id="_9CwhJN1yaCqQ-_2WR2m-38" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;div&gt;&lt;b&gt;Watcher&lt;/b&gt;&lt;/div&gt;&lt;div&gt;- Listens to chosen reporters and keeps a filtered list of latest news they care about&lt;/div&gt;" vertex="1">
+        <mxCell id="p3CQqrPQedQ-AUx41cyJ-10" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;div&gt;&lt;b&gt;Watcher&lt;/b&gt;&lt;/div&gt;&lt;div&gt;- Listens to chosen reporters and keeps a filtered list of latest news they care about&lt;/div&gt;" vertex="1">
           <mxGeometry height="130" width="120" x="690" y="280" as="geometry" />
         </mxCell>
-        <mxCell id="_9CwhJN1yaCqQ-_2WR2m-39" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="" vertex="1">
+        <mxCell id="p3CQqrPQedQ-AUx41cyJ-11" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="" vertex="1">
           <mxGeometry height="180" width="780" x="40" y="40" as="geometry" />
         </mxCell>
-        <mxCell id="_9CwhJN1yaCqQ-_2WR2m-40" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="&lt;div&gt;&lt;b&gt;Presentation Layer&lt;/b&gt;&lt;/div&gt;&lt;div&gt;Some components must present info to the user. This also necessitates accessing the medium. Following parts are used to achieve this:&lt;/div&gt;" vertex="1">
+        <mxCell id="p3CQqrPQedQ-AUx41cyJ-12" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="&lt;div&gt;&lt;b&gt;Presentation Layer&lt;/b&gt;&lt;/div&gt;&lt;div&gt;Some components must present info to the user. This also necessitates accessing the medium. Following parts are used to achieve this:&lt;/div&gt;" vertex="1">
           <mxGeometry height="30" width="760" x="50" y="50" as="geometry" />
         </mxCell>
-        <mxCell id="_9CwhJN1yaCqQ-_2WR2m-51" edge="1" parent="1" source="_9CwhJN1yaCqQ-_2WR2m-41" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.25;exitDx=0;exitDy=0;defaultLabelBackgroundColor=page;labelPadding=0 4;" target="_9CwhJN1yaCqQ-_2WR2m-46">
+        <mxCell id="p3CQqrPQedQ-AUx41cyJ-13" edge="1" parent="1" source="p3CQqrPQedQ-AUx41cyJ-15" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.25;exitDx=0;exitDy=0;defaultLabelBackgroundColor=page;labelPadding=0 4;" target="p3CQqrPQedQ-AUx41cyJ-16">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="230" y="112.5" />
@@ -48,7 +48,7 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="_9CwhJN1yaCqQ-_2WR2m-52" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.75;exitDx=0;exitDy=0;defaultLabelBackgroundColor=page;labelPadding=0 4;">
+        <mxCell id="p3CQqrPQedQ-AUx41cyJ-14" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.75;exitDx=0;exitDy=0;defaultLabelBackgroundColor=page;labelPadding=0 4;">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="430" y="202.5" />
@@ -58,73 +58,73 @@
             <mxPoint x="450" y="170" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="_9CwhJN1yaCqQ-_2WR2m-41" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;div&gt;&lt;b&gt;Listener&lt;/b&gt;&lt;/div&gt;&lt;div&gt;- Listens to website changes and manages the lifecycle of presenter and manager. Creates then applies and connects them at the appropriate moment.&lt;/div&gt;&lt;div&gt;- Owns the presenter and the manager&lt;/div&gt;" vertex="1">
+        <mxCell id="p3CQqrPQedQ-AUx41cyJ-15" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;div&gt;&lt;b&gt;Listener&lt;/b&gt;&lt;/div&gt;&lt;div&gt;- Listens to website changes and manages the lifecycle of presenter and manager. Creates then applies and connects them at the appropriate moment.&lt;/div&gt;&lt;div&gt;- Owns the presenter and the manager&lt;/div&gt;" vertex="1">
           <mxGeometry height="130" width="160" x="50" y="80" as="geometry" />
         </mxCell>
-        <mxCell id="_9CwhJN1yaCqQ-_2WR2m-46" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;div&gt;&lt;b&gt;Manager&lt;/b&gt;&lt;/div&gt;&lt;div&gt;- Exposes functionality for interacting with the actual Moodle page&lt;/div&gt;&lt;div&gt;- Is owned by the listener&lt;/div&gt;" vertex="1">
+        <mxCell id="p3CQqrPQedQ-AUx41cyJ-16" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;div&gt;&lt;b&gt;Manager&lt;/b&gt;&lt;/div&gt;&lt;div&gt;- Exposes functionality for interacting with the actual Moodle page&lt;/div&gt;&lt;div&gt;- Is owned by the listener&lt;/div&gt;" vertex="1">
           <mxGeometry height="100" width="160" x="250" y="80" as="geometry" />
         </mxCell>
-        <mxCell id="_9CwhJN1yaCqQ-_2WR2m-54" edge="1" parent="1" source="_9CwhJN1yaCqQ-_2WR2m-47" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.25;exitDx=0;exitDy=0;entryX=0;entryY=0.25;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;labelPadding=0 4;" target="_9CwhJN1yaCqQ-_2WR2m-48">
+        <mxCell id="p3CQqrPQedQ-AUx41cyJ-17" edge="1" parent="1" source="p3CQqrPQedQ-AUx41cyJ-18" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.25;exitDx=0;exitDy=0;entryX=0;entryY=0.25;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;labelPadding=0 4;" target="p3CQqrPQedQ-AUx41cyJ-19">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="_9CwhJN1yaCqQ-_2WR2m-47" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;div&gt;&lt;b&gt;Presenter&lt;/b&gt;&lt;/div&gt;&lt;div&gt;- Defines and implements business logic for interacting with Moodle and definitions&lt;/div&gt;&lt;div&gt;- Coordinates renderers to draw additional UI elements&lt;/div&gt;&lt;div&gt;- Owns the renderer&lt;/div&gt;&lt;div&gt;- Is owned by the manager&lt;/div&gt;" vertex="1">
+        <mxCell id="p3CQqrPQedQ-AUx41cyJ-18" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;div&gt;&lt;b&gt;Presenter&lt;/b&gt;&lt;/div&gt;&lt;div&gt;- Defines and implements business logic for interacting with Moodle and definitions&lt;/div&gt;&lt;div&gt;- Coordinates renderers to draw additional UI elements&lt;/div&gt;&lt;div&gt;- Owns the renderer&lt;/div&gt;&lt;div&gt;- Is owned by the manager&lt;/div&gt;" vertex="1">
           <mxGeometry height="130" width="160" x="450" y="80" as="geometry" />
         </mxCell>
-        <mxCell id="_9CwhJN1yaCqQ-_2WR2m-48" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;div&gt;&lt;b&gt;Renderer&lt;/b&gt;&lt;/div&gt;&lt;div&gt;- Renders new UI components and manages their lifecycle&lt;/div&gt;&lt;div&gt;- Is owned by the presenter&lt;/div&gt;" vertex="1">
+        <mxCell id="p3CQqrPQedQ-AUx41cyJ-19" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;div&gt;&lt;b&gt;Renderer&lt;/b&gt;&lt;/div&gt;&lt;div&gt;- Renders new UI components and manages their lifecycle&lt;/div&gt;&lt;div&gt;- Is owned by the presenter&lt;/div&gt;" vertex="1">
           <mxGeometry height="130" width="160" x="650" y="80" as="geometry" />
         </mxCell>
-        <mxCell id="_9CwhJN1yaCqQ-_2WR2m-55" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="" vertex="1">
+        <mxCell id="p3CQqrPQedQ-AUx41cyJ-20" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="" vertex="1">
           <mxGeometry height="60" width="780" x="40" y="440" as="geometry" />
         </mxCell>
-        <mxCell id="_9CwhJN1yaCqQ-_2WR2m-56" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="&lt;b&gt;Service Layer&lt;br&gt;&lt;/b&gt;Service distributes functionality to above layers. This can be storage, sending messages or something else." vertex="1">
+        <mxCell id="p3CQqrPQedQ-AUx41cyJ-21" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="&lt;b&gt;Service Layer&lt;br&gt;Service&lt;/b&gt; distributes functionality to above layers. This can be storage, sending messages or something else." vertex="1">
           <mxGeometry height="30" width="760" x="50" y="450" as="geometry" />
         </mxCell>
-        <mxCell id="_9CwhJN1yaCqQ-_2WR2m-62" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="" vertex="1">
+        <mxCell id="p3CQqrPQedQ-AUx41cyJ-22" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="" vertex="1">
           <mxGeometry height="60" width="780" x="40" y="520" as="geometry" />
         </mxCell>
-        <mxCell id="_9CwhJN1yaCqQ-_2WR2m-63" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="&lt;b&gt;Repository Layer&lt;br&gt;&lt;/b&gt;Repository layer provides access to storage functionality, for example localStorage or local file system." vertex="1">
+        <mxCell id="p3CQqrPQedQ-AUx41cyJ-23" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="&lt;b&gt;Repository Layer&lt;br&gt;Repository&lt;/b&gt; provides access to storage functionality, for example localStorage or local file system." vertex="1">
           <mxGeometry height="30" width="760" x="50" y="530" as="geometry" />
         </mxCell>
-        <mxCell id="_9CwhJN1yaCqQ-_2WR2m-64" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="" vertex="1">
+        <mxCell id="p3CQqrPQedQ-AUx41cyJ-24" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="" vertex="1">
           <mxGeometry height="180" width="780" x="40" y="600" as="geometry" />
         </mxCell>
-        <mxCell id="_9CwhJN1yaCqQ-_2WR2m-65" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="&lt;div&gt;&lt;b&gt;Foundation Layer&lt;/b&gt;&lt;/div&gt;&lt;div&gt;Foundation makes connections to external systems and provides abstract objects that other components use.&lt;/div&gt;" vertex="1">
+        <mxCell id="p3CQqrPQedQ-AUx41cyJ-25" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="&lt;div&gt;&lt;b&gt;Foundation Layer&lt;/b&gt;&lt;/div&gt;&lt;div&gt;Foundation makes connections to external systems and provides abstract objects that other components use.&lt;/div&gt;" vertex="1">
           <mxGeometry height="30" width="760" x="50" y="610" as="geometry" />
         </mxCell>
-        <mxCell id="_9CwhJN1yaCqQ-_2WR2m-66" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;div&gt;&lt;b&gt;Infrastructure&lt;/b&gt;&lt;/div&gt;&lt;div&gt;Provides connection to external systems: the browser, VS Code, WebSocket, File storage and more.&lt;/div&gt;" vertex="1">
+        <mxCell id="p3CQqrPQedQ-AUx41cyJ-26" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;div&gt;&lt;b&gt;Infrastructure&lt;/b&gt;&lt;/div&gt;&lt;div&gt;Provides connection to external systems: the browser, VS Code, WebSocket, File storage and more.&lt;/div&gt;" vertex="1">
           <mxGeometry height="130" width="120" x="50" y="640" as="geometry" />
         </mxCell>
-        <mxCell id="_9CwhJN1yaCqQ-_2WR2m-67" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;div&gt;&lt;b&gt;Object&lt;/b&gt;&lt;/div&gt;&lt;div&gt;Defines custom objects and concepts for implementation.&lt;/div&gt;" vertex="1">
+        <mxCell id="p3CQqrPQedQ-AUx41cyJ-27" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;div&gt;&lt;b&gt;Object&lt;/b&gt;&lt;/div&gt;&lt;div&gt;Defines custom objects and concepts for implementation.&lt;/div&gt;" vertex="1">
           <mxGeometry height="130" width="120" x="210" y="640" as="geometry" />
         </mxCell>
-        <mxCell id="_9CwhJN1yaCqQ-_2WR2m-68" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;div&gt;&lt;b&gt;Util&lt;/b&gt;&lt;/div&gt;&lt;div&gt;Generic helper functions without ties to a certain domain object, used everywhere.&lt;/div&gt;" vertex="1">
+        <mxCell id="p3CQqrPQedQ-AUx41cyJ-28" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;div&gt;&lt;b&gt;Util&lt;/b&gt;&lt;/div&gt;&lt;div&gt;Generic helper functions without ties to a certain domain object, used everywhere.&lt;/div&gt;" vertex="1">
           <mxGeometry height="130" width="120" x="370" y="640" as="geometry" />
         </mxCell>
-        <mxCell id="_9CwhJN1yaCqQ-_2WR2m-69" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;div&gt;&lt;b&gt;Generator&lt;/b&gt;&lt;/div&gt;&lt;div&gt;Generators generate messages and news for use between clients and controllers.&lt;/div&gt;" vertex="1">
+        <mxCell id="p3CQqrPQedQ-AUx41cyJ-29" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;div&gt;&lt;b&gt;Generator&lt;/b&gt;&lt;/div&gt;&lt;div&gt;Generators generate messages and news for use between clients and controllers.&lt;/div&gt;" vertex="1">
           <mxGeometry height="130" width="120" x="530" y="640" as="geometry" />
         </mxCell>
-        <mxCell id="_9CwhJN1yaCqQ-_2WR2m-70" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;div&gt;&lt;b&gt;Constants&lt;/b&gt;&lt;/div&gt;&lt;div&gt;Common values shared throughout the system.&lt;/div&gt;" vertex="1">
+        <mxCell id="p3CQqrPQedQ-AUx41cyJ-30" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;div&gt;&lt;b&gt;Constants&lt;/b&gt;&lt;/div&gt;&lt;div&gt;Common values shared throughout the system.&lt;/div&gt;" vertex="1">
           <mxGeometry height="130" width="120" x="690" y="640" as="geometry" />
         </mxCell>
-        <mxCell id="_9CwhJN1yaCqQ-_2WR2m-71" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="" vertex="1">
+        <mxCell id="p3CQqrPQedQ-AUx41cyJ-31" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="" vertex="1">
           <mxGeometry height="180" width="780" x="40" y="800" as="geometry" />
         </mxCell>
-        <mxCell id="_9CwhJN1yaCqQ-_2WR2m-72" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="&lt;b&gt;Business Layer&lt;br&gt;&lt;/b&gt;Business is the ultimate source of truth for decisions and structure, it&#39;s what everything else is built around of." vertex="1">
+        <mxCell id="p3CQqrPQedQ-AUx41cyJ-32" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="&lt;b&gt;Business Layer&lt;br&gt;&lt;/b&gt;Business is the ultimate source of truth for decisions and structure, it&#39;s what everything else is built around of." vertex="1">
           <mxGeometry height="30" width="760" x="50" y="810" as="geometry" />
         </mxCell>
-        <mxCell id="_9CwhJN1yaCqQ-_2WR2m-73" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;div&gt;&lt;b&gt;Rules&lt;/b&gt;&lt;/div&gt;&lt;div&gt;Rules define how something should behave, for example&lt;/div&gt;&lt;div&gt;rules for definitions.&lt;/div&gt;" vertex="1">
+        <mxCell id="p3CQqrPQedQ-AUx41cyJ-33" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;div&gt;&lt;b&gt;Rules&lt;/b&gt;&lt;/div&gt;&lt;div&gt;Rules define how something should behave, for example&lt;/div&gt;&lt;div&gt;rules for definitions.&lt;/div&gt;" vertex="1">
           <mxGeometry height="130" width="120" x="50" y="840" as="geometry" />
         </mxCell>
-        <mxCell id="_9CwhJN1yaCqQ-_2WR2m-74" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;div&gt;&lt;b&gt;Types&lt;/b&gt;&lt;/div&gt;&lt;div&gt;Types define objects which other layers manipulate and are the highest source of truth for how things look like.&lt;/div&gt;" vertex="1">
+        <mxCell id="p3CQqrPQedQ-AUx41cyJ-34" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;div&gt;&lt;b&gt;Types&lt;/b&gt;&lt;/div&gt;&lt;div&gt;Types define objects which other layers manipulate and are the highest source of truth for how things look like.&lt;/div&gt;" vertex="1">
           <mxGeometry height="130" width="120" x="210" y="840" as="geometry" />
         </mxCell>
-        <mxCell id="_9CwhJN1yaCqQ-_2WR2m-75" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;div&gt;&lt;b&gt;Config&lt;/b&gt;&lt;/div&gt;&lt;div&gt;Configures how the whole application behaves.&lt;/div&gt;" vertex="1">
+        <mxCell id="p3CQqrPQedQ-AUx41cyJ-35" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;div&gt;&lt;b&gt;Config&lt;/b&gt;&lt;/div&gt;&lt;div&gt;Configures how the whole application behaves.&lt;/div&gt;" vertex="1">
           <mxGeometry height="130" width="120" x="370" y="840" as="geometry" />
         </mxCell>
-        <mxCell id="_9CwhJN1yaCqQ-_2WR2m-76" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;div&gt;&lt;b&gt;Translations&lt;/b&gt;&lt;/div&gt;&lt;div&gt;Translations hold key intent on how things are intended to work.&lt;/div&gt;" vertex="1">
+        <mxCell id="p3CQqrPQedQ-AUx41cyJ-36" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;div&gt;&lt;b&gt;Translations&lt;/b&gt;&lt;/div&gt;&lt;div&gt;Translations hold key intent on how things are intended to work.&lt;/div&gt;" vertex="1">
           <mxGeometry height="130" width="120" x="530" y="840" as="geometry" />
         </mxCell>
-        <mxCell id="_9CwhJN1yaCqQ-_2WR2m-77" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;div&gt;&lt;b&gt;Styles&lt;/b&gt;&lt;/div&gt;&lt;div&gt;Looks is everything in business, so styles are positioned here.&lt;/div&gt;" vertex="1">
+        <mxCell id="p3CQqrPQedQ-AUx41cyJ-37" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;div&gt;&lt;b&gt;Styles&lt;/b&gt;&lt;/div&gt;&lt;div&gt;Looks is everything in business, so styles are positioned here.&lt;/div&gt;" vertex="1">
           <mxGeometry height="130" width="120" x="690" y="840" as="geometry" />
         </mxCell>
       </root>
